@@ -1,16 +1,5 @@
 import bcrypt from "bcryptjs";
 import postgres from "postgres";
-import {
-  invoices,
-  customers,
-  revenue,
-  users,
-  invoicees,
-  groups,
-  members,
-  loans,
-  ginvoices,
-} from "../lib/placeholder-data";
 import sql from "@/app/lib/db";
 
 async function seedUsers() {
@@ -18,11 +7,11 @@ async function seedUsers() {
   const hashedPassword = await bcrypt.hash(password, 10);
   const created = new Date();
   const admin =
-    await sql`INSERT INTO users (name, email, phone, role, status, password, created) 
+    await sql`INSERT INTO users (name, email, phone, role, status, password, created)
     VALUES ('henry-admin','henryomosh7@gmail.com', '0708663296', 'admin', 'active', ${hashedPassword}, ${created})`;
+
   console.log(admin);
 
-  // await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
   // await sql`
   //   CREATE TABLE IF NOT EXISTS users (
   //     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -40,8 +29,6 @@ async function seedUsers() {
 }
 
 async function seedRegions() {
-  await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-
   await sql`
   CREATE TABLE IF NOT EXISTS regions (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -54,8 +41,6 @@ async function seedRegions() {
 }
 
 async function seedIndividuals() {
-  await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-
   await sql`
   CREATE TABLE IF NOT EXISTS individuals (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -74,8 +59,6 @@ async function seedIndividuals() {
 }
 
 async function seedIndividualLoans() {
-  await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-
   await sql`
   CREATE TABLE IF NOT EXISTS individuals_loans (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -94,8 +77,6 @@ async function seedIndividualLoans() {
 }
 
 async function seedInvoices() {
-  await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-
   await sql`
     CREATE TABLE IF NOT EXISTS invoices (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -108,8 +89,6 @@ async function seedInvoices() {
 }
 
 async function seedCustomers() {
-  await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-
   await sql`
     CREATE TABLE IF NOT EXISTS customers (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -130,8 +109,6 @@ async function seedRevenue() {
 }
 
 async function seedInvoicees() {
-  await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-
   await sql`
   CREATE TABLE IF NOT EXISTS invoicees (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -147,8 +124,6 @@ async function seedInvoicees() {
 }
 
 async function seedGroups() {
-  await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-
   await sql`
   CREATE TABLE IF NOT EXISTS groups (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -163,8 +138,6 @@ async function seedGroups() {
 }
 
 async function seedMembers() {
-  await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-
   await sql`
   CREATE TABLE IF NOT EXISTS members (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -185,8 +158,6 @@ async function seedMembers() {
 }
 
 async function seedLoans() {
-  await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-
   await sql`
   CREATE TABLE IF NOT EXISTS loans (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -207,8 +178,6 @@ async function seedLoans() {
 }
 
 async function seedGroupInvoices() {
-  await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-
   await sql`
     CREATE TABLE IF NOT EXISTS groupinvoice (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -221,8 +190,6 @@ async function seedGroupInvoices() {
 }
 
 async function seedMpesaInvoices() {
-  await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-
   await sql`
     CREATE TABLE IF NOT EXISTS mpesainvoice (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,

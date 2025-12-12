@@ -31,12 +31,14 @@ export default async function Page(props: {
     page?: string;
     startDate?: string;
     endDate?: string;
+    pageItems?: string;
   }>;
 }) {
   const searchParams = await props.searchParams;
   const query = searchParams?.query || "";
   const startDate = searchParams?.startDate || "";
   const endDate = searchParams?.endDate || "";
+  const pageItems = searchParams?.pageItems || "5";
 
   const currentPage = Number(searchParams?.page) || 1;
 
@@ -50,13 +52,15 @@ export default async function Page(props: {
     totalPagesGroupInvoice = await fetchMpesaInvoicesPages(
       query,
       startDate,
-      endDate
+      endDate,
+      Number(pageItems)
     );
     ginvoices = await fetchFilteredMpesaInvoices(
       query,
       currentPage,
       startDate,
-      endDate
+      endDate,
+      Number(pageItems)
     );
   }
 
@@ -80,8 +84,7 @@ export default async function Page(props: {
     <div className="w-full">
       <div className="">
         <h1
-          className={`text-2xl flex gap-2 items-center border p-2 rounded-md`}
-        >
+          className={`text-2xl flex gap-2 items-center border p-2 rounded-md`}>
           <Coins className="h-6 w-6 text-green-500" /> Mpesa Invoices
         </h1>
       </div>
@@ -97,7 +100,7 @@ export default async function Page(props: {
         <Table
           query={query}
           currentPage={currentPage}
-          user={curentUser}
+          user={user}
           startDate={startDate}
           endDate={endDate}
           ginvoices={ginvoices}

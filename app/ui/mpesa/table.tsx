@@ -37,6 +37,7 @@ export default async function InvoicesTable({
       </div>
     );
   }
+  console.log(user);
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">
@@ -120,8 +121,7 @@ export default async function InvoicesTable({
               {ginvoices?.map((invoice: any, index: any) => (
                 <tr
                   key={index}
-                  className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
-                >
+                  className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg">
                   <td className="whitespace-nowrap py-1 pr-3 pl-2">
                     <div className="flex items-center gap-3">
                       <p className="text-xs">{invoice.refnumber}</p>
@@ -155,7 +155,7 @@ export default async function InvoicesTable({
                     {invoice.cycle}
                   </td>
                   <td className=" flex pr-4 py-2">
-                    {user.role === "admin" && (
+                    {user?.role === "admin" && (
                       <>
                         {" "}
                         <EditMpesa mpesa={invoice} />

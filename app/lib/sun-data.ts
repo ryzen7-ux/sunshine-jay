@@ -1291,7 +1291,8 @@ export async function fetchFilteredGroupInvoices(
 export async function fetchMpesaInvoicesPages(
   query: string,
   startDate: string,
-  endDate: string
+  endDate: string,
+  pageItems: number
 ) {
   const today = new Date();
   const formattedDate = today.toISOString().split("T")[0];
@@ -1317,7 +1318,7 @@ export async function fetchMpesaInvoicesPages(
       mpesainvoice.refnumber ILIKE ${`%${query}%`})
   `;
 
-    const totalPages = Math.ceil(Number(data[0].count) / ITEMS_PER_PAGE);
+    const totalPages = Math.ceil(Number(data[0].count) / pageItems);
 
     return totalPages;
   } catch (error) {
@@ -1330,9 +1331,10 @@ export async function fetchFilteredMpesaInvoices(
   query: string,
   currentPage: number,
   startDate: string,
-  endDate: string
+  endDate: string,
+  pageItems: number
 ) {
-  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+  const offset = (currentPage - 1) * pageItems;
 
   const today = new Date();
   const formattedDate = today.toISOString().split("T")[0];
@@ -1370,7 +1372,7 @@ export async function fetchFilteredMpesaInvoices(
       
 
       ORDER BY mpesainvoice.transtime DESC
-      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
+      LIMIT ${pageItems} OFFSET ${offset}
     `;
 
     return invoices;

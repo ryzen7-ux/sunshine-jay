@@ -20,12 +20,14 @@ export default function InvoicesTable({
   filtredIndividuals,
   regions,
   detailLoans,
+  user,
 }: {
   query: string;
   currentPage: number;
   filtredIndividuals: any;
   regions: any;
   detailLoans: any;
+  user: any;
 }) {
   return (
     <div className="mt-6 flow-root">
@@ -46,7 +48,9 @@ export default function InvoicesTable({
                           individual={individual}
                           regions={regions}
                         />{" "}
-                        <DeleteIndividual id={individual?.id} />
+                        {user === "admin" && (
+                          <DeleteIndividual id={individual?.id} />
+                        )}
                       </div>
                     </div>
                     <p className="text-sm text-gray-500">
@@ -122,7 +126,9 @@ export default function InvoicesTable({
                         regions={regions}
                       />
 
-                      <DeleteIndividual id={individual?.id} />
+                      {user.role === "admin" && (
+                        <DeleteIndividual id={individual?.id} />
+                      )}
                     </div>
                   </td>
                 </tr>

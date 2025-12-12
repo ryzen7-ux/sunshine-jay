@@ -21,7 +21,16 @@ import { getSession } from "@/app/lib/session";
 
 const ITEMS_PER_PAGE = 6;
 
-export async function fetchMpesaInvoicesPages2(query: string, userId: string) {
+export async function fetchMpesaInvoicesPages2(
+  query: string,
+  userId: string,
+  startDate: string,
+  endDate: string
+) {
+  const today = new Date();
+  const formattedDate = today.toISOString().split("T")[0];
+
+  const defaultStartDate = "1979-01-01";
   try {
     const data = await sql`SELECT COUNT(*)
     FROM mpesainvoice
@@ -30,7 +39,11 @@ export async function fetchMpesaInvoicesPages2(query: string, userId: string) {
     regions.id = individuals.region 
     WHERE
     regions.manager = ${userId} AND
-    mpesainvoice.cycle::TEXT ILIKE ${`%${query}%`} OR
+    mpesainvoice.cycle::TEXT ILIKE ${`%${query}%`} AND mpesainvoice.transtime >= ${
+      startDate || defaultStartDate
+    }::timestamp AND mpesainvoice.transtime < ${
+      endDate || formattedDate
+    }::timestamp + interval '1 day' AND OR
     ( mpesainvoice.transid ILIKE ${`%${query}%`} OR
       mpesainvoice.transtime::text ILIKE ${`%${query}%`} OR
       mpesainvoice.transamount::text ILIKE ${`%${query}%`} OR
@@ -70,11 +83,18 @@ export async function fetchMpesaInvoicesPages2(query: string, userId: string) {
 export async function fetchFilteredMpesaInvoices2(
   query: string,
   currentPage: number,
-  userId: string
+  userId: string,
+  startDate: string,
+  endDate: string
 ) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
   const startIndex = currentPage * ITEMS_PER_PAGE - ITEMS_PER_PAGE;
   const endIndex = currentPage * ITEMS_PER_PAGE;
+
+  const today = new Date();
+  const formattedDate = today.toISOString().split("T")[0];
+
+  const defaultStartDate = "1979-01-01";
   try {
     const invoices = await sql<MpesaInvoice[]>`
       SELECT
@@ -92,7 +112,11 @@ export async function fetchFilteredMpesaInvoices2(
         JOIN groups ON LOWER(groups.name) = LOWER(mpesaInvoice.refnumber) 
         JOIN regions ON regions.id = groups.region 
       WHERE
-      regions.manager = ${userId} AND
+      regions.manager = ${userId} AND mpesainvoice.transtime >= ${
+      startDate || defaultStartDate
+    }::timestamp AND mpesainvoice.transtime < ${
+      endDate || formattedDate
+    }::timestamp + interval '1 day' AND
       ( mpesainvoice.transid ILIKE ${`%${query}%`} OR
         mpesainvoice.cycle::TEXT ILIKE ${`%${query}%`} OR
         mpesainvoice.transtime::text ILIKE ${`%${query}%`} OR
@@ -117,7 +141,11 @@ export async function fetchFilteredMpesaInvoices2(
         JOIN individuals ON individuals.idnumber::TEXT = LOWER(mpesaInvoice.refnumber) 
         JOIN regions ON regions.id = individuals.region 
       WHERE
-      regions.manager = ${userId} AND
+      regions.manager = ${userId} AND mpesainvoice.transtime >= ${
+      startDate || defaultStartDate
+    }::timestamp AND mpesainvoice.transtime < ${
+      endDate || formattedDate
+    }::timestamp + interval '1 day' AND
       ( mpesainvoice.transid ILIKE ${`%${query}%`} OR
         mpesainvoice.cycle::TEXT ILIKE ${`%${query}%`} OR
         mpesainvoice.transtime::text ILIKE ${`%${query}%`} OR

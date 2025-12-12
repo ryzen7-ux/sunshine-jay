@@ -69,7 +69,7 @@ export default async function Page(props: {
           key={query + currentPage}
           fallback={<InvoicesTableSkeleton />}
         >
-          <GroupTable groups={groups} regions={regions} />
+          <GroupTable groups={groups} regions={regions} user={user} />
         </Suspense>
         <div className="mt-5 mb-5 flex w-full justify-center">
           <GroupPagination totalPages={totalPages} />

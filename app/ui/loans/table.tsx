@@ -100,7 +100,7 @@ export default async function InvoicesTable({
                   </div>
                   <div className="flex justify-end gap-2">
                     <UpdateLoan id={loan.id} loan={loan} />
-                    <DeleteLoan id={loan.id} />
+                    {user.role === "admin" && <DeleteLoan id={loan.id} />}
                   </div>
                 </div>
               </div>
@@ -204,7 +204,7 @@ export default async function InvoicesTable({
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
                       <UpdateLoan id={loan.id} loan={loan} />
-                      <DeleteLoan id={loan.id} />
+                      {user.role === "admin" && <DeleteLoan id={loan.id} />}
                     </div>
                   </td>
                 </tr>

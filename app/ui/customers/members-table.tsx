@@ -47,10 +47,12 @@ export default function MembersTable({
   group,
   members,
   loan,
+  user,
 }: {
   group: any;
   members: any;
   loan: any;
+  user: any;
 }) {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [isOpenLoan, setIsOpenLoan] = React.useState(false);
@@ -114,7 +116,9 @@ export default function MembersTable({
               <EditMemberModal member={member} />
             </Tooltip>
 
-            <DeleteMemberAction id={member.id} gid={group.id} />
+            {user.role === "admin" && (
+              <DeleteMemberAction id={member.id} gid={group.id} />
+            )}
           </div>
         );
       default:

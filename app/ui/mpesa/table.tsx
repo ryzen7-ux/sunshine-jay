@@ -11,32 +11,30 @@ import { fetchFilteredInvoices } from "@/app/lib/data";
 import { fetchFilteredMpesaInvoices } from "@/app/lib/sun-data";
 import { fetchFilteredMpesaInvoices2 } from "@/app/lib/sun-data2";
 import EditMpesa from "@/app/ui/mpesa/edit-mpesa";
+import { Button } from "@heroui/react";
+import { Download } from "lucide-react";
+import { exportCvs } from "@/app/lib/cvs";
 
 export default async function InvoicesTable({
   query,
   currentPage,
   user,
+  startDate,
+  endDate,
+  ginvoices,
 }: {
   query: string;
   currentPage: number;
   user: any;
+  startDate: any;
+  endDate: any;
+  ginvoices: any;
 }) {
-  let ginvoices: any = [];
-  if (user[0]?.role === "admin") {
-    ginvoices = await fetchFilteredMpesaInvoices(query, currentPage);
-  }
-
-  if (user[0]?.role !== "admin") {
-    ginvoices = await fetchFilteredMpesaInvoices2(
-      query,
-      currentPage,
-      user[0]?.id
-    );
-  }
-
   if (!ginvoices || ginvoices.length === 0) {
     return (
-      <div className="mt-6 text-center text-gray-500">No invoices found.</div>
+      <div className="mt-6 text-center text-gray-500">
+        <p>No invoices found.</p>
+      </div>
     );
   }
   return (
@@ -80,8 +78,13 @@ export default async function InvoicesTable({
                     </p>
                   </div>
                   <div className="flex flex-col gap-4">
-                    <EditMpesa mpesa={invoice} />
-                    <DeleteInvoice id={invoice.id} />
+                    {user?.role === "admin" && (
+                      <>
+                        {" "}
+                        <EditMpesa mpesa={invoice} />
+                        <DeleteInvoice id={invoice.id} />
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -152,8 +155,13 @@ export default async function InvoicesTable({
                     {invoice.cycle}
                   </td>
                   <td className=" flex pr-4 py-2">
-                    <EditMpesa mpesa={invoice} />
-                    <DeleteInvoice id={invoice.id} />
+                    {user.role === "admin" && (
+                      <>
+                        {" "}
+                        <EditMpesa mpesa={invoice} />
+                        <DeleteInvoice id={invoice.id} />
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}

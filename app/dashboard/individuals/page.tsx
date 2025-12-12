@@ -107,6 +107,7 @@ export default async function Page(props: {
           loans={loans}
           maxCycle={maxCycle}
           detailLoans={individual_loans}
+          user={user}
         />
         {/* <AddIndividuals regions={regions} /> */}
       </div>

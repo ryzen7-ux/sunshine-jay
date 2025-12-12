@@ -1288,12 +1288,25 @@ export async function fetchFilteredGroupInvoices(
   }
 }
 // MPESA FETCH LOGIC
-export async function fetchMpesaInvoicesPages(query: string) {
+export async function fetchMpesaInvoicesPages(
+  query: string,
+  startDate: string,
+  endDate: string
+) {
+  const today = new Date();
+  const formattedDate = today.toISOString().split("T")[0];
+
+  const defaultStartDate = "1979-01-01";
   try {
     const data = await sql`SELECT COUNT(*)
     FROM mpesainvoice
     WHERE
-    mpesainvoice.cycle::TEXT ILIKE ${`%${query}%`} OR
+       mpesainvoice.transtime >= ${
+         startDate || defaultStartDate
+       }::timestamp AND mpesainvoice.transtime < ${
+      endDate || formattedDate
+    }::timestamp + interval '1 day' AND
+    (mpesainvoice.cycle::TEXT ILIKE ${`%${query}%`} OR
       mpesainvoice.transid ILIKE ${`%${query}%`} OR
       mpesainvoice.transtime::text ILIKE ${`%${query}%`} OR
       mpesainvoice.transamount::text ILIKE ${`%${query}%`} OR
@@ -1301,7 +1314,7 @@ export async function fetchMpesaInvoicesPages(query: string) {
       mpesainvoice.middle_name::text ILIKE ${`%${query}%`} OR
       mpesainvoice.last_name::text ILIKE ${`%${query}%`} OR
       mpesainvoice.phone_number::text ILIKE ${`%${query}%`} OR
-      mpesainvoice.refnumber ILIKE ${`%${query}%`}
+      mpesainvoice.refnumber ILIKE ${`%${query}%`})
   `;
 
     const totalPages = Math.ceil(Number(data[0].count) / ITEMS_PER_PAGE);
@@ -1315,9 +1328,16 @@ export async function fetchMpesaInvoicesPages(query: string) {
 
 export async function fetchFilteredMpesaInvoices(
   query: string,
-  currentPage: number
+  currentPage: number,
+  startDate: string,
+  endDate: string
 ) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+
+  const today = new Date();
+  const formattedDate = today.toISOString().split("T")[0];
+
+  const defaultStartDate = "1979-01-01";
 
   try {
     const invoices = await sql<MpesaInvoice[]>`
@@ -1334,11 +1354,21 @@ export async function fetchFilteredMpesaInvoices(
         mpesainvoice.refnumber
       FROM mpesainvoice
       WHERE
-        mpesainvoice.cycle::TEXT ILIKE ${`%${query}%`} OR
+        mpesainvoice.transtime >= ${
+          startDate || defaultStartDate
+        }::timestamp AND mpesainvoice.transtime < ${
+      endDate || formattedDate
+    }::timestamp + interval '1 day' AND
+       (mpesainvoice.cycle::TEXT ILIKE ${`%${query}%`} OR
         mpesainvoice.transid ILIKE ${`%${query}%`} OR
         mpesainvoice.transtime::text ILIKE ${`%${query}%`} OR
         mpesainvoice.transamount::text ILIKE ${`%${query}%`} OR
-        mpesainvoice.refnumber ILIKE ${`%${query}%`}
+        mpesainvoice.refnumber ILIKE ${`%${query}%`} OR
+        mpesainvoice.first_name ILIKE ${`%${query}%`} OR
+        mpesainvoice.last_name ILIKE ${`%${query}%`} OR
+        mpesainvoice.middle_name ILIKE ${`%${query}%`})
+      
+
       ORDER BY mpesainvoice.transtime DESC
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
     `;

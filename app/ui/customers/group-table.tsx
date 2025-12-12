@@ -160,9 +160,11 @@ const statusColorMap = {
 export default function GroupTable({
   groups,
   regions,
+  user,
 }: {
   groups: any;
   regions: any;
+  user: any;
 }) {
   const renderCell = React.useCallback((group: any, columnKey: any) => {
     const cellValue = group[columnKey];
@@ -223,9 +225,11 @@ export default function GroupTable({
             <Tooltip color="success" content="Edit group">
               <EditGroupModal group={group} regions={regions} />
             </Tooltip>
-            <Tooltip color="danger" content="Delete group info">
-              <DeleteGroupAction id={group.id} />
-            </Tooltip>
+            {user?.role === "admin" && (
+              <Tooltip color="danger" content="Delete group info">
+                <DeleteGroupAction id={group.id} />
+              </Tooltip>
+            )}
           </div>
         );
       default:

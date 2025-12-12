@@ -22,11 +22,13 @@ export default function LoansTable({
   loans,
   loansQuery,
   loansCurrentPage,
+  user,
 }: {
   filteredLoanIndividuals: any;
   loans: any;
   loansQuery: string;
   loansCurrentPage: number;
+  user: any;
 }) {
   return (
     <div className="mt-6 flow-root">
@@ -47,7 +49,9 @@ export default function LoansTable({
                           {individual.created}
                         </p>
                         <EditLoan individual={individual} />{" "}
-                        <DeleteIndividualLoan id={individual?.id} />
+                        {user.role === "admin" && (
+                          <DeleteIndividualLoan id={individual?.id} />
+                        )}
                       </div>
                     </div>
                     <div className="flex justify-between">
@@ -209,7 +213,9 @@ export default function LoansTable({
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
                       <EditLoan individual={individual} />
-                      <DeleteIndividualLoan id={individual?.id} />
+                      {user.role === "admin" && (
+                        <DeleteIndividualLoan id={individual?.id} />
+                      )}
                     </div>
                   </td>
                 </tr>

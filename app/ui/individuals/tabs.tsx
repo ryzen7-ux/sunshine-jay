@@ -26,6 +26,7 @@ interface tabsProps {
   loans: any;
   maxCycle: any;
   detailLoans: any;
+  user: any;
 }
 export default function IndividualsTab({
   regions,
@@ -42,6 +43,7 @@ export default function IndividualsTab({
   loans,
   maxCycle,
   detailLoans,
+  user,
 }: tabsProps) {
   return (
     <div className="flex w-full flex-col">
@@ -76,6 +78,7 @@ export default function IndividualsTab({
                     filtredIndividuals={filtredIndividuals}
                     regions={regions}
                     detailLoans={detailLoans}
+                    user={user}
                   />
                 </Suspense>
                 <div className="my-5 flex w-full justify-center">
@@ -114,6 +117,7 @@ export default function IndividualsTab({
                     loans={loans}
                     loansQuery={loansQuery}
                     loansCurrentPage={loansCurrentPage}
+                    user={user}
                   />
                 </Suspense>
                 <div className="mt-5 flex w-full justify-center">

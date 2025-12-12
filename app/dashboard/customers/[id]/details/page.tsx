@@ -21,6 +21,7 @@ import HeroBreadcrumbs from "@/app/ui/customers/hero-breadcrumbs";
 import { UsersBRoundIcon } from "@/app/ui/customers/icons";
 import { Divider } from "@heroui/react";
 import DisbursementCycle from "@/app/ui/customers/disbursement-cycle";
+import { getSession } from "@/app/lib/session";
 
 export default async function Page(props: {
   searchParams?: Promise<{
@@ -34,6 +35,8 @@ export default async function Page(props: {
   const query = searchParams?.query || "";
   const loansQuery = searchParams?.loansQuery || "";
   const id = params.id;
+
+  const user = await getSession();
 
   const [group] = await Promise.all([fetchGroupById(id)]);
   const { members, loans } = await fetchMembers(id);
@@ -89,7 +92,12 @@ export default async function Page(props: {
             <h1 className={`text-lg font-bold text-gray-900`}>Group Members</h1>
             <SearchMembers group={group} />
           </div>
-          <MembersTable group={group} members={members} loan={loans} />
+          <MembersTable
+            group={group}
+            members={members}
+            loan={loans}
+            user={user}
+          />
         </div>
       </div>
     </main>

@@ -42,6 +42,10 @@ export const formatFormDateTime = (
   return parseZonedDateTime(formatedDateTime);
 };
 
+export const formatDate = (timestamp: string) => {
+  return new Date(timestamp).toLocaleString();
+};
+
 export const formatDateToLocal = (
   dateStr: string,
   locale: string = "en-US"

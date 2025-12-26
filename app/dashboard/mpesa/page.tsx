@@ -38,13 +38,14 @@ export default async function Page(props: {
   const query = searchParams?.query || "";
   const startDate = searchParams?.startDate || "";
   const endDate = searchParams?.endDate || "";
-  const pageItems = searchParams?.pageItems || "5";
+  const pageItems = searchParams?.pageItems || "10";
 
   const currentPage = Number(searchParams?.page) || 1;
 
   const user = await getSession();
   const isAdmin = user?.role === "admin";
   const curentUser: any = await fetchUserByEmail(user?.email);
+  const userId = curentUser[0].id;
   let totalPagesGroupInvoice: any = 0;
 
   let ginvoices: any = [];
@@ -74,7 +75,7 @@ export default async function Page(props: {
     ginvoices = await fetchFilteredMpesaInvoices2(
       query,
       currentPage,
-      user[0]?.id,
+      userId,
       startDate,
       endDate
     );
@@ -84,7 +85,8 @@ export default async function Page(props: {
     <div className="w-full">
       <div className="">
         <h1
-          className={`text-2xl flex gap-2 items-center border p-2 rounded-md`}>
+          className={`text-2xl flex gap-2 items-center border p-2 rounded-md`}
+        >
           <Coins className="h-6 w-6 text-green-500" /> Mpesa Invoices
         </h1>
       </div>

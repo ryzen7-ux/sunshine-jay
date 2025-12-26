@@ -652,8 +652,19 @@ export async function fetchLoanByIdNew(id: string) {
   }
 }
 
-export async function fetchFilteredLoans(query: string, currentPage: number) {
-  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+export async function fetchFilteredLoans(
+  query: string,
+  currentPage: number,
+  startDate: string,
+  endDate: string,
+  pagetItems: number
+) {
+  const offset = (currentPage - 1) * pagetItems;
+
+  const today = new Date();
+  const formattedDate = today.toISOString().split("T")[0];
+
+  const defaultStartDate = "1979-01-01";
 
   try {
     const loans = await sql<LoanForm[]>`
@@ -677,9 +688,14 @@ export async function fetchFilteredLoans(query: string, currentPage: number) {
         groups.name      
       FROM loans
       JOIN members ON loans.memberid = members.id
-      JOIN groups ON members.groupid = groups.id:: text
+      JOIN groups ON members.groupid = groups.id::text
       WHERE
-        loans.loanid ILIKE ${`%${query}%`} OR
+      loans.date >=${
+        startDate || defaultStartDate
+      }::timestamp AND   loans.date  < ${
+      endDate || formattedDate
+    }::timestamp + interval '1 day' AND
+        (loans.loanid ILIKE ${`%${query}%`} OR
         loans.cycle::TEXT ILIKE ${`%${query}%`} OR
         loans.fee::TEXT ILIKE ${`%${query}%`} OR
         loans.amount::text ILIKE ${`%${query}%`} OR
@@ -691,9 +707,9 @@ export async function fetchFilteredLoans(query: string, currentPage: number) {
         members.firstname ILIKE ${`%${query}%`} OR
         members.surname ILIKE ${`%${query}%`} OR
         groups.location ILIKE ${`%${query}%`} OR
-        groups.date::text ILIKE ${`%${query}%`}
+        groups.date::text ILIKE ${`%${query}%`})
       ORDER BY loans.date DESC
-      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
+      LIMIT ${pagetItems} OFFSET ${offset}
     `;
 
     return loans;
@@ -703,12 +719,40 @@ export async function fetchFilteredLoans(query: string, currentPage: number) {
   }
 }
 
-export async function fetchLoansPages(query: string) {
+export async function fetchLoansPages(
+  query: string,
+  startDate: string,
+  endDate: string,
+  pageItems: number
+) {
+  const today = new Date();
+  const formattedDate = today.toISOString().split("T")[0];
+
+  const defaultStartDate = "1979-01-01";
   try {
     const data = await sql`SELECT COUNT(*)
-    FROM loans
+    FROM loans 
+      JOIN members ON loans.memberid = members.id
+      JOIN groups ON members.groupid = groups.id::text
+      WHERE loans.date >= ${startDate || defaultStartDate}::timestamp 
+    AND loans.date < ${
+      endDate || formattedDate
+    }::timestamp  + interval '1 day' AND
+  
+       (loans.loanid ILIKE ${`%${query}%`} OR
+        loans.cycle::TEXT ILIKE ${`%${query}%`} OR
+        loans.fee::TEXT ILIKE ${`%${query}%`} OR
+        loans.amount::text ILIKE ${`%${query}%`} OR
+        loans.interest::text ILIKE ${`%${query}%`} OR
+        loans.term::text ILIKE ${`%${query}%`} OR
+        loans.status ILIKE ${`%${query}%`} OR
+        groups.name ILIKE ${`%${query}%`} OR
+        members.firstname ILIKE ${`%${query}%`} OR
+        members.surname ILIKE ${`%${query}%`} OR
+        groups.location ILIKE ${`%${query}%`} 
+      )
   `;
-    const totalPages = Math.ceil(Number(data[0].count) / ITEMS_PER_PAGE);
+    const totalPages = Math.ceil(Number(data[0].count) / pageItems);
     return totalPages;
   } catch (error) {
     console.error("Database Error:", error);

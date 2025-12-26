@@ -10,11 +10,10 @@ import { Download } from "lucide-react";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
 import { Select, SelectItem } from "@heroui/react";
-import { start } from "repl";
 
 const items = ["5", "10", "20", "30", "40", "50", "100", "150", "200"];
 
-export function ExportMpesaCvs({ ginvoices }: { ginvoices: any }) {
+export function ExportLoanCvs({ loans }: { loans: any }) {
   const [fromForm, setFromForm] = useState("");
   const [toForm, setToForm] = useState("");
   const [selectItem, setSelectItem] = useState("5");
@@ -49,29 +48,36 @@ export function ExportMpesaCvs({ ginvoices }: { ginvoices: any }) {
   }, [selectItem]);
 
   const exportInvoice = () => {
-    if (!confirm("Download transaction statement")) {
+    if (!confirm("Download Loans")) {
       return;
     }
     const csvContent = [
       [
         "Name",
-        "Reference Number",
-        "Phone Number",
-        "Transaction Id",
-        "Date",
-        "Time",
+        "Group",
         "Amount",
+        "Interest Rate (%)",
+        "Term (Weeks)",
+        "Fee",
+        "Total Loan Amount",
         "Cycle",
+        "Start Date",
+        "End Date",
+        "Status",
       ].join(","),
-      ...ginvoices.map((item: any) =>
+      ...loans.map((item: any) =>
         [
-          item.first_name,
-          item.refnumber,
-          formatPhoneNumber(item.phone_number),
-          item.transid,
-          formatDate(item.transtime || new Date()),
-          item.transamount,
+          `${item.firstname} ${item.surname}`,
+          item.name,
+          item.amount,
+          item.interest,
+          item.term,
+          item.fee,
+          item.total,
           item.cycle,
+          item.start_date.toISOString().split("T")[0],
+          item.end_date.toISOString().split("T")[0],
+          item.status,
         ].join(",")
       ),
     ].join("\n");
@@ -80,7 +86,7 @@ export function ExportMpesaCvs({ ginvoices }: { ginvoices: any }) {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `MPESA-STATEMENTS-${
+    a.download = `LOANS-STATEMENT-${
       new Date().toISOString().split("T")[0]
     }.csv`;
     a.click();

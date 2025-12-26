@@ -43,7 +43,7 @@ export async function fetchMpesaInvoicesPages2(
       startDate || defaultStartDate
     }::timestamp AND mpesainvoice.transtime < ${
       endDate || formattedDate
-    }::timestamp + interval '1 day' AND OR
+    }::timestamp + interval '1 day' AND 
     ( mpesainvoice.transid ILIKE ${`%${query}%`} OR
       mpesainvoice.transtime::text ILIKE ${`%${query}%`} OR
       mpesainvoice.transamount::text ILIKE ${`%${query}%`} OR
@@ -243,13 +243,42 @@ export async function fetchRegion2(userId: any) {
   }
 }
 
-export async function fetchLoansPages2(query: string, userId: string) {
+export async function fetchLoansPages2(
+  query: string,
+  userId: string,
+  startDate: string,
+  endDate: string,
+  pageItems: number
+) {
+  const today = new Date();
+  const formattedDate = today.toISOString().split("T")[0];
+  const defaultStartDate = "1979-01-01";
+
   try {
     const data = await sql`SELECT COUNT(*)
-    FROM loans JOIN groups ON groups.id = loans.groupid JOIN regions ON
-    regions.id = groups.region WHERE regions.manager = ${userId}
+    FROM loans JOIN groups ON groups.id = loans.groupid 
+    JOIN regions ON regions.id = groups.region 
+    JOIN members ON loans.memberid = members.id
+    WHERE regions.manager = ${userId} AND
+    loans.date >= ${startDate || defaultStartDate}::timestamp 
+    AND loans.date < ${
+      endDate || formattedDate
+    }::timestamp  + interval '1 day' AND
+     (loans.loanid ILIKE ${`%${query}%`} OR
+        loans.cycle::TEXT ILIKE ${`%${query}%`} OR
+        loans.fee::TEXT ILIKE ${`%${query}%`} OR
+        loans.amount::text ILIKE ${`%${query}%`} OR
+        loans.interest::text ILIKE ${`%${query}%`} OR
+        loans.term::text ILIKE ${`%${query}%`} OR
+        loans.term::text ILIKE ${`%${query}%`} OR
+        loans.status ILIKE ${`%${query}%`} OR
+        groups.name ILIKE ${`%${query}%`} OR
+        members.firstname ILIKE ${`%${query}%`} OR
+        members.surname ILIKE ${`%${query}%`} OR
+        groups.location ILIKE ${`%${query}%`} OR
+        groups.date::text ILIKE ${`%${query}%`})
   `;
-    const totalPages = Math.ceil(Number(data[0].count) / ITEMS_PER_PAGE);
+    const totalPages = Math.ceil(Number(data[0].count) / pageItems);
     return totalPages;
   } catch (error) {
     console.error("Database Error:", error);
@@ -260,9 +289,17 @@ export async function fetchLoansPages2(query: string, userId: string) {
 export async function fetchFilteredLoans2(
   query: string,
   currentPage: number,
-  userId: string
+  userId: string,
+  startDate: string,
+  endDate: string,
+  pagetItems: number
 ) {
-  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+  const offset = (currentPage - 1) * pagetItems;
+
+  const today = new Date();
+  const formattedDate = today.toISOString().split("T")[0];
+
+  const defaultStartDate = "1979-01-01";
 
   try {
     const loans = await sql<LoanForm[]>`
@@ -290,7 +327,11 @@ export async function fetchFilteredLoans2(
       JOIN groups ON members.groupid = groups.id:: text
       JOIN regions ON regions.id = groups.region
       WHERE
-      regions.manager = ${userId} AND 
+      regions.manager = ${userId} AND  loans.date >=${
+      startDate || defaultStartDate
+    }::timestamp AND   loans.date  < ${
+      endDate || formattedDate
+    }::timestamp + interval '1 day' AND
        (loans.loanid ILIKE ${`%${query}%`} OR
         loans.cycle::TEXT ILIKE ${`%${query}%`} OR
         loans.fee::TEXT ILIKE ${`%${query}%`} OR
@@ -305,7 +346,7 @@ export async function fetchFilteredLoans2(
         groups.location ILIKE ${`%${query}%`} OR
         groups.date::text ILIKE ${`%${query}%`})
       ORDER BY loans.date DESC
-      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
+      LIMIT ${pagetItems} OFFSET ${offset}
     `;
 
     return loans;

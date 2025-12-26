@@ -11,11 +11,17 @@ import {
   fetchGroupMembers,
   fetchLoanByIdNew,
   fetchUserByEmail,
+  fetchFilteredLoans,
 } from "@/app/lib/sun-data";
-import { fetchGroups2, fetchLoansPages2 } from "@/app/lib/sun-data2";
+import {
+  fetchFilteredLoans2,
+  fetchGroups2,
+  fetchLoansPages2,
+} from "@/app/lib/sun-data2";
 import { Metadata } from "next";
 import { ProcessDisbursement } from "@/app/ui/loans/buttons";
 import { getSession } from "@/app/lib/session";
+import { ExportLoanCvs } from "@/app/ui/loans/export-cvs";
 
 export const metadata: Metadata = {
   title: "Loans",
@@ -26,17 +32,24 @@ export default async function Page(props: {
     query?: string;
     page?: string;
     memberQuery?: string;
+    startDate?: string;
+    endDate?: string;
+    pageItems?: string;
   }>;
   params: Promise<{ id: string }>;
 }) {
   const searchParams = await props.searchParams;
   const query = searchParams?.query || "";
   const memberQuery = searchParams?.memberQuery || "";
+  const startDate = searchParams?.startDate || "";
+  const endDate = searchParams?.endDate || "";
+  const pageItems = searchParams?.pageItems || "10";
   const currentPage = Number(searchParams?.page) || 1;
 
   const user = await getSession();
   const isAdmin = user?.role === "admin";
   const curentUser: any = await fetchUserByEmail(user?.email);
+  const userId = curentUser[0].id;
 
   const params = await props.params;
   const id = params.id;
@@ -44,6 +57,7 @@ export default async function Page(props: {
   let loan: any = [];
   let groups: any = [];
   let totalPages: any = 0;
+  let loans: any = [];
 
   if (id) {
     [loan] = await Promise.all([fetchLoanByIdNew(id)]);
@@ -51,12 +65,38 @@ export default async function Page(props: {
 
   if (isAdmin) {
     groups = await fetchGroups();
-    totalPages = await fetchLoansPages(query);
+    totalPages = await fetchLoansPages(
+      query,
+      startDate,
+      endDate,
+      Number(pageItems)
+    );
+    loans = await fetchFilteredLoans(
+      query,
+      currentPage,
+      startDate,
+      endDate,
+      Number(pageItems)
+    );
   }
 
   if (!isAdmin) {
-    groups = await fetchGroups2(curentUser[0]?.id);
-    totalPages = await fetchLoansPages2(query, curentUser[0]?.id);
+    groups = await fetchGroups2(userId);
+    totalPages = await fetchLoansPages2(
+      query,
+      userId,
+      startDate,
+      endDate,
+      Number(pageItems)
+    );
+    loans = await fetchFilteredLoans2(
+      query,
+      currentPage,
+      userId,
+      startDate,
+      endDate,
+      Number(pageItems)
+    );
   }
 
   const members = await fetchGroupMembers(memberQuery);
@@ -74,12 +114,16 @@ export default async function Page(props: {
 
         <CreateInvoice groups={groups} members={members} />
       </div>
+      <div>
+        <ExportLoanCvs loans={loans} />
+      </div>
       <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
         <Table
           query={query}
           currentPage={currentPage}
           loan={loan}
           user={curentUser}
+          loans={loans}
         />
       </Suspense>
       <div className="mt-5 flex w-full justify-center">

@@ -16,21 +16,23 @@ export default async function InvoicesTable({
   currentPage,
   loan,
   user,
+  loans,
 }: {
   query: string;
   currentPage: number;
   loan: any;
   user: any;
+  loans: any;
 }) {
   const isAdmin: any = user[0].role === "admin";
-  let loans: any = [];
+  // let loans: any = [];
 
-  if (isAdmin) {
-    loans = await fetchFilteredLoans(query, currentPage);
-  }
-  if (!isAdmin) {
-    loans = await fetchFilteredLoans2(query, currentPage, user[0]?.id);
-  }
+  // if (isAdmin) {
+  //   loans = await fetchFilteredLoans(query, currentPage);
+  // }
+  // if (!isAdmin) {
+  //   loans = await fetchFilteredLoans2(query, currentPage, user[0]?.id);
+  // }
 
   return (
     <div className="mt-6 flow-root">

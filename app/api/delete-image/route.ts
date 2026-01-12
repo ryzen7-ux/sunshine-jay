@@ -1,4 +1,3 @@
-//@ts-nocheck
 import sql from "@/app/lib/db";
 import { Storage } from "@google-cloud/storage";
 
@@ -12,10 +11,7 @@ const storage = new Storage({
   credentials,
 });
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { url: string } }
-) {
+export async function DELETE(request: NextRequest) {
   try {
     const body = await request.json();
     const imgUrl1 = String(body?.imageUrl).split(

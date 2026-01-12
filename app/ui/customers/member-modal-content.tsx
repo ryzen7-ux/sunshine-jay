@@ -104,9 +104,8 @@ export function LeftContent({ memberData }: { memberData: any }) {
                       href={memberData.doc}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-block px-4 py-2 bg-green-600 text-primary-foreground rounded hover:bg-green-500  text-sm"
-                    >
-                      Open PDF in New Tab
+                      className="inline-block px-4 py-2 bg-green-600 text-primary-foreground rounded hover:bg-green-500  text-sm">
+                      Download PDF
                     </a>
                   </div>
                 </div>
@@ -145,8 +144,7 @@ export function RightContent({
             {loans?.map((loan: any) => (
               <div
                 key={loan.id}
-                className="mb-2 w-full border-2 border-green-500 rounded-md bg-green-100 p-4"
-              >
+                className="mb-2 w-full border-2 border-green-500 rounded-md bg-green-100 p-4">
                 <div className="border-b pb-4 w-full">
                   <div>
                     <div className="mb-2 flex items-center justify-between w-full">

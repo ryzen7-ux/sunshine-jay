@@ -76,13 +76,12 @@ export default function NavLinks({ user }: { user: any }) {
             key={link.name}
             href={link.href}
             className={clsx(
-              "flex h-[28px] md:h-[48px] grow items-center justify-center gap-1 rounded-md bg-gray-50  text-sm font-medium hover:bg-green-200 hover:text-green-600 md:flex-none md:justify-start md:p-2 md:px-3",
+              "flex h-[28px] md:h-[48px] grow items-center justify-center gap-1 rounded-md bg-gray-50  text-sm font-medium hover:bg-green-200 hover:text-green-600 md:flex-none md:justify-start",
               {
                 "bg-green-200 text-green-600":
                   pathname === link?.dash || pathname.match(link?.path),
               }
-            )}
-          >
+            )}>
             <LinkIcon className="w-4 md:w-5 fill-green-700" />
             <p className="hidden md:block">{link.name}</p>
           </Link>

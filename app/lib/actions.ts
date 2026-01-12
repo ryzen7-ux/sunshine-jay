@@ -116,3 +116,11 @@ export async function authenticate(formData: FormData) {
     }
   }
 }
+
+export async function revalidateMemberFileUpload(groupId: string) {
+  revalidatePath(`/dashboard/customers/${groupId}/details`);
+}
+
+export async function revalidateIndividualFileUpload() {
+  revalidatePath(`dashboard/individuals`);
+}

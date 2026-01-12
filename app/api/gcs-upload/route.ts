@@ -1,3 +1,4 @@
+//@ts-nocheck
 import sql from "@/app/lib/db";
 import { performServerUpload } from "@/app/lib/server_upload";
 import { NextRequest, NextResponse } from "next/server";

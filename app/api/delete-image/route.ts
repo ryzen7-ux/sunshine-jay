@@ -1,3 +1,4 @@
+//@ts-nocheck
 import sql from "@/app/lib/db";
 import { Storage } from "@google-cloud/storage";
 

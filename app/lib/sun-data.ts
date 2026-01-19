@@ -198,7 +198,7 @@ export async function fetchIndividualPages(query: string, regions: any) {
 export async function fetchFilteredIndividuals(
   query: string,
   currentPage: number,
-  regions: any
+  regions: any,
 ) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
@@ -258,7 +258,7 @@ export async function fetchFilteredIndividuals(
 export async function fetchFilteredIndividualLoans(
   query: string,
   currentPage: number,
-  regions: any
+  regions: any,
 ) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
@@ -303,7 +303,7 @@ export async function fetchFilteredIndividualLoans(
         payment: computeTotalLoan(
           Math.trunc(item.amount),
           Math.trunc(item.interest),
-          Math.trunc(item.term)
+          Math.trunc(item.term),
         ),
         interest: Math.trunc(item.interest),
         term: Math.trunc(item.term),
@@ -313,7 +313,7 @@ export async function fetchFilteredIndividualLoans(
       }))
       .sort((a: any, b: any) => b.created.localeCompare(a.created));
     const sorted = [...loan].sort(
-      (a: any, b: any) => b.created_at - a.created_at
+      (a: any, b: any) => b.created_at - a.created_at,
     );
     return sorted;
   } catch (error) {
@@ -657,7 +657,7 @@ export async function fetchFilteredLoans(
   currentPage: number,
   startDate: string,
   endDate: string,
-  pagetItems: number
+  pagetItems: number,
 ) {
   const offset = (currentPage - 1) * pagetItems;
 
@@ -693,8 +693,8 @@ export async function fetchFilteredLoans(
       loans.date >=${
         startDate || defaultStartDate
       }::timestamp AND   loans.date  < ${
-      endDate || formattedDate
-    }::timestamp + interval '1 day' AND
+        endDate || formattedDate
+      }::timestamp + interval '1 day' AND
         (loans.loanid ILIKE ${`%${query}%`} OR
         loans.cycle::TEXT ILIKE ${`%${query}%`} OR
         loans.fee::TEXT ILIKE ${`%${query}%`} OR
@@ -723,7 +723,7 @@ export async function fetchLoansPages(
   query: string,
   startDate: string,
   endDate: string,
-  pageItems: number
+  pageItems: number,
 ) {
   const today = new Date();
   const formattedDate = today.toISOString().split("T")[0];
@@ -839,7 +839,7 @@ export async function fetchDashboardCardData(query: string, region: any) {
 
     const cycleArray = Array.from(
       { length: highestCyle },
-      (_, index) => index + 1
+      (_, index) => index + 1,
     );
 
     let cycleAllArayy: any = cycleArray;
@@ -1064,7 +1064,7 @@ ORDER BY
       (item: any, index: any) => ({
         ...item,
         disbursed: Number(item.disbursed) + Number(data[13][index].disbursed),
-      })
+      }),
     );
 
     return {
@@ -1104,7 +1104,7 @@ export async function fetchIndividualsMaxCycle() {
 }
 export async function fetchIndividualsDashbordCards(
   query: string,
-  region: any
+  region: any,
 ) {
   try {
     const highestCyclePromise =
@@ -1115,7 +1115,7 @@ export async function fetchIndividualsDashbordCards(
 
     const cycleArray = Array.from(
       { length: highestCyle },
-      (_, index) => index + 1
+      (_, index) => index + 1,
     );
     let cycleAllArayy: any = cycleArray;
 
@@ -1237,24 +1237,24 @@ export async function fetchIndividualsDashbordCards(
       AND transtime < DATE_TRUNC('day', NOW()) + INTERVAL '1 day' GROUP BY individuals.idnumber`;
 
     const totalIndividualDisbursed: any = Number(
-      totalCountPromise[0]?.sum ?? "0"
+      totalCountPromise[0]?.sum ?? "0",
     );
     const totalIndivdualLoanees = Number(membersCountPromise[0]?.count ?? 0);
     const totalIndividualLoans = totalLoanPromise[0]?.sum ?? 0;
     const totalIndividualCollected = collectedLoanPromise[0]?.total ?? 0;
     const monthIndividualDisbursed = Number(
-      disbursedCountThisMonthPromise[0]?.sum ?? 0
+      disbursedCountThisMonthPromise[0]?.sum ?? 0,
     );
     const monthIndividualLoan = totalLoanThisMonthPromise[0]?.sum ?? 0;
     const monthIndividualCollected =
       Number(collectedThisMonthPromise[0]?.total) ?? 0;
     const weekIndividualDisbursed = Number(
-      disbursedCountThisWeekPromise[0]?.sum ?? 0
+      disbursedCountThisWeekPromise[0]?.sum ?? 0,
     );
     const weekIndividualLoan = totalLoanThisWeekPromise[0]?.sum ?? 0;
     const weekIndividualCollected = collectedThisWeekPromise[0]?.total ?? 0;
     const todayIndividualDisbursed = Number(
-      todayDisbursedPromises[0]?.sum ?? 0
+      todayDisbursedPromises[0]?.sum ?? 0,
     );
     const todayIndividualLoan = totalLoanTodayPromise[0]?.sum ?? 0;
     const todayIndividualCollected = collectedTodayhPromise[0]?.total ?? 0;
@@ -1301,7 +1301,7 @@ export async function fetchGroupInvoicesPages(query: string) {
 
 export async function fetchFilteredGroupInvoices(
   query: string,
-  currentPage: number
+  currentPage: number,
 ) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
@@ -1336,7 +1336,7 @@ export async function fetchMpesaInvoicesPages(
   query: string,
   startDate: string,
   endDate: string,
-  pageItems: number
+  pageItems: number,
 ) {
   const today = new Date();
   const formattedDate = today.toISOString().split("T")[0];
@@ -1349,8 +1349,8 @@ export async function fetchMpesaInvoicesPages(
        mpesainvoice.transtime >= ${
          startDate || defaultStartDate
        }::timestamp AND mpesainvoice.transtime < ${
-      endDate || formattedDate
-    }::timestamp + interval '1 day' AND
+         endDate || formattedDate
+       }::timestamp + interval '1 day' AND
     (mpesainvoice.cycle::TEXT ILIKE ${`%${query}%`} OR
       mpesainvoice.transid ILIKE ${`%${query}%`} OR
       mpesainvoice.transtime::text ILIKE ${`%${query}%`} OR
@@ -1376,7 +1376,7 @@ export async function fetchFilteredMpesaInvoices(
   currentPage: number,
   startDate: string,
   endDate: string,
-  pageItems: number
+  pageItems: number,
 ) {
   const offset = (currentPage - 1) * pageItems;
 
@@ -1403,8 +1403,8 @@ export async function fetchFilteredMpesaInvoices(
         mpesainvoice.transtime >= ${
           startDate || defaultStartDate
         }::timestamp AND mpesainvoice.transtime < ${
-      endDate || formattedDate
-    }::timestamp + interval '1 day' AND
+          endDate || formattedDate
+        }::timestamp + interval '1 day' AND
        (mpesainvoice.cycle::TEXT ILIKE ${`%${query}%`} OR
         mpesainvoice.transid ILIKE ${`%${query}%`} OR
         mpesainvoice.transtime::text ILIKE ${`%${query}%`} OR
@@ -1497,16 +1497,29 @@ export async function fetchLatestGroupInvoices() {
   }
 }
 
-export async function fetchLatestMpesaInvoices() {
+export async function fetchLatestMpesaInvoices(region: any, isAdmin: boolean) {
+  let data: MpesaInvoice[] = [];
   try {
-    const data = await sql<MpesaInvoice[]>`
+    if (isAdmin) {
+      data = await sql<MpesaInvoice[]>`
       SELECT mpesainvoice.transamount, mpesainvoice.refnumber, mpesainvoice.transtime, mpesainvoice.transid, first_name, middle_name, last_name, phone_number
       FROM mpesainvoice
     
       ORDER BY mpesainvoice.transtime DESC
       LIMIT 5`;
+    } else {
+      data = await sql<MpesaInvoice[]>`
+      SELECT mpesainvoice.transamount, mpesainvoice.refnumber, mpesainvoice.transtime, mpesainvoice.transid, first_name, middle_name, last_name, phone_number
+      FROM mpesainvoice
+      JOIN groups
+       ON refnumber % groups.name
+      JOIN regions ON regions.id = groups.region WHERE SIMILARITY(groups.name, refnumber)
+      >= 0.7 AND regions.id = ANY(${region}) 
+      ORDER BY mpesainvoice.transtime DESC
+      LIMIT 5`;
+    }
 
-    const latestInvoices = data.map((invoice) => ({
+    const latestInvoices = data.map((invoice: any) => ({
       ...invoice,
       transamount: formatCurrencyToLocal(invoice.transamount),
       transtime: formatDateToLocal(invoice.transtime),
@@ -1531,7 +1544,7 @@ export async function fetchMaxCycle(id: string) {
 export async function fetchGroupCardData(
   id: string,
   name: string,
-  query: string
+  query: string,
 ) {
   try {
     // const groupDisbursedPromise = sql`SELECT SUM(CASE WHEN status = 'approved' THEN amount ELSE 0 END), SUM((CASE WHEN status = 'approved' THEN amount ELSE 0 END/term + CASE WHEN status = 'approved' THEN amount ELSE 0 END * (interest/4/100) + CASE WHEN status = 'approved' THEN 1 ELSE 0 END ) * term ) AS payment FROM loans WHERE groupid = ${id} GROUP BY id`;
@@ -1543,7 +1556,7 @@ export async function fetchGroupCardData(
 
     const cycleArray = Array.from(
       { length: highestCyle },
-      (_, index) => index + 1
+      (_, index) => index + 1,
     );
     let cycleAllArayy: any = [highestCyle];
 
@@ -1605,20 +1618,20 @@ export async function fetchGroupCardData(
     ]);
 
     const groupDisbusredAmount = formatCurrencyToLocal(
-      Number(data[0][0]?.sum || "0")
+      Number(data[0][0]?.sum || "0"),
     );
     const totalPayment = formatCurrencyToLocal(Number(data[5][0]?.sum ?? "0"));
 
     const groupCollectedAmount = formatCurrencyToLocal(
-      Number(data[1][0]?.sum ?? "0")
+      Number(data[1][0]?.sum ?? "0"),
     );
 
     const groupPendingPayments = formatCurrencyToLocal(
-      Number(data[2][0]?.sum ?? "0")
+      Number(data[2][0]?.sum ?? "0"),
     );
     const totalMembers = Number(data[3][0]?.total ?? "0");
     const balance = formatCurrencyToLocal(
-      Number(data[5][0]?.sum ?? "0") - Number(data[4][0]?.mpesa ?? "0")
+      Number(data[5][0]?.sum ?? "0") - Number(data[4][0]?.mpesa ?? "0"),
     );
     const totalMpesa = formatCurrencyToLocal(Number(data[4][0]?.mpesa ?? "0"));
 

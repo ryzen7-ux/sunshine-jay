@@ -3,14 +3,15 @@ import postgres from "postgres";
 import sql from "@/app/lib/db";
 
 async function seedUsers() {
+  await sql`CREATE EXTENSION IF NOT EXISTS pg_trgm;`;
   const password: string = "pass1234";
   const hashedPassword = await bcrypt.hash(password, 10);
   const created = new Date();
-  const admin =
-    await sql`INSERT INTO users (name, email, phone, role, status, password, created)
-    VALUES ('henry-admin','henryomosh7@gmail.com', '0708663296', 'admin', 'active', ${hashedPassword}, ${created})`;
+  // const admin =
+  //   await sql`INSERT INTO users (name, email, phone, role, status, password, created)
+  //   VALUES ('henry-admin','henryomosh7@gmail.com', '0708663296', 'admin', 'active', ${hashedPassword}, ${created})`;
 
-  console.log(admin);
+  // console.log(admin);
 
   // await sql`
   //   CREATE TABLE IF NOT EXISTS users (

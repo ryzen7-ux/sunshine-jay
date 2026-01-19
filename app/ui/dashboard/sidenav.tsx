@@ -10,8 +10,7 @@ export default async function SideNav({ user }: { user: any }) {
     <div className="flex h-full flex-col py-4  pb-4 md:px-0 md:py-0 ">
       <Link
         className="mb-2 flex h-24 items-end justify-start px-2  md:h-36 bg-gray-200 hidden md:block"
-        href="/"
-      >
+        href="/">
         <div className="">
           <Image
             src="/logo.png"
@@ -24,14 +23,13 @@ export default async function SideNav({ user }: { user: any }) {
       </Link>
 
       <div className="flex px-2 grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2  md:px-0">
-        <NavLinks user={user} />
+        <NavLinks onClose={() => null} />
         <div className="hidden h-auto w-full grow rounded-md bg-gray-50 md:block"></div>
         <form
           action={async () => {
             "use server";
             await signOut();
-          }}
-        >
+          }}>
           <button className="flex h-[28px] md:h-[48px] w-full grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3">
             <PowerIcon className="w-4 md-w-6 fill-red-700" />
             <div className="hidden md:block">Sign Out</div>

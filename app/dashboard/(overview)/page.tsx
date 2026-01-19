@@ -25,6 +25,7 @@ import {
   fetchIndividualsDashbordCards,
   fetchIndividualsMaxCycle,
   fetchUserByEmail,
+  fetchLatestMpesaInvoices,
 } from "@/app/lib/sun-data";
 import { fetchRevenue } from "@/app/lib/data";
 import RevenueChart2 from "@/app/ui/dashboard/revenue-chart-2";
@@ -32,6 +33,8 @@ import { getSession } from "@/app/lib/session";
 import Regions from "@/app/ui/system-management/regions";
 import { map } from "zod";
 import { decodeMsisdnValue } from "@/app/lib/utils";
+import { fethcDashboarChartData } from "@/app/lib/analytics-data";
+import { RadixRevenueChart } from "@/app/ui/dashboard/radix-revenue-chart";
 
 const months = [
   "January",
@@ -77,7 +80,7 @@ export default async function Page(props: {
 
   if (!isAdmin) {
     const filteredRegions = regions?.filter(
-      (item: any) => item?.manager === curentUser[0].id
+      (item: any) => item?.manager === curentUser[0].id,
     );
     selectRegions = filteredRegions;
     regionArr = filteredRegions?.map((item: any) => item.id);
@@ -90,7 +93,7 @@ export default async function Page(props: {
 
   const groupLoansData = await fetchDashboardCardData(query, regionArr);
 
-  const revenue = await fetchRevenue();
+  // const revenue = await fetchRevenue();
 
   const maxCycle: any = await fetchDashboardMaxCycle();
 
@@ -98,7 +101,7 @@ export default async function Page(props: {
 
   const individualLoanData = await fetchIndividualsDashbordCards(
     iQuery,
-    regionArr
+    regionArr,
   );
 
   let groupCycle = "All";
@@ -110,99 +113,100 @@ export default async function Page(props: {
     individualsCycle = iQuery;
   }
 
+  const chartData = await fethcDashboarChartData(regionArr);
+  const latestInvoices = await fetchLatestMpesaInvoices(regionArr, isAdmin);
+
   return (
-    <main>
-      <h1
-        className={`mb-4 text-xl md:text-xl flex gap-2 p-2 border rounded-md  `}
-      >
-        <LayoutDashboard className="h-6 w-6 text-green-500" /> Dashboard
-      </h1>
-      <RegionFilter maxCycle={maxCycle} selectRegions={selectRegions} />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="border border-green-500 rounded-md p-2">
-          <h2 className="text-md font-bold  pb-2">Group Stats</h2>
-          <div className=" border-b mb-2 pb-2">
-            <DisbursementCycle maxCycle={maxCycle} />{" "}
-          </div>
-          <DashboardTabs
-            groupAmount={groupLoansData?.groupAmount}
-            numberOfMembers={groupLoansData?.numberOfMembers}
-            totalLoans={groupLoansData?.totalLoans}
-            totalCollectedLoans={groupLoansData?.totalCollectedLoans}
-            loanBalance={groupLoansData?.loanBalance}
-            monthlyDisbursement={groupLoansData?.monthlyDisbursement}
-            monthlyTotalLoan={groupLoansData?.monthlyTotalLoan}
-            monthlyLoanBalance={groupLoansData?.loanBalance}
-            monthlyCollected={groupLoansData?.monthlyCollected}
-            weeklyDisbursed={groupLoansData?.weeklyDisbursed}
-            weeklyTotalLoan={groupLoansData?.weeklyTotalLoan}
-            weeklyCollected={groupLoansData?.weeklyCollected}
-            weeklyLoanBalance={groupLoansData?.loanBalance}
-            todayDisbursed={groupLoansData?.todayDisbursed}
-            todayTotalLoan={groupLoansData?.todayTotalLoan}
-            todayCollected={groupLoansData?.todayCollected}
-            todayLoanBalance={groupLoansData?.loanBalance}
-            groupCycle={groupCycle}
-            user={user}
-          />
-        </div>
-        <div className="border border-green-500 rounded-md p-2">
-          <h2 className="text-md font-bold  pb-2">Individuals Stats</h2>
-          <div className="border-b mb-2 pb-2">
-            <IndividualFilters
-              regions={regions}
-              maxCycle={individualsMaxCyle}
+    <>
+      {" "}
+      <main>
+        <h1
+          className={`mb-4 text-xl md:text-xl flex gap-2 p-2 border rounded-md  `}>
+          <LayoutDashboard className="h-6 w-6 text-green-500" /> Dashboard
+        </h1>
+        <RegionFilter maxCycle={maxCycle} selectRegions={selectRegions} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="border border-green-500 rounded-md p-2">
+            <h2 className="text-md font-bold  pb-2">Group Stats</h2>
+            <div className=" border-b mb-2 pb-2">
+              <DisbursementCycle maxCycle={maxCycle} />{" "}
+            </div>
+            <DashboardTabs
+              groupAmount={groupLoansData?.groupAmount}
+              numberOfMembers={groupLoansData?.numberOfMembers}
+              totalLoans={groupLoansData?.totalLoans}
+              totalCollectedLoans={groupLoansData?.totalCollectedLoans}
+              loanBalance={groupLoansData?.loanBalance}
+              monthlyDisbursement={groupLoansData?.monthlyDisbursement}
+              monthlyTotalLoan={groupLoansData?.monthlyTotalLoan}
+              monthlyLoanBalance={groupLoansData?.loanBalance}
+              monthlyCollected={groupLoansData?.monthlyCollected}
+              weeklyDisbursed={groupLoansData?.weeklyDisbursed}
+              weeklyTotalLoan={groupLoansData?.weeklyTotalLoan}
+              weeklyCollected={groupLoansData?.weeklyCollected}
+              weeklyLoanBalance={groupLoansData?.loanBalance}
+              todayDisbursed={groupLoansData?.todayDisbursed}
+              todayTotalLoan={groupLoansData?.todayTotalLoan}
+              todayCollected={groupLoansData?.todayCollected}
+              todayLoanBalance={groupLoansData?.loanBalance}
+              groupCycle={groupCycle}
+              user={user}
             />
           </div>
-          <DashboardTabs
-            groupAmount={individualLoanData?.totalIndividualDisbursed}
-            numberOfMembers={individualLoanData?.totalIndivdualLoanees}
-            totalLoans={Number(individualLoanData?.totalIndividualLoans)}
-            totalCollectedLoans={individualLoanData?.totalIndividualCollected}
-            loanBalance={
-              individualLoanData?.totalIndividualLoans -
-              individualLoanData?.totalIndividualCollected
-            }
-            monthlyDisbursement={individualLoanData?.monthIndividualDisbursed}
-            monthlyTotalLoan={individualLoanData?.monthIndividualLoan}
-            monthlyLoanBalance={
-              individualLoanData?.totalIndividualLoans -
-              individualLoanData?.totalIndividualCollected
-            }
-            monthlyCollected={Number(
-              individualLoanData?.monthIndividualCollected
-            )}
-            weeklyDisbursed={individualLoanData?.weekIndividualDisbursed}
-            weeklyTotalLoan={individualLoanData?.weekIndividualLoan}
-            weeklyCollected={individualLoanData?.weekIndividualCollected}
-            weeklyLoanBalance={
-              individualLoanData?.totalIndividualLoans -
-              individualLoanData?.totalIndividualCollected
-            }
-            todayDisbursed={individualLoanData?.todayIndividualDisbursed}
-            todayTotalLoan={individualLoanData?.todayIndividualLoan}
-            todayCollected={individualLoanData?.todayIndividualCollected}
-            todayLoanBalance={
-              individualLoanData?.totalIndividualLoans -
-              individualLoanData?.totalIndividualCollected
-            }
-            groupCycle={individualsCycle}
-            user={user}
-          />
+          <div className="border border-green-500 rounded-md p-2">
+            <h2 className="text-md font-bold  pb-2">Individuals Stats</h2>
+            <div className="border-b mb-2 pb-2">
+              <IndividualFilters
+                regions={regions}
+                maxCycle={individualsMaxCyle}
+              />
+            </div>
+            <DashboardTabs
+              groupAmount={individualLoanData?.totalIndividualDisbursed}
+              numberOfMembers={individualLoanData?.totalIndivdualLoanees}
+              totalLoans={Number(individualLoanData?.totalIndividualLoans)}
+              totalCollectedLoans={individualLoanData?.totalIndividualCollected}
+              loanBalance={
+                individualLoanData?.totalIndividualLoans -
+                individualLoanData?.totalIndividualCollected
+              }
+              monthlyDisbursement={individualLoanData?.monthIndividualDisbursed}
+              monthlyTotalLoan={individualLoanData?.monthIndividualLoan}
+              monthlyLoanBalance={
+                individualLoanData?.totalIndividualLoans -
+                individualLoanData?.totalIndividualCollected
+              }
+              monthlyCollected={Number(
+                individualLoanData?.monthIndividualCollected,
+              )}
+              weeklyDisbursed={individualLoanData?.weekIndividualDisbursed}
+              weeklyTotalLoan={individualLoanData?.weekIndividualLoan}
+              weeklyCollected={individualLoanData?.weekIndividualCollected}
+              weeklyLoanBalance={
+                individualLoanData?.totalIndividualLoans -
+                individualLoanData?.totalIndividualCollected
+              }
+              todayDisbursed={individualLoanData?.todayIndividualDisbursed}
+              todayTotalLoan={individualLoanData?.todayIndividualLoan}
+              todayCollected={individualLoanData?.todayIndividualCollected}
+              todayLoanBalance={
+                individualLoanData?.totalIndividualLoans -
+                individualLoanData?.totalIndividualCollected
+              }
+              groupCycle={individualsCycle}
+              user={user}
+            />
+          </div>
         </div>
-      </div>
-      <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8">
-        <Suspense fallback={<LatestInvoicesSkeleton />}>
-          <LatestInvoices />
-        </Suspense>
-        <Suspense fallback={<RevenueChartSkeleton />}>
-          <RevenueChart2
-            revenue={revenue}
-            lastFourDisbursement={groupLoansData?.lastFourDisbursement}
-          />
-        </Suspense>
-      </div>
-      <div></div>
-    </main>
+        <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 md:grid-cols-8">
+          <Suspense fallback={<LatestInvoicesSkeleton />}>
+            <LatestInvoices latestInvoices={latestInvoices} />
+          </Suspense>
+          <Suspense fallback={<RevenueChartSkeleton />}>
+            <RadixRevenueChart charData={chartData} />
+          </Suspense>
+        </div>
+      </main>
+    </>
   );
 }

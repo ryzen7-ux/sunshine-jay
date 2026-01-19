@@ -14,12 +14,13 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
+import { ChartNoAxesCombined } from "lucide-react";
 
 // Map of links to display in the side navigation.
 // Depending on the size of the application, this would be stored in a database.
 const links = [
   {
-    name: "Home",
+    name: "Dashboard",
     href: "/dashboard",
     path: "/null",
     icon: HomeIcon,
@@ -56,6 +57,12 @@ const links = [
     path: "/loans",
     icon: DocumentCurrencyDollarIcon,
   },
+  // {
+  //   name: "Analytics",
+  //   href: "/dashboard/analytics",
+  //   path: "/analytics",
+  //   icon: ChartNoAxesCombined,
+  // },
 
   {
     name: "System Management",
@@ -65,7 +72,7 @@ const links = [
   },
 ];
 
-export default function NavLinks({ user }: { user: any }) {
+export default function NavLinks({ onClose }: { onClose: any }) {
   const pathname = usePathname();
   return (
     <>
@@ -75,15 +82,16 @@ export default function NavLinks({ user }: { user: any }) {
           <Link
             key={link.name}
             href={link.href}
+            onClick={onClose}
             className={clsx(
-              "flex h-[28px] md:h-[48px] grow items-center justify-center gap-1 rounded-md bg-gray-50  text-sm font-medium hover:bg-green-200 hover:text-green-600 md:flex-none md:justify-start",
+              "flex  h-[48px]  items-center  gap-2 rounded-lg  text-sm font-medium hover:bg-green-200 hover:text-green-600 t px-4",
               {
                 "bg-green-200 text-green-600":
                   pathname === link?.dash || pathname.match(link?.path),
-              }
+              },
             )}>
-            <LinkIcon className="w-4 md:w-5 fill-green-700" />
-            <p className="hidden md:block">{link.name}</p>
+            <LinkIcon className="w-5 md:w-5 fill-green-700 text-green-700" />
+            <p className="">{link.name}</p>
           </Link>
         );
       })}

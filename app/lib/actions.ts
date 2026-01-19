@@ -4,9 +4,10 @@ import { z } from "zod";
 import postgres from "postgres";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { signIn } from "@/auth";
+import { signIn, signOut } from "@/auth";
 import { AuthError } from "next-auth";
 import sql from "@/app/lib/db";
+import { cookies } from "next/headers";
 
 const FormSchema = z.object({
   id: z.string(),
@@ -115,6 +116,12 @@ export async function authenticate(formData: FormData) {
       return { success: false, message: "Server Error!" };
     }
   }
+}
+
+export async function signOutUser() {
+  const cookieStore = await cookies();
+  cookieStore.delete("user-session");
+  redirect("/login");
 }
 
 export async function revalidateMemberFileUpload(groupId: string) {

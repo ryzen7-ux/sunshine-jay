@@ -1,9 +1,13 @@
-//@ts-nocheck
-
 import { Revenue } from "./definitions";
 import { decodeMsisdn, fetchHashed } from "mpesa-hash-decoder";
 import axios from "axios";
 import { parseZonedDateTime } from "@internationalized/date";
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
 
 export const formatCurrency = (amount: number) => {
   return amount.toLocaleString("en-US", {

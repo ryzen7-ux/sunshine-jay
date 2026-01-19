@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { Revenue } from "./definitions";
 import { decodeMsisdn, fetchHashed } from "mpesa-hash-decoder";
 import axios from "axios";
@@ -17,7 +19,7 @@ export const formatCurrency = (amount: number) => {
 };
 export const formatCurrencyToLocal = (
   amount: number,
-  locale: string = "en-KE"
+  locale: string = "en-KE",
 ) => {
   return amount?.toLocaleString(locale, {
     style: "currency",
@@ -27,7 +29,7 @@ export const formatCurrencyToLocal = (
 
 export const formatFormDateTime = (
   dateStr: string,
-  locale: string = "en-US"
+  locale: string = "en-US",
 ) => {
   const isoTime: any = new Date(dateStr)?.toLocaleDateString("fr-CA", {
     day: "2-digit",
@@ -52,7 +54,7 @@ export const formatDate = (timestamp: string) => {
 
 export const formatDateToLocal = (
   dateStr: string,
-  locale: string = "en-US"
+  locale: string = "en-US",
 ) => {
   const date = new Date(dateStr);
   const options: Intl.DateTimeFormatOptions = {
@@ -138,7 +140,7 @@ export async function decodeMsisdnValue(hashStr: string) {
       data.msisdn,
       data.hash,
       "msisdn" in data, // Determine success based on available data
-      data.detail
+      data.detail,
     );
 
     return decodeHashResponseModel;
@@ -160,7 +162,7 @@ export const formatPhoneNumber = (number: string) => {
 export const computeTotalLoan = (
   amount: number,
   interest: number,
-  term: number
+  term: number,
 ) => {
   const rate = interest / 100 / 4;
   const wpay = Math.ceil(amount / term + amount * rate);

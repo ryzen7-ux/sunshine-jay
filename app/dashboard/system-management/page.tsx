@@ -26,7 +26,7 @@ export default async function Page() {
 
   if (user.role !== "admin") {
     return (
-      <main>
+      <main className="pt-24">
         <div className="p-6 flex items-center  justify-center">
           <p className="text-lg bg-red-100 text-red-500 border rounded-md p-4 flex gap-2 items-center">
             <ExclamationCircleIcon className="h-12 w-12 text-yellow-500" /> You
@@ -38,10 +38,9 @@ export default async function Page() {
   }
 
   return (
-    <main>
+    <main className="pt-24">
       <h1
-        className={`mb-4 text-xl md:text-xl font-bold flex gap-2 text-green-600 border rounded-md p-2`}
-      >
+        className={`mb-4 text-xl md:text-xl font-bold flex gap-2 text-green-600 border rounded-md p-2`}>
         <MonitorCog className="h-6 w-6 text-green-500" /> System Management
       </h1>
       <div className="border rounded-md px-2 pb-6">

@@ -177,7 +177,6 @@ ORDER BY
       };
     });
 
-    console.log(series);
     return series;
   } catch (error) {
     console.log(error);

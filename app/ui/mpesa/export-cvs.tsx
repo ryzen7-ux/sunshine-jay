@@ -10,14 +10,13 @@ import { Download } from "lucide-react";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
 import { Select, SelectItem } from "@heroui/react";
-import { start } from "repl";
 
-const items = ["5", "10", "20", "30", "40", "50", "100", "150", "200"];
+const items = ["15", "20", "30", "40", "50", "100", "150", "200"];
 
 export function ExportMpesaCvs({ ginvoices }: { ginvoices: any }) {
   const [fromForm, setFromForm] = useState("");
   const [toForm, setToForm] = useState("");
-  const [selectItem, setSelectItem] = useState("5");
+  const [selectItem, setSelectItem] = useState("15");
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -72,7 +71,7 @@ export function ExportMpesaCvs({ ginvoices }: { ginvoices: any }) {
           formatDate(item.transtime || new Date()),
           item.transamount,
           item.cycle,
-        ].join(",")
+        ].join(","),
       ),
     ].join("\n");
 
@@ -93,8 +92,7 @@ export function ExportMpesaCvs({ ginvoices }: { ginvoices: any }) {
           <button
             type="button"
             className="flex h-10 items-center rounded-lg bg-green-600 px-4 text-sm font-medium text-white transition-colors hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-            onClick={exportInvoice}
-          >
+            onClick={exportInvoice}>
             <Download className="me-2 h-4 w-4" />
             Export CVS
           </button>
@@ -112,8 +110,7 @@ export function ExportMpesaCvs({ ginvoices }: { ginvoices: any }) {
               focus:outline-none focus:border-green-500 focus:ring-green-500
              shadow-sm hover:border-green-400"
               value={selectItem}
-              onChange={(e) => setSelectItem(e.target.value)}
-            >
+              onChange={(e) => setSelectItem(e.target.value)}>
               {items.map((item: any) => (
                 <option value={item} key={item}>
                   {item}

@@ -56,7 +56,7 @@ export default async function Page(props: {
 
   if (!isAdmin) {
     const filteredRegions = regions?.filter(
-      (item: any) => item?.manager === curentUser[0].id
+      (item: any) => item?.manager === curentUser[0].id,
     );
 
     regionArr = filteredRegions?.map((item: any) => item.id);
@@ -68,7 +68,7 @@ export default async function Page(props: {
   const loans = await fetchFilteredIndividualLoans(
     loansquery,
     loansCurrentPage,
-    regionArr
+    regionArr,
   );
 
   const { individualLoanees, individual_loans } =
@@ -77,7 +77,7 @@ export default async function Page(props: {
   const filteredLoanIndividuals = await fetchFilteredIndividuals(
     loansquery,
     loansCurrentPage,
-    regionArr
+    regionArr,
   );
   const users = await fetchUsers();
   const individuals = await fetchIndividuals(regionArr);
@@ -86,7 +86,7 @@ export default async function Page(props: {
   const maxCycle = await fetchIndividualsMaxCycle();
 
   return (
-    <main className="">
+    <main className="pt-24">
       <h1 className={`mb-4 text-xl md:text-xl font-bold flex gap-2`}>
         <Cuboid className="h-6 w-6 text-green-500" /> Individual borrowers
         management

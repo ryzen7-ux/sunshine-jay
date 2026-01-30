@@ -35,15 +35,14 @@ export default async function InvoicesTable({
   // }
 
   return (
-    <div className="mt-6 flow-root">
+    <div className="mt-6 ">
       <div className="inline-block min-w-full align-middle">
         <div className="rounded-lg bg-gray-100 p-2 md:pt-0">
           <div className="md:hidden">
             {loans?.map((loan: any) => (
               <div
                 key={loan.id}
-                className="mb-2 w-full rounded-md bg-white p-4"
-              >
+                className="mb-2 w-full rounded-md bg-white p-4">
                 <div className="border-b pb-4 w-full">
                   <div>
                     <div className="mb-2 flex items-center justify-between w-full">
@@ -96,7 +95,7 @@ export default async function InvoicesTable({
                     <p className="text-sm font-bold text-green-500">
                       Total:{" "}
                       {formatCurrencyToLocal(
-                        Number(loan.total) + Number(loan.fee)
+                        Number(loan.total) + Number(loan.fee),
                       )}
                     </p>
                   </div>
@@ -148,7 +147,7 @@ export default async function InvoicesTable({
                 <th scope="col" className="px-3 py-5 font-medium">
                   Created
                 </th>
-                <th scope="col" className="relative py-3 pl-6 pr-3">
+                <th scope="col" className=" py-3 pl-6 pr-3">
                   <span className="sr-only">Edit</span>
                 </th>
               </tr>
@@ -157,8 +156,7 @@ export default async function InvoicesTable({
               {loans?.map((loan: any) => (
                 <tr
                   key={loan.id}
-                  className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
-                >
+                  className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg">
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex items-center gap-3">
                       <p className="text-xs">
@@ -181,7 +179,7 @@ export default async function InvoicesTable({
 
                   <td className="whitespace-nowrap px-3 py-3 text-xs">
                     {formatCurrencyToLocal(
-                      Number(loan.total) + Number(loan.fee)
+                      Number(loan.total) + Number(loan.fee),
                     )}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3 text-xs">
@@ -215,11 +213,13 @@ export default async function InvoicesTable({
           </table>
         </div>
       </div>
-      {loans.length < 1 && (
-        <div className="text-sm flex items-center justify-center py-6">
-          No loans are added
-        </div>
-      )}
+      <div>
+        {loans.length < 1 && (
+          <div className="text-sm flex items-center justify-center py-6">
+            No loans are added
+          </div>
+        )}
+      </div>
     </div>
   );
 }

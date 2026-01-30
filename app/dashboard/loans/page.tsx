@@ -43,7 +43,7 @@ export default async function Page(props: {
   const memberQuery = searchParams?.memberQuery || "";
   const startDate = searchParams?.startDate || "";
   const endDate = searchParams?.endDate || "";
-  const pageItems = searchParams?.pageItems || "10";
+  const pageItems = searchParams?.pageItems || "15";
   const currentPage = Number(searchParams?.page) || 1;
 
   const user = await getSession();
@@ -69,14 +69,14 @@ export default async function Page(props: {
       query,
       startDate,
       endDate,
-      Number(pageItems)
+      Number(pageItems),
     );
     loans = await fetchFilteredLoans(
       query,
       currentPage,
       startDate,
       endDate,
-      Number(pageItems)
+      Number(pageItems),
     );
   }
 
@@ -87,7 +87,7 @@ export default async function Page(props: {
       userId,
       startDate,
       endDate,
-      Number(pageItems)
+      Number(pageItems),
     );
     loans = await fetchFilteredLoans2(
       query,
@@ -95,14 +95,14 @@ export default async function Page(props: {
       userId,
       startDate,
       endDate,
-      Number(pageItems)
+      Number(pageItems),
     );
   }
 
   const members = await fetchGroupMembers(memberQuery);
 
   return (
-    <div className="w-full">
+    <div className="w-full pt-24">
       <div className="flex w-full items-center justify-between">
         <h1 className={`text-xl font-bold text-gray-900`}>
           Loans and Disbursments
@@ -126,7 +126,7 @@ export default async function Page(props: {
           loans={loans}
         />
       </Suspense>
-      <div className="mt-5 flex w-full justify-center">
+      <div className="mt-5 mb-10 flex w-full justify-center">
         <Pagination totalPages={totalPages} />
       </div>
     </div>

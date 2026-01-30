@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import { DeleteInvoice } from "@/app/ui/mpesa/buttons";
 import InvoiceStatus from "@/app/ui/invoices/status";
@@ -15,7 +16,7 @@ import { Button } from "@heroui/react";
 import { Download } from "lucide-react";
 import { exportCvs } from "@/app/lib/cvs";
 
-export default async function InvoicesTable({
+export default function InvoicesTable({
   query,
   currentPage,
   user,
@@ -37,7 +38,7 @@ export default async function InvoicesTable({
       </div>
     );
   }
-  console.log(user);
+
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">

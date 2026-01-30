@@ -53,7 +53,7 @@ export default async function Page(props: {
   }
 
   return (
-    <>
+    <div className="pt-24">
       <div className="w-full border border-gray-100 px-4 py-4 rounded-lg">
         <SuccessToast success={success} />
         <div className="flex w-full items-center bg-gray-100 rounded-lg px-4 py-4">
@@ -67,14 +67,13 @@ export default async function Page(props: {
 
         <Suspense
           key={query + currentPage}
-          fallback={<InvoicesTableSkeleton />}
-        >
+          fallback={<InvoicesTableSkeleton />}>
           <GroupTable groups={groups} regions={regions} user={user} />
         </Suspense>
         <div className="mt-5 mb-5 flex w-full justify-center">
           <GroupPagination totalPages={totalPages} />
         </div>
       </div>
-    </>
+    </div>
   );
 }

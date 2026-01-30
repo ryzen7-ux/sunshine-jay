@@ -1,10 +1,5 @@
-import SideNav from "@/app/ui/dashboard/sidenav";
 import UserAvatar from "@/app/ui/user-avatar";
-import { auth } from "@/auth";
-
 import { cookies } from "next/headers";
-import { Button } from "../ui/button";
-import { Menu } from "lucide-react";
 import { SidebarCollapsible } from "../ui/dashboard/sidebar-collapsible";
 import Image from "next/image";
 import Link from "next/link";
@@ -27,13 +22,9 @@ export default async function Layout({
   const user = JSON.parse(cookie);
 
   return (
-    <div className="">
-      {/* <div className="w-full flex-none md:w-64 ">
-        <SideNav user={user} />
-      </div> */}
-      <div className="flex justify-between bg-blue-200 pr-4">
+    <main className="h-screen">
+      <div className="flex justify-between bg-blue-200 pr-4 fixed left-0 top-0 z-10 w-full">
         <div className="flex ">
-          {" "}
           <SidebarCollapsible user={user} />
           <Link href="/dashboard" className="pt-2">
             {" "}
@@ -49,10 +40,9 @@ export default async function Layout({
           <UserAvatar user={user ?? userTypes} />
         </div>
       </div>
-      <div className="flex-grow p-2 md:overflow-y-auto md:px-4 md:py-2 overflow-y-auto h-dvh">
+      <div className=" p-2 md:px-4 md:py-2 h-full overflow-y-auto ">
         {children}
-        <div className="h-36 md:h-[10px]"></div>
       </div>
-    </div>
+    </main>
   );
 }

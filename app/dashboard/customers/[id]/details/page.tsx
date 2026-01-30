@@ -56,7 +56,7 @@ export default async function Page(props: {
   } = await fetchGroupCardData(id, group.name, query);
 
   return (
-    <main>
+    <main className="pt-24">
       <HeroBreadcrumbs
         breadcrumbs={[
           {

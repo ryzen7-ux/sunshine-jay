@@ -22,7 +22,7 @@ import { ExportMpesaCvs } from "@/app/ui/mpesa/export-cvs";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Invoices",
+  title: "Mpesa Invoices",
 };
 
 export default async function Page(props: {
@@ -38,7 +38,7 @@ export default async function Page(props: {
   const query = searchParams?.query || "";
   const startDate = searchParams?.startDate || "";
   const endDate = searchParams?.endDate || "";
-  const pageItems = searchParams?.pageItems || "10";
+  const pageItems = searchParams?.pageItems || "15";
 
   const currentPage = Number(searchParams?.page) || 1;
 
@@ -54,14 +54,14 @@ export default async function Page(props: {
       query,
       startDate,
       endDate,
-      Number(pageItems)
+      Number(pageItems),
     );
     ginvoices = await fetchFilteredMpesaInvoices(
       query,
       currentPage,
       startDate,
       endDate,
-      Number(pageItems)
+      Number(pageItems),
     );
   }
 
@@ -70,23 +70,22 @@ export default async function Page(props: {
       query,
       curentUser[0].id,
       startDate,
-      endDate
+      endDate,
     );
     ginvoices = await fetchFilteredMpesaInvoices2(
       query,
       currentPage,
       userId,
       startDate,
-      endDate
+      endDate,
     );
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full pt-24">
       <div className="">
         <h1
-          className={`text-2xl flex gap-2 items-center border p-2 rounded-md`}
-        >
+          className={`text-2xl flex gap-2 items-center border p-2 rounded-md`}>
           <Coins className="h-6 w-6 text-green-500" /> Mpesa Invoices
         </h1>
       </div>

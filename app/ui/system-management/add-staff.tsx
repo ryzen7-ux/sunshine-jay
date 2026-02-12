@@ -83,8 +83,7 @@ export default function AddStaff() {
         <Button
           color="success"
           className="w-1/2 md:w-1/4"
-          onPress={() => setIsModalOpen(true)}
-        >
+          onPress={() => setIsModalOpen(true)}>
           Add Staff
         </Button>
       </div>
@@ -94,8 +93,7 @@ export default function AddStaff() {
         onOpenChange={onOpenChange}
         onClose={() => setIsModalOpen(false)}
         size="xl"
-        scrollBehavior="outside"
-      >
+        scrollBehavior="outside">
         <ModalContent>
           {(onClose) => (
             <>
@@ -144,7 +142,7 @@ export default function AddStaff() {
                           name="phone"
                           type="text"
                           className="outline-2 outline-blue-500  "
-                          label="Phones"
+                          label="Phone"
                           labelPlacement="outside"
                           color="success"
                           size="md"
@@ -155,8 +153,7 @@ export default function AddStaff() {
                         <div
                           id="customer-error"
                           aria-live="polite"
-                          aria-atomic="true"
-                        ></div>
+                          aria-atomic="true"></div>
                       </div>
                       <div className="w-full">
                         <Select
@@ -169,8 +166,7 @@ export default function AddStaff() {
                           color="success"
                           labelPlacement="outside"
                           selectedKeys={[selectRole]}
-                          onChange={(e) => setRole(e.target.value)}
-                        >
+                          onChange={(e) => setRole(e.target.value)}>
                           {roles.map((role: any, index: any) => (
                             <SelectItem key={role.key}>{role.label}</SelectItem>
                           ))}
@@ -189,8 +185,7 @@ export default function AddStaff() {
                           color="success"
                           labelPlacement="outside"
                           selectedKeys={[selectStatus]}
-                          onChange={(e) => setStatus(e.target.value)}
-                        >
+                          onChange={(e) => setStatus(e.target.value)}>
                           {status.map((item: any, index: any) => (
                             <SelectItem key={item.key}>{item.label}</SelectItem>
                           ))}
@@ -212,8 +207,7 @@ export default function AddStaff() {
                               aria-label="toggle password visibility"
                               className="focus:outline-solid outline-transparent"
                               type="button"
-                              onClick={toggleVisibility}
-                            >
+                              onClick={toggleVisibility}>
                               {isVisible ? (
                                 <EyeSlashIcon className="h-6 w-6 text-gray-500" />
                               ) : (
@@ -234,8 +228,7 @@ export default function AddStaff() {
                         type="submit"
                         color="success"
                         className="w-full"
-                        disabled={isLoading}
-                      >
+                        disabled={isLoading}>
                         {isLoading ? (
                           <Spinner color="default" size="md" className="py-4" />
                         ) : (

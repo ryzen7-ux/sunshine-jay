@@ -25,14 +25,6 @@ export default async function InvoicesTable({
   loans: any;
 }) {
   const isAdmin: any = user[0].role === "admin";
-  // let loans: any = [];
-
-  // if (isAdmin) {
-  //   loans = await fetchFilteredLoans(query, currentPage);
-  // }
-  // if (!isAdmin) {
-  //   loans = await fetchFilteredLoans2(query, currentPage, user[0]?.id);
-  // }
 
   return (
     <div className="mt-6 ">
@@ -101,7 +93,7 @@ export default async function InvoicesTable({
                   </div>
                   <div className="flex justify-end gap-2">
                     <UpdateLoan id={loan.id} loan={loan} />
-                    {user.role === "admin" && <DeleteLoan id={loan.id} />}
+                    {isAdmin && <DeleteLoan id={loan.id} />}
                   </div>
                 </div>
               </div>
@@ -204,7 +196,7 @@ export default async function InvoicesTable({
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
                       <UpdateLoan id={loan.id} loan={loan} />
-                      {user.role === "admin" && <DeleteLoan id={loan.id} />}
+                      {isAdmin && <DeleteLoan id={loan.id} />}
                     </div>
                   </td>
                 </tr>

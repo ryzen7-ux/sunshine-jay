@@ -32,7 +32,7 @@ export default function EditRegion({
   });
 
   const [isLoading, setIsloading] = useState(false);
-  const [selectManager, setManager] = useState("");
+  const [selectManager, setManager] = useState(region?.manager || "");
   const [isVisible, setIsVisible] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -74,8 +74,7 @@ export default function EditRegion({
             className="pr-3"
             onClick={(event) => {
               setIsModalOpen(true);
-            }}
-          >
+            }}>
             <Edit className="h-4 w-4 text-green-500 hover:text-green-600" />
           </button>
         </Tooltip>
@@ -86,8 +85,7 @@ export default function EditRegion({
         onOpenChange={onOpenChange}
         onClose={() => setIsModalOpen(false)}
         size="xl"
-        scrollBehavior="outside"
-      >
+        scrollBehavior="outside">
         <ModalContent>
           {(onClose) => (
             <>
@@ -148,8 +146,7 @@ export default function EditRegion({
                           color="success"
                           labelPlacement="outside"
                           selectedKeys={[selectManager]}
-                          onChange={(e) => setManager(e.target.value)}
-                        >
+                          onChange={(e) => setManager(e.target.value)}>
                           {users.map((user: any, index: any) => (
                             <SelectItem key={user.id}>{user.name}</SelectItem>
                           ))}
@@ -164,8 +161,7 @@ export default function EditRegion({
                         type="submit"
                         color="success"
                         className="w-full"
-                        disabled={isLoading}
-                      >
+                        disabled={isLoading}>
                         {isLoading ? (
                           <Spinner color="default" size="md" className="py-4" />
                         ) : (

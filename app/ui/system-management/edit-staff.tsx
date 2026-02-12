@@ -85,8 +85,7 @@ export default function EditStaff({ user }: { user: any }) {
           className="pr-3"
           onClick={(event) => {
             setIsModalOpen(true);
-          }}
-        >
+          }}>
           <Edit className="h-4 w-4 text-green-500 hover:text-green-600" />
         </button>
       </Tooltip>
@@ -97,8 +96,7 @@ export default function EditStaff({ user }: { user: any }) {
         onOpenChange={onOpenChange}
         onClose={() => setIsModalOpen(false)}
         size="xl"
-        scrollBehavior="outside"
-      >
+        scrollBehavior="outside">
         <ModalContent>
           {(onClose) => (
             <>
@@ -153,7 +151,7 @@ export default function EditStaff({ user }: { user: any }) {
                           name="phone"
                           type="text"
                           className="outline-2 outline-blue-500  "
-                          label="Phones"
+                          label="Phone"
                           labelPlacement="outside"
                           color="success"
                           size="md"
@@ -164,8 +162,7 @@ export default function EditStaff({ user }: { user: any }) {
                         <div
                           id="customer-error"
                           aria-live="polite"
-                          aria-atomic="true"
-                        ></div>
+                          aria-atomic="true"></div>
                       </div>
                       <div className="w-full">
                         <Select
@@ -178,8 +175,7 @@ export default function EditStaff({ user }: { user: any }) {
                           color="success"
                           labelPlacement="outside"
                           selectedKeys={[selectRole]}
-                          onChange={(e) => setRole(e.target.value)}
-                        >
+                          onChange={(e) => setRole(e.target.value)}>
                           {roles.map((role: any, index: any) => (
                             <SelectItem key={role.key}>{role.label}</SelectItem>
                           ))}
@@ -198,8 +194,7 @@ export default function EditStaff({ user }: { user: any }) {
                           color="success"
                           labelPlacement="outside"
                           selectedKeys={[selectStatus]}
-                          onChange={(e) => setStatus(e.target.value)}
-                        >
+                          onChange={(e) => setStatus(e.target.value)}>
                           {status.map((item: any, index: any) => (
                             <SelectItem key={item.key}>{item.label}</SelectItem>
                           ))}
@@ -220,8 +215,7 @@ export default function EditStaff({ user }: { user: any }) {
                               aria-label="toggle password visibility"
                               className="focus:outline-solid outline-transparent"
                               type="button"
-                              onClick={toggleVisibility}
-                            >
+                              onClick={toggleVisibility}>
                               {isVisible ? (
                                 <EyeSlashIcon className="h-6 w-6 text-gray-500" />
                               ) : (
@@ -242,8 +236,7 @@ export default function EditStaff({ user }: { user: any }) {
                         type="submit"
                         color="success"
                         className="w-full"
-                        disabled={isLoading}
-                      >
+                        disabled={isLoading}>
                         {isLoading ? (
                           <Spinner color="default" size="md" className="py-4" />
                         ) : (

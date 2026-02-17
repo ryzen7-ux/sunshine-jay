@@ -39,10 +39,10 @@ export default function LoanModal({
   const [isLoading, setIsLoading] = React.useState(false);
   const [weeklyPayment, setWeeklyPayment] = React.useState(0);
   const [startDate, setStartDate] = React.useState<any>(
-    now(getLocalTimeZone())
+    now(getLocalTimeZone()),
   );
   const [endDate, setEndDate] = React.useState<any>(
-    startDate.add({ weeks: Number(term) })
+    startDate.add({ weeks: Number(term) }),
   );
   const [error, setError] = React.useState({ isError: false, type: "" });
   const [cycle, setCycle] = React.useState<any>(0);
@@ -86,20 +86,12 @@ export default function LoanModal({
 
     if (res?.success === false) {
       setIsLoading(false);
-      if (res?.errors?.status) {
-        addToast({
-          title: "Error !",
-          description: res?.errors.status,
-          color: "danger",
-        });
-      } else {
-        setIsLoading(false);
-        addToast({
-          title: "Error !",
-          description: res?.message,
-          color: "danger",
-        });
-      }
+      setIsLoading(false);
+      addToast({
+        title: "Error !",
+        description: res?.message,
+        color: "danger",
+      });
     }
 
     if (res?.success === true) {
@@ -129,8 +121,7 @@ export default function LoanModal({
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         size="xl"
-        scrollBehavior="outside"
-      >
+        scrollBehavior="outside">
         <ModalContent>
           {(onClose) => (
             <>
@@ -183,8 +174,7 @@ export default function LoanModal({
                       <div
                         id="amount-error"
                         aria-live="polite"
-                        aria-atomic="true"
-                      ></div>
+                        aria-atomic="true"></div>
                     </div>
                     <div className="w-full">
                       <Input
@@ -226,8 +216,7 @@ export default function LoanModal({
                       <div
                         id="amount-error"
                         aria-live="polite"
-                        aria-atomic="true"
-                      ></div>
+                        aria-atomic="true"></div>
                     </div>
                     <div className="w-full">
                       <Input
@@ -253,8 +242,7 @@ export default function LoanModal({
                       <div
                         id="term-error"
                         aria-live="polite"
-                        aria-atomic="true"
-                      ></div>
+                        aria-atomic="true"></div>
                     </div>
                   </div>
                   <div className="flex flex-row gap-4 py-2">
@@ -359,8 +347,7 @@ export default function LoanModal({
                           />
                           <label
                             htmlFor="pending"
-                            className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-600"
-                          >
+                            className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-600">
                             Pending <ClockIcon className="h-4 w-4" />
                           </label>
                         </div>
@@ -374,8 +361,7 @@ export default function LoanModal({
                           />
                           <label
                             htmlFor="paid"
-                            className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-green-500 px-3 py-1.5 text-xs font-medium text-white"
-                          >
+                            className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-green-500 px-3 py-1.5 text-xs font-medium text-white">
                             Approved <CheckIcon className="h-4 w-4" />
                           </label>
                         </div>
@@ -384,8 +370,7 @@ export default function LoanModal({
                     <div
                       id="status-error"
                       aria-live="polite"
-                      aria-atomic="true"
-                    ></div>
+                      aria-atomic="true"></div>
                   </fieldset>
                   <div className="py-2">
                     <p className="text-xl py-2">Loan Summary</p>

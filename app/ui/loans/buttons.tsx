@@ -13,6 +13,8 @@ import {
   ModalFooter,
   Button,
   useDisclosure,
+  addToast,
+  Spinner,
 } from "@heroui/react";
 import { Trash2Icon, Trash2, Eye, Pen, AlertTriangleIcon } from "lucide-react";
 import CreateLoanForm from "./loan-from";
@@ -23,9 +25,11 @@ import { useDebouncedCallback } from "use-debounce";
 export function CreateInvoice({
   groups,
   members,
+  isAdmin,
 }: {
   groups: any;
   members: any;
+  isAdmin: boolean;
 }) {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
@@ -46,8 +50,7 @@ export function CreateInvoice({
       {" "}
       <button
         onClick={() => setIsAddModalOpen(true)}
-        className="flex h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-      >
+        className="flex h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
         <span className="hidden md:block">New Loan</span>{" "}
         <PlusIcon className="h-5 md:ml-4" />
       </button>
@@ -59,8 +62,7 @@ export function CreateInvoice({
           handleDeleteParam();
         }}
         size="xl"
-        scrollBehavior="outside"
-      >
+        scrollBehavior="outside">
         <ModalContent>
           {(onClose) => (
             <>
@@ -91,8 +93,7 @@ export function UpdateLoan({ id, loan }: { id: string; loan: any }) {
       <Tooltip color="success" content="Edit Loan">
         <button
           onClick={() => setIsEditModalOpen(true)}
-          className="rounded-md border p-2 hover:bg-green-100"
-        >
+          className="rounded-md border p-2 hover:bg-green-100">
           <PencilIcon className="w-4 fill-green-500" />
         </button>
       </Tooltip>
@@ -103,8 +104,7 @@ export function UpdateLoan({ id, loan }: { id: string; loan: any }) {
           setIsEditModalOpen(false);
         }}
         size="xl"
-        scrollBehavior="outside"
-      >
+        scrollBehavior="outside">
         <ModalContent>
           {(onClose) => (
             <>
@@ -124,14 +124,36 @@ export function UpdateLoan({ id, loan }: { id: string; loan: any }) {
 
 export function DeleteLoan({ id }: { id: string }) {
   const deleteLoanWithId = deleteLoan.bind(null, id);
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async (e: React.FormEvent<HTMLFormElement>) => {
+    setIsDeleting(true);
+    e.preventDefault();
+    const deleteInvoiceWithId = await deleteLoan(id);
+    if (deleteInvoiceWithId.success === true) {
+      setIsDeleting(false);
+      addToast({
+        color: "warning",
+        title: "Item deleted!",
+      });
+
+      onClose();
+    } else {
+      setIsDeleting(false);
+      addToast({
+        color: "danger",
+        title: "Failed to delete Item!",
+      });
+    }
+  };
+
   return (
     <>
       <Tooltip color="danger" content="Delete Loan Item">
         <button
           onClick={onOpen}
-          className="rounded-md border p-2 hover:bg-red-100"
-        >
+          className="rounded-md border p-2 hover:bg-red-100">
           <span className="sr-only">Delete</span>
           <TrashIcon className="w-4 fill-red-500" />
         </button>
@@ -149,9 +171,9 @@ export function DeleteLoan({ id }: { id: string }) {
                 </p>
               </ModalBody>
               <ModalFooter>
-                <form action={deleteLoanWithId}>
+                <form onSubmit={handleDelete}>
                   <Button type="submit" color="danger">
-                    YES
+                    {isDeleting ? <Spinner color="default" /> : "YES"}
                   </Button>
                 </form>
                 <Button color="primary" onPress={onClose}>
@@ -170,8 +192,7 @@ export function ProcessDisbursement() {
   return (
     <Link
       href="/dashboard/loans/process-disbursement"
-      className="flex h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-    >
+      className="flex h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
       <span className="hidden md:block">Process Disbursement</span>{" "}
       <PlusIcon className="h-5 md:ml-4" />
     </Link>

@@ -47,8 +47,8 @@ export async function fethcDashboarChartData(region: any) {
   try {
     const groupDisbursment = await sql`SELECT 
     TO_CHAR(gs.month_start_date, 'MM') AS month,
-    COALESCE(SUM(ot.amount), 0) AS total_amount,
-    COALESCE(SUM(CEIL(CEIL(ot.amount / term + amount * (interest/4/100)) * term)), 0) as total_loan
+    COALESCE(SUM(CASE WHEN status = 'approved' OR status = 'inactive' THEN amount ELSE 0 END), 0) AS total_amount,
+    COALESCE(SUM(CEIL(CEIL(CASE WHEN status = 'approved' OR status = 'inactive' THEN amount ELSE 0 END / term + CASE WHEN status = 'approved' OR status = 'inactive' THEN amount ELSE 0 END * (interest/4/100)) * term)), 0) as total_loan
 FROM 
     GENERATE_SERIES(
         DATE_TRUNC('month', NOW() - INTERVAL '4 months'), 
@@ -67,8 +67,8 @@ ORDER BY
 
     const individualDisbursement = await sql`SELECT 
     TO_CHAR(gs.month_start_date, 'MM') AS month,
-    COALESCE(SUM(ot.amount), 0) AS total_amount,
-    COALESCE(SUM(CEIL(CEIL(ot.amount / term + amount * (interest/4/100)) * term)), 0) as total_loan
+    COALESCE(SUM(CASE WHEN status = 'approved' OR status = 'inactive' THEN amount ELSE 0 END), 0) AS total_amount,
+    COALESCE(SUM(CEIL(CEIL(CASE WHEN status = 'approved' OR status = 'inactive' THEN amount ELSE 0 END/ term + CASE WHEN status = 'approved' OR status = 'inactive' THEN amount ELSE 0 END * (interest/4/100)) * term)), 0) as total_loan
 FROM 
     GENERATE_SERIES(
         DATE_TRUNC('month', NOW() - INTERVAL '4 months'), 

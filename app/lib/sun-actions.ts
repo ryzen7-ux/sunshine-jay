@@ -12,6 +12,8 @@ import {
   fetchIndividualById,
   fetchMemberById,
   fetchMemberByIdNumber,
+  fetchLoanById,
+  fetchMaxCycle,
 } from "@/app/lib/sun-data";
 import bcrypt from "bcryptjs";
 import { DateTime } from "luxon";
@@ -39,6 +41,23 @@ const MembersFormSchema = z.object({
 });
 
 const LoanFormSchema = z.object({
+  group_id: z.string(),
+  member_id: z.string(),
+  amount: z.coerce
+    .number()
+    .gt(0, { message: "Please enter a value greater than zero." }),
+  loan_id: z.string(),
+  interest: z.coerce
+    .number()
+    .gt(0, { message: "Please enter a value greater than zero." }),
+  term: z.coerce
+    .number()
+    .gt(0, { message: "Please enter a value greater than zero." }),
+  notes: z.string(),
+  date: z.string(),
+});
+
+const UpdateLoanFormSchema = z.object({
   group_id: z.string(),
   member_id: z.string(),
   amount: z.coerce
@@ -84,7 +103,7 @@ const CreateMembers = MembersFormSchema.omit({
 const UpdateMember = MembersFormSchema.omit({ groupId: true });
 
 const CreateLoan = LoanFormSchema.omit({ date: true, notes: true });
-const UpdateLoan = LoanFormSchema.omit({
+const UpdateLoan = UpdateLoanFormSchema.omit({
   member_id: true,
   group_id: true,
   date: true,
@@ -382,9 +401,9 @@ export async function createIndividualLoan(formData: FormData) {
   try {
     await sql`INSERT INTO individuals_loans (region, loanee, amount, interest, term, status, cycle, start_date, created, fee)
     VALUES (${region}, ${loannee}, ${Number(amount)}, ${Number(
-      interest
+      interest,
     )}, ${Number(
-      term
+      term,
     )},${status},${cycle}, ${newStartDate}, ${created}, ${Number(fee)})`;
 
     revalidatePath("/dashboard/individuals");
@@ -414,11 +433,11 @@ export async function updateIndividualLoan(formData: FormData) {
   const newStartDate = new Date(splitDate2[0]);
   try {
     await sql`UPDATE  individuals_loans SET amount = ${Number(
-      amount
+      amount,
     )} , interest = ${Number(interest)}, term = ${Number(
-      term
+      term,
     )}, status = ${status}, cycle=${cycle}, start_date=${newStartDate}, fee = ${Number(
-      fee
+      fee,
     )} WHERE id = ${id}`;
 
     revalidatePath("/dashboard/individuals");
@@ -524,8 +543,8 @@ export async function createMembers(formData: FormData) {
     await sql`
         INSERT INTO members (groupid, idnumber, surname, firstname, phone, location, nature, date)
         VALUES (${groupId}, ${Number(
-      idNumber
-    )}, ${surname}, ${firstName}, ${phone}, ${location}, ${nature}, ${date})
+          idNumber,
+        )}, ${surname}, ${firstName}, ${phone}, ${location}, ${nature}, ${date})
       `;
     revalidatePath(`/dashboard/customers/${groupId}/details`);
     return { success: true, message: "Member created successfuly!" };
@@ -615,7 +634,7 @@ export async function updateMember(formData: FormData) {
     await sql`
         UPDATE members
         SET idnumber = ${Number(
-          idNumber
+          idNumber,
         )}, surname = ${surname}, firstname= ${firstName}, phone=${phone}, location = ${location}, nature = ${nature}
         WHERE id = ${mid}
       `;
@@ -675,7 +694,6 @@ export async function createLoan(formData: FormData) {
     loan_id: formData.get("loan_id"),
     interest: formData.get("interest"),
     term: formData.get("term"),
-    status: formData.get("status"),
   });
 
   const localDate = new Date();
@@ -694,21 +712,42 @@ export async function createLoan(formData: FormData) {
       message: "Missing Fields. Failed to Create Invoice.",
     };
   }
-  const { group_id, member_id, amount, loan_id, interest, term, status } =
+
+  const { group_id, member_id, amount, loan_id, interest, term } =
     validatedFields.data;
+
+  const member_loans: any = await fetchLoanById(member_id, Number(cycle));
+  if (member_loans.length > 0) {
+    return {
+      success: false,
+      message: "Member has a loan in this cycle!",
+    };
+  }
+
+  const group_max_cycle: any = await fetchMaxCycle(group_id);
+
+  if (Number(cycle) > group_max_cycle[0].max + 1) {
+    return {
+      success: false,
+      message: `Cannot skip loan cycle! Next loan cycle is ${group_max_cycle[0].max + 1}`,
+    };
+  }
+
+  const status = "pending";
 
   try {
     await sql`
       INSERT INTO loans (groupid, memberid, amount, loanid, interest, term, status, cycle, start_date, date, fee)
       VALUES (${group_id}, ${member_id}, ${amount}, ${loan_id}, ${interest}, ${term}, ${status}, ${Number(
-      cycle
-    )}, ${newStartDate}, ${localDate}, ${Number(fee)})
+        cycle,
+      )}, ${newStartDate}, ${localDate}, ${Number(fee)})
     `;
     revalidatePath(`/dashboard/loans`);
     return { success: true, message: "Loan created successfully" };
   } catch (error) {
     console.log(error);
     return {
+      success: false,
       message: "Database Error: Failed to Create Invoice.",
     };
   }
@@ -731,6 +770,23 @@ export async function updateLoan(formData: FormData) {
   const cycle = formData.get("cycle") as string;
   const fee = formData.get("fee") as string;
 
+  //   const member_loans: any = await fetchLoanById(member_id, Number(cycle));
+  // if (member_loans.length > 0) {
+  //   return {
+  //     success: false,
+  //     message: "Member has a loan in this cycle!",
+  //   };
+  // }
+
+  // const group_max_cycle: any = await fetchMaxCycle(group_id);
+
+  // if (Number(cycle) > group_max_cycle[0].max + 1) {
+  //   return {
+  //     success: false,
+  //     message: `Cannot skip loan cycle! Next loan cycle is ${group_max_cycle[0].max + 1}`,
+  //   };
+  // }
+
   const start_date = formData.get("start_date") as string;
   const splitDate1 = start_date.split("+");
   const splitDate2 = splitDate1[0].split(".");
@@ -740,8 +796,8 @@ export async function updateLoan(formData: FormData) {
       UPDATE loans
       SET amount = ${amount}, loanid = ${loan_id}, interest = ${interest}, term = ${term}, status = 
       ${status}, start_date=${newStartDate}, cycle = ${cycle}, notes=${notes}, fee=${Number(
-      fee
-    )}
+        fee,
+      )}
       WHERE id= ${id}
     `;
   } catch (error) {
@@ -756,13 +812,18 @@ export async function updateLoan(formData: FormData) {
 }
 
 export async function deleteLoan(id: string) {
-  await sql`DELETE FROM loans WHERE id = ${id}`;
-  revalidatePath("/dashboard/loans");
+  try {
+    await sql`DELETE FROM loans WHERE id = ${id}`;
+    revalidatePath("/dashboard/loans");
+    return { success: true };
+  } catch (error) {
+    return { success: false };
+  }
 }
 
 export async function createGroupInvoice(
   prevState: InvoiceState,
-  formData: FormData
+  formData: FormData,
 ) {
   const validatedFields = CreateGroupInvoice.safeParse({
     groupId: formData.get("groupId"),
@@ -847,8 +908,8 @@ export async function createMpesaInvoice(formData: FormData) {
   try {
     await sql`INSERT INTO mpesainvoice (transid, transtime, transamount, refnumber, first_name, phone_number, cycle)
           VALUES (${transId},${newTransDate}, ${Number(
-      transAmount
-    )}, ${refNumber}, ${firstName}, ${phone}, ${Number(cycle)})`;
+            transAmount,
+          )}, ${refNumber}, ${firstName}, ${phone}, ${Number(cycle)})`;
     revalidatePath("dashboard/mpesa");
     return { success: true, message: "Transaction created" };
   } catch (error) {
@@ -876,9 +937,9 @@ export async function updateMpesaInvoice(formData: FormData) {
 
   try {
     await sql`UPDATE mpesainvoice SET refnumber = ${refNumber}, transid =${transId}, transtime =${newTransDate}, transamount =${Number(
-      transAmount
+      transAmount,
     )}, first_name = ${firstName}, phone_number = ${phone}, cycle = ${Number(
-      cycle
+      cycle,
     )} WHERE id=${id}`;
     revalidatePath("dashboard/mpesa");
     return { success: true, message: "Transaction updated" };

@@ -112,7 +112,7 @@ export default async function Page(props: {
       <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
         <Search placeholder="Search loans..." />
 
-        <CreateInvoice groups={groups} members={members} />
+        <CreateInvoice groups={groups} members={members} isAdmin={isAdmin} />
       </div>
       <div>
         <ExportLoanCvs loans={loans} />

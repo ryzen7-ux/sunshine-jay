@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { GroupsTable, MemberForm } from "@/app/lib/sun-defination";
 import {
   Input,
@@ -29,6 +29,7 @@ import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
 import { formatCurrencyToLocal, formatDateToLocal } from "@/app/lib/utils";
 import { now, getLocalTimeZone, parseDate } from "@internationalized/date";
+import { start } from "node:repl";
 
 export default function CreateLoanForm({
   groups,
@@ -53,26 +54,26 @@ export default function CreateLoanForm({
     }
     replace(`${pathname}?${params.toString()}`);
   }, 300);
-
+  const isMounted = useRef(false);
   const [select, setSelect] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
   const [selectMember, setSelectMember] = React.useState(select ? "" : "");
   const [startDate, setStartDate] = React.useState<any>(
-    now(getLocalTimeZone())
+    now(getLocalTimeZone()),
   );
 
   const [error, setError] = React.useState({ isError: false, type: "" });
   const [cycle, setCycle] = React.useState(0);
   const [fee, setFee] = React.useState(0);
 
-  const [amount, setAmount] = React.useState("");
-  const [interest, setInterest] = React.useState("");
-  const [term, setTerm] = React.useState("");
+  const [amount, setAmount] = React.useState("0");
+  const [interest, setInterest] = React.useState("0");
+  const [term, setTerm] = React.useState("1");
   const [weeklyPayment, setWeeklyPayment] = React.useState(0);
   const [loanId, setLoanId] = React.useState("NILL");
 
   const [endDate, setEndDate] = React.useState<any>(
-    startDate.add({ weeks: Number(term) })
+    startDate.add({ weeks: Number(term) }),
   );
 
   const principal = Number.parseFloat(amount);
@@ -114,20 +115,12 @@ export default function CreateLoanForm({
 
     if (res?.success === false) {
       setIsLoading(false);
-      if (res?.errors?.status) {
-        addToast({
-          title: "Error !",
-          description: res?.errors.status,
-          color: "danger",
-        });
-      } else {
-        setIsLoading(false);
-        addToast({
-          title: "Error !",
-          description: res?.message,
-          color: "danger",
-        });
-      }
+      setIsLoading(false);
+      addToast({
+        title: "Error !",
+        description: res?.message,
+        color: "danger",
+      });
     }
 
     if (res?.success === true) {
@@ -152,6 +145,17 @@ export default function CreateLoanForm({
     setEndDate(loanEndDate);
   };
 
+  useEffect(() => {
+    if (isMounted.current) {
+      if (term) {
+        const newDate = startDate;
+        const loanEndDate = newDate.add({ weeks: Number(term) });
+        setEndDate(loanEndDate);
+      }
+    } else {
+      isMounted.current = true;
+    }
+  }, [term]);
   return (
     <form onSubmit={handleSubmit} className="">
       <div className="flex gap-4 pb-2">
@@ -171,8 +175,7 @@ export default function CreateLoanForm({
               setSelect(e.target.value);
               handleSearch(e.target.value);
               setSelectMember("");
-            }}
-          >
+            }}>
             {groups.map((group: any) => (
               <SelectItem key={group.id}>{group.name}</SelectItem>
             ))}
@@ -193,8 +196,7 @@ export default function CreateLoanForm({
             labelPlacement="outside"
             onChange={(e) => {
               setSelectMember(e.target.value);
-            }}
-          >
+            }}>
             {members?.map((member) => (
               <SelectItem key={member.id}>{member.name}</SelectItem>
             ))}
@@ -267,7 +269,8 @@ export default function CreateLoanForm({
             variant="faded"
             defaultValue={term}
             onChange={(e: any) => {
-              setTerm(e.target.value), setError({ isError: false, type: "" });
+              setTerm(e.target.value);
+              setError({ isError: false, type: "" });
             }}
           />
         </div>
@@ -369,15 +372,16 @@ export default function CreateLoanForm({
                 value="pending"
                 className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"
                 readOnly
+                disabled
+                checked
               />
               <label
                 htmlFor="pending"
-                className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-yellow-200 px-3 py-1.5 text-xs font-medium text-gray-600"
-              >
+                className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-yellow-200 px-3 py-1.5 text-xs font-medium text-gray-600">
                 Pending <ClockIcon className="h-4 w-4" />
               </label>
             </div>
-            <div className="flex items-center">
+            {/* <div className="flex items-center">
               <input
                 id="approved"
                 name="status"
@@ -392,7 +396,7 @@ export default function CreateLoanForm({
               >
                 Approved <CheckIcon className="h-4 w-4" />
               </label>
-            </div>
+            </div> */}
           </div>
           <input className="hidden" name="group_id" value={select} readOnly />
         </div>

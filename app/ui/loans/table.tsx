@@ -195,7 +195,7 @@ export default async function InvoicesTable({
 
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
-                      <UpdateLoan id={loan.id} loan={loan} />
+                      {isAdmin && <UpdateLoan id={loan.id} loan={loan} />}
                       {isAdmin && <DeleteLoan id={loan.id} />}
                     </div>
                   </td>

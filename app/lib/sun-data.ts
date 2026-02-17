@@ -589,7 +589,7 @@ export async function fetchMemberLoanById(mid: string) {
   }
 }
 
-export async function fetchLoanById(mid: string) {
+export async function fetchLoanById(mid: string, cycle: number) {
   try {
     const data = await sql<LoanForm[]>`
       SELECT
@@ -609,13 +609,13 @@ export async function fetchLoanById(mid: string) {
         (EXTRACT(days FROM (now() - loans.start_date)) / 7)::int as today,
         (EXTRACT(days FROM (now() - loans.start_date)))::int as past_days
       FROM loans
-      WHERE loans.memberid = ${mid}
+      WHERE loans.memberid = ${mid} AND loans.cycle = ${cycle}
       ORDER BY loans.date DESC
-      LIMIT 1
+      
       
     `;
 
-    return data[0];
+    return data;
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch invoice.");
@@ -685,6 +685,7 @@ export async function fetchFilteredLoans(
           loans.start_date + (COALESCE(loans.term, 0) * INTERVAL '1 week') AS end_date,
         members.surname,
         members.firstName,
+        members.idnumber,
         groups.name      
       FROM loans
       JOIN members ON loans.memberid = members.id
@@ -856,7 +857,7 @@ export async function fetchDashboardCardData(query: string, region: any) {
     }
 
     const groupCountPromise = sql`SELECT 
-        SUM(CASE WHEN cycle = ANY(${cycleAllArayy}) THEN amount ELSE 0 END)
+        SUM(CASE WHEN cycle = ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive') THEN amount ELSE 0 END)
         FROM groups JOIN loans ON groupid = groups.id JOIN regions ON regions.id
         = groups.region WHERE regions.id = ANY(${region})`;
 
@@ -869,7 +870,7 @@ export async function fetchDashboardCardData(query: string, region: any) {
          SUM(CASE WHEN status = 'inactive' THEN amount ELSE 0 END) AS "inactive"
          FROM loans`;
     const totalLoanPromise = sql`SELECT 
-        CEIL(SUM(CEIL(CASE WHEN cycle = ANY(${cycleAllArayy}) THEN amount ELSE 0 END/term + CASE WHEN cycle = ANY(${cycleAllArayy})
+        CEIL(SUM(CEIL(CASE WHEN cycle = ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive') THEN amount ELSE 0 END/term + CASE WHEN cycle = ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive')
         THEN amount ELSE 0 END * (interest/4/100)) * term )) AS sum FROM groups JOIN loans ON groupid = groups.id JOIN regions ON
         regions.id = groups.region WHERE regions.id = ANY(${region})`;
     const collectedLoanPromise = sql`SELECT 
@@ -881,14 +882,14 @@ export async function fetchDashboardCardData(query: string, region: any) {
 
     // THIS MONTH
     const groupCountThisMonthPromise = sql`SELECT 
-        SUM(CASE WHEN cycle = ANY(${cycleAllArayy}) THEN amount ELSE 0 END) FROM groups JOIN 
+        SUM(CASE WHEN cycle = ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive') THEN amount ELSE 0 END) FROM groups JOIN 
         loans ON groupid = groups.id JOIN regions ON
         regions.id = groups.region WHERE regions.id = ANY(${region}) AND loans.date 
         >= DATE_TRUNC('month', current_timestamp) AND loans.date < 
         DATE_TRUNC('month', current_timestamp) + INTERVAL '1 month'`;
     const totalLoanThisMonthPromise = sql`SELECT 
-        CEIL(SUM(CEIL(CASE WHEN cycle = ANY(${cycleAllArayy}) THEN amount ELSE 0 
-        END/term + CASE WHEN cycle = ANY(${cycleAllArayy}) 
+        CEIL(SUM(CEIL(CASE WHEN cycle = ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive') THEN amount ELSE 0 
+        END/term + CASE WHEN cycle = ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive')
         THEN amount ELSE 0 END * (interest/4/100)) * term )) 
         AS sum FROM groups JOIN 
         loans ON groupid = groups.id JOIN regions ON
@@ -904,13 +905,13 @@ export async function fetchDashboardCardData(query: string, region: any) {
       AND transtime < DATE_TRUNC('month', current_timestamp) + INTERVAL '1 month'`;
     // WEEK
     const groupCountThisWeekPromise = await sql`SELECT 
-        SUM(CASE WHEN cycle = ANY(${cycleAllArayy}) THEN amount ELSE 0 END) FROM groups JOIN 
+        SUM(CASE WHEN cycle = ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive') THEN amount ELSE 0 END) FROM groups JOIN 
         loans ON groupid = groups.id JOIN regions ON
         regions.id = groups.region WHERE regions.id = ANY(${region}) AND  loans.date >= DATE_TRUNC('week', NOW())
         AND loans.date < DATE_TRUNC('week', NOW()) + INTERVAL '1 week'`;
     const totalLoanThisWeekPromise = await sql`SELECT 
-        CEIL(SUM(CEIL(CASE WHEN cycle = ANY(${cycleAllArayy}) THEN amount ELSE 0 
-        END/term + CASE WHEN cycle = ANY(${cycleAllArayy}) 
+        CEIL(SUM(CEIL(CASE WHEN cycle = ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive') THEN amount ELSE 0 
+        END/term + CASE WHEN cycle = ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive')
         THEN amount ELSE 0 END * (interest/4/100)) * term )) 
         AS sum FROM groups JOIN 
         loans ON groupid = groups.id JOIN regions ON
@@ -1003,14 +1004,14 @@ ORDER BY
     ]);
 
     const todayDisbursedPromises =
-      await sql`SELECT SUM(CASE WHEN cycle = ANY(${cycleAllArayy}) THEN amount ELSE 0 END) 
+      await sql`SELECT SUM(CASE WHEN cycle = ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive') THEN amount ELSE 0 END) 
         FROM groups JOIN 
         loans ON groupid = groups.id JOIN regions ON
         regions.id = groups.region WHERE regions.id = ANY(${region}) AND loans.date >= DATE_TRUNC('day', NOW())
         AND loans.date < DATE_TRUNC('day', NOW()) + INTERVAL '1 day'`;
     const totalLoanTodayPromise = await sql`SELECT 
-        CEIL(SUM(CEIL(CASE WHEN cycle = ANY(${cycleAllArayy}) THEN amount ELSE 0 END/term + 
-        CASE WHEN cycle = ANY(${cycleAllArayy}) THEN amount ELSE 0 END * (interest/4/100)) * term ))
+        CEIL(SUM(CEIL(CASE WHEN cycle = ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive') THEN amount ELSE 0 END/term + 
+        CASE WHEN cycle = ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive') THEN amount ELSE 0 END * (interest/4/100)) * term ))
         AS sum FROM groups JOIN 
         loans ON groupid = groups.id JOIN regions ON
         regions.id = groups.region
@@ -1155,14 +1156,14 @@ export async function fetchIndividualsDashbordCards(
     }
 
     const totalCountPromise = await sql`SELECT 
-      SUM(CASE WHEN cycle = ANY(${cycleAllArayy}) THEN amount ELSE 0 END) FROM individuals 
+      SUM(CASE WHEN cycle = ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive') THEN amount ELSE 0 END) FROM individuals 
       JOIN individuals_loans ON individuals_loans.loanee = individuals.id JOIN regions
       ON regions.id = individuals.region WHERE regions.id = ANY(${region})`;
     const membersCountPromise = await sql`SELECT COUNT(*) FROM individuals JOIN 
     regions ON regions.id = individuals.region WHERE regions.id = ANY(${region})`;
     const totalLoanPromise = await sql`SELECT 
-      CEIL(SUM(CEIL(CASE WHEN cycle = ANY(${cycleAllArayy}) THEN amount ELSE 0 END/term + 
-      CASE WHEN cycle = ANY(${cycleAllArayy}) THEN amount ELSE 0 END * (interest/4/100)) * term ))
+      CEIL(SUM(CEIL(CASE WHEN cycle = ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive') THEN amount ELSE 0 END/term + 
+      CASE WHEN cycle = ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive') THEN amount ELSE 0 END * (interest/4/100)) * term ))
       AS sum FROM individuals JOIN individuals_loans ON individuals_loans.loanee = individuals.id 
       JOIN regions ON regions.id = individuals.region WHERE regions.id = ANY(${region})`;
     const collectedLoanPromise = await sql`SELECT 
@@ -1173,14 +1174,14 @@ export async function fetchIndividualsDashbordCards(
       AND mpesainvoice.cycle = ANY(${cycleAllArayy}) `;
     // CURRENT MONTH
     const disbursedCountThisMonthPromise = await sql`SELECT 
-      SUM(CASE WHEN cycle = ANY(${cycleAllArayy}) THEN amount ELSE 0 END)  
+      SUM(CASE WHEN cycle = ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive') THEN amount ELSE 0 END)  
       FROM individuals JOIN individuals_loans ON individuals_loans.loanee = individuals.id 
       JOIN regions ON regions.id = individuals.region WHERE regions.id = ANY(${region}) AND 
       individuals_loans.created >= DATE_TRUNC('month', current_timestamp)
       AND individuals_loans.created < DATE_TRUNC('month', current_timestamp) + INTERVAL '1 month'`;
     const totalLoanThisMonthPromise = await sql`SELECT 
-      CEIL(SUM(CEIL(CASE WHEN cycle = ANY(${cycleAllArayy}) THEN amount ELSE 0 END/term + 
-      CASE WHEN cycle = ANY(${cycleAllArayy}) THEN amount ELSE 0 END * (interest/4/100)) * term )) 
+      CEIL(SUM(CEIL(CASE WHEN cycle = ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive') THEN amount ELSE 0 END/term + 
+      CASE WHEN cycle = ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive') THEN amount ELSE 0 END * (interest/4/100)) * term )) 
       AS sum FROM individuals JOIN individuals_loans ON individuals_loans.loanee = individuals.id 
       JOIN regions ON regions.id = individuals.region WHERE regions.id = ANY(${region}) AND 
       individuals_loans.created >= DATE_TRUNC('month', current_timestamp)
@@ -1194,14 +1195,14 @@ export async function fetchIndividualsDashbordCards(
      AND transtime < DATE_TRUNC('month', current_timestamp) + INTERVAL '1 month'`;
     // THIS WEEK
     const disbursedCountThisWeekPromise = await sql`SELECT 
-      SUM(CASE WHEN cycle = ANY(${cycleAllArayy}) THEN amount ELSE 0 END)  
+      SUM(CASE WHEN cycle = ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive') THEN amount ELSE 0 END)  
       FROM individuals JOIN individuals_loans ON individuals_loans.loanee = individuals.id 
       JOIN regions ON regions.id = individuals.region WHERE regions.id = ANY(${region}) AND 
       individuals_loans.created >= DATE_TRUNC('week', NOW())
       AND individuals_loans.created < DATE_TRUNC('week', NOW()) + INTERVAL '1 week'`;
     const totalLoanThisWeekPromise = await sql`SELECT 
-      CEIL(SUM(CEIL(CASE WHEN cycle = ANY(${cycleAllArayy}) THEN amount ELSE 0 END/term + 
-      CASE WHEN cycle = ANY(${cycleAllArayy}) THEN amount ELSE 0 END * (interest/4/100)) * term )) 
+      CEIL(SUM(CEIL(CASE WHEN cycle = ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive') THEN amount ELSE 0 END/term + 
+      CASE WHEN cycle = ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive') THEN amount ELSE 0 END * (interest/4/100)) * term )) 
       AS sum FROM individuals JOIN individuals_loans ON individuals_loans.loanee = individuals.id 
       JOIN regions ON regions.id = individuals.region WHERE regions.id = ANY(${region}) AND 
        individuals_loans.created >= DATE_TRUNC('week', NOW())
@@ -1214,15 +1215,15 @@ export async function fetchIndividualsDashbordCards(
       AND transtime < DATE_TRUNC('week', NOW()) + INTERVAL '1 week'`;
     // TODAY
     const todayDisbursedPromises = await sql`SELECT 
-      SUM(CASE WHEN cycle = ANY(${cycleAllArayy}) THEN amount ELSE 0 END) 
+      SUM(CASE WHEN cycle = ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive') THEN amount ELSE 0 END) 
       FROM individuals JOIN individuals_loans ON individuals_loans.loanee = individuals.id 
       JOIN regions ON regions.id = individuals.region WHERE regions.id = ANY(${region}) AND 
       individuals_loans.created >= DATE_TRUNC('day', NOW())
       AND individuals_loans.created < DATE_TRUNC('day', NOW()) + INTERVAL '1 day'`;
 
     const totalLoanTodayPromise = await sql`SELECT 
-      CEIL(SUM(CEIL(CASE WHEN cycle = ANY(${cycleAllArayy}) THEN amount ELSE 0 END/term + 
-      CASE WHEN cycle = ANY(${cycleAllArayy})  THEN amount ELSE 0 END * (interest/4/100)) * term ))
+      CEIL(SUM(CEIL(CASE WHEN cycle = ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive') THEN amount ELSE 0 END/term + 
+      CASE WHEN cycle = ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive') THEN amount ELSE 0 END * (interest/4/100)) * term ))
       AS sum FROM individuals JOIN individuals_loans ON individuals_loans.loanee = individuals.id 
       JOIN regions ON regions.id = individuals.region WHERE regions.id = ANY(${region}) AND 
       individuals_loans.created >= DATE_TRUNC('day', NOW())
@@ -1592,10 +1593,11 @@ export async function fetchGroupCardData(
     }
 
     const groupDisbursedPromise = sql`SELECT 
-        SUM(amount) FROM loans WHERE groupid=${id}  AND cycle= ANY(${cycleAllArayy})`;
+        SUM(amount) FROM loans WHERE groupid=${id}  AND cycle= ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive')`;
 
     const totalGroupLoan = sql`SELECT 
-        CEIL(SUM(CEIL(CASE WHEN cycle = ANY(${cycleAllArayy}) THEN amount ELSE 0 END/term + CASE WHEN cycle = ANY(${cycleAllArayy})
+        CEIL(SUM(CEIL(CASE WHEN cycle = ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive') THEN amount ELSE 0 END/term + CASE WHEN cycle = ANY(${cycleAllArayy}) 
+        AND (status = 'approved' OR status = 'inactive')
         THEN amount ELSE 0 END * (interest/4/100)) * term )) AS sum FROM loans WHERE groupid=${id}`;
     const groupsCollectedPromise = sql`SELECT 
         SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) FROM groupinvoice WHERE group_id = ${id}`;

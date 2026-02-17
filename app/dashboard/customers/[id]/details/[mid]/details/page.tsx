@@ -28,9 +28,8 @@ export default async function Page(props: {
   const mid = params.mid;
   const [group] = await Promise.all([fetchGroupById(id)]);
   const [member] = await Promise.all([fetchMemberById(mid)]);
-  const [loan] = await Promise.all([fetchLoanById(mid)]);
+  // const [loan] = await Promise.all([fetchLoanById(mid)]);
 
-  console.log(loan);
   if (!member) {
     notFound();
   }
@@ -57,7 +56,7 @@ export default async function Page(props: {
         ]}
       />
       <div className="flex flex-col md:flex-row gap-4">
-        <MemberDetails memberData={member} loan={loan} />
+        {/* <MemberDetails memberData={member} loan={loan} /> */}
       </div>
     </main>
   );

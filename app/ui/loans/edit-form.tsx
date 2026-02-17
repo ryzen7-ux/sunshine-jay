@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { LoanForm } from "@/app/lib/sun-defination";
 import {
   Input,
@@ -38,13 +38,14 @@ export default function EditLoanForm({
   loan: any;
   onClose: any;
 }) {
+  const isMounted = useRef(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const [amount, setAmount] = React.useState(loan.amount.toString());
   const [interest, setInterest] = React.useState(loan.interest.toString());
   const [term, setTerm] = React.useState(loan.term.toString());
   const [weeklyPayment, setWeeklyPayment] = React.useState(0);
   const [startDate, setStartDate] = React.useState<any>(
-    formatFormDateTime(loan.start_date)
+    formatFormDateTime(loan.start_date),
   );
 
   const [error, setError] = React.useState({ isError: false, type: "" });
@@ -59,7 +60,7 @@ export default function EditLoanForm({
   const payment = Math.ceil(wpay * Loanterm) + Number(fee);
 
   const [endDate, setEndDate] = React.useState<any>(
-    startDate.add({ weeks: Number(term) })
+    startDate.add({ weeks: Number(term) }),
   );
 
   const calculateWeeklyPayment = () => {
@@ -111,6 +112,19 @@ export default function EditLoanForm({
     setEndDate(loanEndDate);
   };
 
+  useEffect(() => {
+    if (isMounted.current) {
+      if (term) {
+        const newDate = startDate;
+        const loanEndDate = newDate.add({ weeks: Number(term) });
+        setEndDate(loanEndDate);
+      }
+    } else {
+      isMounted.current = true;
+    }
+  }, [term]);
+
+  console.log(loan);
   return (
     <form onSubmit={handleUpdate} className="">
       <div className="flex gap-4  mb-2 items-center px-4 py-2 border rounded-lg bg-blue-100 ">
@@ -320,8 +334,7 @@ export default function EditLoanForm({
                 />
                 <label
                   htmlFor="pending"
-                  className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-yellow-200 px-3 py-1.5 text-xs font-medium text-gray-600"
-                >
+                  className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-yellow-200 px-3 py-1.5 text-xs font-medium text-gray-600">
                   Pending <ClockIcon className="h-4 w-4" />
                 </label>
               </div>
@@ -336,8 +349,7 @@ export default function EditLoanForm({
                 />
                 <label
                   htmlFor="paid"
-                  className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-green-500 px-3 py-1.5 text-xs font-medium text-white"
-                >
+                  className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-green-500 px-3 py-1.5 text-xs font-medium text-white">
                   Approved <CheckIcon className="h-4 w-4" />
                 </label>
               </div>
@@ -352,8 +364,7 @@ export default function EditLoanForm({
                 />
                 <label
                   htmlFor="paid"
-                  className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-cyan-500 px-3 py-1.5 text-xs font-medium text-white"
-                >
+                  className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-cyan-500 px-3 py-1.5 text-xs font-medium text-white">
                   Defered <CalendarDaysIcon className="h-4 w-4" />
                 </label>
               </div>
@@ -370,8 +381,7 @@ export default function EditLoanForm({
                 />
                 <label
                   htmlFor="paid"
-                  className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-red-500 px-3 py-1.5 text-xs font-medium text-white"
-                >
+                  className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-red-500 px-3 py-1.5 text-xs font-medium text-white">
                   Rejected <XCircleIcon className="h-4 w-4" />
                 </label>
               </div>
@@ -387,8 +397,7 @@ export default function EditLoanForm({
                 />
                 <label
                   htmlFor="paid"
-                  className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-pink-500 px-3 py-1.5 text-xs font-medium text-white"
-                >
+                  className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-pink-500 px-3 py-1.5 text-xs font-medium text-white">
                   Inactive <ShieldExclamationIcon className="h-4 w-4" />
                 </label>
               </div>
@@ -460,8 +469,7 @@ export default function EditLoanForm({
             type="submit"
             color="success"
             disabled={isLoading}
-            className=""
-          >
+            className="">
             {isLoading ? <Spinner color="default" /> : "SUBMIT"}
           </Button>
         </div>

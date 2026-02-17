@@ -25,7 +25,7 @@ export async function fetchMpesaInvoicesPages2(
   query: string,
   userId: string,
   startDate: string,
-  endDate: string
+  endDate: string,
 ) {
   const today = new Date();
   const formattedDate = today.toISOString().split("T")[0];
@@ -85,7 +85,7 @@ export async function fetchFilteredMpesaInvoices2(
   currentPage: number,
   userId: string,
   startDate: string,
-  endDate: string
+  endDate: string,
 ) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
   const startIndex = currentPage * ITEMS_PER_PAGE - ITEMS_PER_PAGE;
@@ -113,10 +113,10 @@ export async function fetchFilteredMpesaInvoices2(
         JOIN regions ON regions.id = groups.region 
       WHERE
       regions.manager = ${userId} AND mpesainvoice.transtime >= ${
-      startDate || defaultStartDate
-    }::timestamp AND mpesainvoice.transtime < ${
-      endDate || formattedDate
-    }::timestamp + interval '1 day' AND
+        startDate || defaultStartDate
+      }::timestamp AND mpesainvoice.transtime < ${
+        endDate || formattedDate
+      }::timestamp + interval '1 day' AND
       ( mpesainvoice.transid ILIKE ${`%${query}%`} OR
         mpesainvoice.cycle::TEXT ILIKE ${`%${query}%`} OR
         mpesainvoice.transtime::text ILIKE ${`%${query}%`} OR
@@ -142,10 +142,10 @@ export async function fetchFilteredMpesaInvoices2(
         JOIN regions ON regions.id = individuals.region 
       WHERE
       regions.manager = ${userId} AND mpesainvoice.transtime >= ${
-      startDate || defaultStartDate
-    }::timestamp AND mpesainvoice.transtime < ${
-      endDate || formattedDate
-    }::timestamp + interval '1 day' AND
+        startDate || defaultStartDate
+      }::timestamp AND mpesainvoice.transtime < ${
+        endDate || formattedDate
+      }::timestamp + interval '1 day' AND
       ( mpesainvoice.transid ILIKE ${`%${query}%`} OR
         mpesainvoice.cycle::TEXT ILIKE ${`%${query}%`} OR
         mpesainvoice.transtime::text ILIKE ${`%${query}%`} OR
@@ -157,7 +157,7 @@ export async function fetchFilteredMpesaInvoices2(
 
     const newInvoices = combinedInvoices
       ?.sort(
-        (a: any, b: any) => b.transtime?.getTime() - a.transtime?.getTime()
+        (a: any, b: any) => b.transtime?.getTime() - a.transtime?.getTime(),
       )
       .slice(startIndex, endIndex);
 
@@ -171,7 +171,7 @@ export async function fetchFilteredMpesaInvoices2(
 export async function fetchFilteredGroups2(
   query: string,
   currentPage: number,
-  userId: string
+  userId: string,
 ) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
@@ -248,7 +248,7 @@ export async function fetchLoansPages2(
   userId: string,
   startDate: string,
   endDate: string,
-  pageItems: number
+  pageItems: number,
 ) {
   const today = new Date();
   const formattedDate = today.toISOString().split("T")[0];
@@ -292,7 +292,7 @@ export async function fetchFilteredLoans2(
   userId: string,
   startDate: string,
   endDate: string,
-  pagetItems: number
+  pagetItems: number,
 ) {
   const offset = (currentPage - 1) * pagetItems;
 
@@ -321,6 +321,7 @@ export async function fetchFilteredLoans2(
         loans.start_date + (COALESCE(loans.term, 0) * INTERVAL '1 week') AS end_date,
         members.surname,
         members.firstName,
+        members.idnumber,
         groups.name      
       FROM loans
       JOIN members ON loans.memberid = members.id
@@ -328,10 +329,10 @@ export async function fetchFilteredLoans2(
       JOIN regions ON regions.id = groups.region
       WHERE
       regions.manager = ${userId} AND  loans.date >=${
-      startDate || defaultStartDate
-    }::timestamp AND   loans.date  < ${
-      endDate || formattedDate
-    }::timestamp + interval '1 day' AND
+        startDate || defaultStartDate
+      }::timestamp AND   loans.date  < ${
+        endDate || formattedDate
+      }::timestamp + interval '1 day' AND
        (loans.loanid ILIKE ${`%${query}%`} OR
         loans.cycle::TEXT ILIKE ${`%${query}%`} OR
         loans.fee::TEXT ILIKE ${`%${query}%`} OR

@@ -33,11 +33,21 @@ export default function FilesForm({
   const [idBackUrl, setIdBackUrl] = useState(member.id_back);
   const [passportUrl, setPassportUrl] = useState(member.passport);
   const [applicationFormUrl, setApplicationFomUrl] = useState(member.doc);
+  const [businessPhotoUrl, setBusinessPhotoUrl] = useState(
+    member.business_photo,
+  );
+  const [kinPhotoUrl, setKinPhotoUrl] = useState(member.kin_photo);
   const [currentInput, setCurrentInput] = useState("");
 
   const handleDocumentUpload = async (
-    documentType: "idCardFront" | "idCardBack" | "passport" | "applicationForm",
-    file: File
+    documentType:
+      | "idCardFront"
+      | "idCardBack"
+      | "passport"
+      | "applicationForm"
+      | "businessPhoto"
+      | "kinPhoto",
+    file: File,
   ) => {
     setIsUploading(true);
     setCurrentInput(documentType);
@@ -73,6 +83,13 @@ export default function FilesForm({
       if (documentType === "applicationForm") {
         setApplicationFomUrl(data.url);
       }
+      if (documentType === "businessPhoto") {
+        setBusinessPhotoUrl(data.url);
+      }
+      if (documentType === "kinPhoto") {
+        setKinPhotoUrl(data.url);
+      }
+
       addToast({
         title: "Document uploaded !",
         color: "success",
@@ -90,7 +107,13 @@ export default function FilesForm({
   };
 
   const handleDocumentDelete = async (
-    documentType: "idCardFront" | "idCardBack" | "passport" | "applicationForm"
+    documentType:
+      | "idCardFront"
+      | "idCardBack"
+      | "passport"
+      | "applicationForm"
+      | "businessPhoto"
+      | "kinPhoto",
   ) => {
     setIsDeleting(true);
     const formDataToSend = new FormData();
@@ -103,10 +126,14 @@ export default function FilesForm({
       documentType === "idCardBack"
         ? idBackUrl
         : documentType === "idCardFront"
-        ? idFrontUrl
-        : documentType === "passport"
-        ? passportUrl
-        : applicationFormUrl;
+          ? idFrontUrl
+          : documentType === "passport"
+            ? passportUrl
+            : documentType === "applicationForm"
+              ? applicationFormUrl
+              : documentType === "businessPhoto"
+                ? businessPhotoUrl
+                : kinPhotoUrl;
     if (!url) {
       setIsDeleting(false);
       return;
@@ -222,6 +249,30 @@ export default function FilesForm({
               currentInput={currentInput}
               loanee={loanee}
             />
+            <DocumentUploadField
+              label="Business Photo"
+              documentUrl={applicationFormUrl}
+              onUpload={(file) => handleDocumentUpload("businessPhoto", file)}
+              onDelete={() => handleDocumentDelete("businessPhoto")}
+              isUploading={isUploading}
+              isDeleting={isDeleting}
+              fileType="image"
+              type="businessPhoto"
+              currentInput={currentInput}
+              loanee={loanee}
+            />
+            <DocumentUploadField
+              label="Next Of Kin Photo"
+              documentUrl={applicationFormUrl}
+              onUpload={(file) => handleDocumentUpload("kinPhoto", file)}
+              onDelete={() => handleDocumentDelete("kinPhoto")}
+              isUploading={isUploading}
+              isDeleting={isDeleting}
+              fileType="image"
+              type="kinPhoto"
+              currentInput={currentInput}
+              loanee={loanee}
+            />
           </div>
 
           <div className="my-6 py-6">
@@ -229,8 +280,7 @@ export default function FilesForm({
               onPress={onClose}
               type="button"
               color="success"
-              className="w-full"
-            >
+              className="w-full">
               Close
             </Button>
           </div>
@@ -303,8 +353,7 @@ function DocumentUploadField({
                 href={documentUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-green-600 hover:underline"
-              >
+                className="text-xs text-green-600 hover:underline">
                 View document
               </a>
             </div>
@@ -323,8 +372,7 @@ function DocumentUploadField({
                 onPress={() => onDelete()}
                 disabled={isUploading || isDeleting}
                 className="text-red-600 hover:text-red-700 bg-red-200"
-                startContent={<Trash className="h-4 w-4 text-red-700" />}
-              >
+                startContent={<Trash className="h-4 w-4 text-red-700" />}>
                 Delete
               </Button>
             )}
@@ -342,8 +390,7 @@ function DocumentUploadField({
             isDragging
               ? "border-primary bg-primary/5"
               : "border-green-300 hover:border-green-400"
-          }`}
-        >
+          }`}>
           <input
             type="file"
             accept={fileType === "pdf" ? ".pdf" : "image/*"}

@@ -26,7 +26,13 @@ import { formatCurrencyToLocal, formatDateToLocal } from "@/app/lib/utils";
 import { UpdateLoan, DeleteLoan } from "@/app/ui/loans/buttons";
 import InvoiceStatus from "@/app/ui/loans/status";
 
-export function LeftContent({ memberData }: { memberData: any }) {
+export function LeftContent({
+  memberData,
+  group,
+}: {
+  memberData: any;
+  group: any;
+}) {
   return (
     <>
       <div className="w-full border rounded-md py-4">
@@ -39,20 +45,44 @@ export function LeftContent({ memberData }: { memberData: any }) {
             <p className="text-lg text-default-900 ">
               {memberData.firstname} {memberData.surname} {memberData.name}
             </p>
-            <p className="pt-4 text-sm text-default-600 pt-1">
-              ID number: {memberData.idnumber}
+            <p className="pt-1 text-sm text-default-600 ">
+              <strong>ID Number:</strong>
+              {memberData.idnumber}
             </p>
-            <p className="pt-1 text-sm text-default-600 pt-1">
-              {memberData.location && <>Location: {memberData.location}</>}
-
+            <p className="pt-1 text-sm text-default-600 ">
+              <strong>Group:</strong>
+              {group.name}
+            </p>
+            <p className="pt-1 text-sm text-default-600 ">
+              <strong>Business Nature:</strong> {memberData.nature}
+            </p>
+            <p className="pt-1 text-sm text-default-600">
               {memberData?.regionname && <>Region: {memberData.regionname}</>}
             </p>
 
-            <p className="flex text-small text-default-500 p-1">
+            <p className="flex text-small text-default-500 p-1 pb-4">
               <span>
-                <PhoneIcon className="w-5 " />
+                <PhoneIcon className="w-5 font-bold" />
               </span>
               <span className="pl-1">{memberData.phone}</span>
+            </p>
+            <hr />
+            <h1>
+              <strong>Next of kin details</strong>
+            </h1>
+            <hr />
+            <p className="pt-1 text-sm text-default-600 pt-1">
+              <strong>Name:</strong> {memberData.kin_name}
+            </p>
+            <p className="pt-1 text-sm text-default-600 pt-1">
+              <strong>ID Number:</strong> {memberData.kin_id}
+            </p>
+            <p className="pt-1 text-sm text-default-600 pt-1">
+              <strong>Relationship:</strong> {memberData.kin_relationship}
+            </p>
+
+            <p className="pt-1 text-sm text-default-600 pt-1">
+              <strong>Phone Number:</strong> {memberData.kin_phone}
             </p>
           </div>
         </div>
@@ -62,7 +92,7 @@ export function LeftContent({ memberData }: { memberData: any }) {
             <div className="text-green-500">
               <FileCheck2 />
             </div>
-            <p className="px-2">Documents</p>
+            <p className="px-2">Member Documents</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
             {memberData.passport ? (
@@ -113,6 +143,31 @@ export function LeftContent({ memberData }: { memberData: any }) {
             ) : (
               <div className="flex items-center justify-center border border-green-500 rounded-md text-green-700">
                 No application form
+              </div>
+            )}
+            {memberData.business_photo ? (
+              <Image
+                isZoomed
+                src={`${memberData.business_photo}`}
+                alt="No image"
+              />
+            ) : (
+              <div className="flex items-center justify-center border border-green-500 rounded-md text-green-700">
+                No Business photo
+              </div>
+            )}
+            {memberData.kin_photo ? (
+              <div className="flex flex-col items-center">
+                <h1 className="font-extrabold">NEXT OF KIN</h1>
+                <Image
+                  isZoomed
+                  src={`${memberData.kin_photo}`}
+                  alt="No image"
+                />
+              </div>
+            ) : (
+              <div className="flex items-center justify-center border border-green-500 rounded-md text-green-700">
+                No next of kin photo
               </div>
             )}
           </div>
@@ -189,7 +244,7 @@ export function RightContent({
                     <p className="text-sm font-bold text-green-500">
                       Total:{" "}
                       {formatCurrencyToLocal(
-                        Number(loan.total) + Number(loan.fee)
+                        Number(loan.total) + Number(loan.fee),
                       )}
                     </p>
                   </div>

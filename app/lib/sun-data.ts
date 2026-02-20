@@ -466,7 +466,13 @@ export async function fetchMembers(id: string) {
         members.id_front,
         members.id_back,
         members.passport,
-        members.doc
+        members.doc,
+        members.business_photo,
+        members.kin_photo,
+        members.kin_relationship,
+        members.kin_name,
+        members.kin_id,
+        members.kin_phone
       FROM members
       WHERE members.groupId = ${id}
       ORDER BY members.date DESC
@@ -518,7 +524,13 @@ export async function fetchMemberById(mid: string) {
         members.id_front,
         members.id_back,
         members.passport,
-        members.doc
+        members.doc,
+        members.business_photo,
+        members.kin_photo,
+        members.kin_relationship,
+        members.kin_name,
+        members.kin_id,
+        members.kin_phone
       FROM members
       WHERE members.id = ${mid};
     `;
@@ -544,7 +556,13 @@ export async function fetchMemberByIdNumber(mid: any) {
         members.id_front,
         members.id_back,
         members.passport,
-        members.doc
+        members.doc,
+                members.business_photo,
+        members.kin_photo,
+        members.kin_relationship,
+        members.kin_name,
+        members.kin_id,
+        members.kin_phone
       FROM members
       WHERE members.idnumber = ${mid};
     `;

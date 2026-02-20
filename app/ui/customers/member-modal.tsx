@@ -19,9 +19,11 @@ import { EyeIcon } from "lucide-react";
 export default function MemberModal({
   memberData,
   loan,
+  group,
 }: {
   memberData: any;
   loan: any;
+  group: any;
 }) {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
@@ -36,8 +38,7 @@ export default function MemberModal({
         <button
           onClick={() => {
             setIsAddModalOpen(true);
-          }}
-        >
+          }}>
           <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
             <EyeIcon className="h-6 w-6 text-yellow-500" />
           </span>
@@ -48,8 +49,7 @@ export default function MemberModal({
         onOpenChange={onOpenChange}
         size="full"
         className="overflow-auto"
-        onClose={() => setIsAddModalOpen(false)}
-      >
+        onClose={() => setIsAddModalOpen(false)}>
         <ModalContent>
           {(onClose) => (
             <>
@@ -58,7 +58,7 @@ export default function MemberModal({
               </ModalHeader>
               <ModalBody>
                 <div className="flex flex-col md:flex-row gap-4">
-                  <LeftContent memberData={memberData} />
+                  <LeftContent memberData={memberData} group={group} />
                   <RightContent memberData={memberData} loans={filteredLoans} />
                 </div>
               </ModalBody>

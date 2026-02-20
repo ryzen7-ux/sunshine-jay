@@ -4,7 +4,10 @@ import { Storage } from "@google-cloud/storage";
 import { type NextRequest, NextResponse } from "next/server";
 
 const credentials = JSON.parse(
-  Buffer.from(process.env.GOOGLE_CLOUD_CREDENTIALS_BASE64!, "base64").toString()
+  Buffer.from(
+    process.env.GOOGLE_CLOUD_CREDENTIALS_BASE64!,
+    "base64",
+  ).toString(),
 );
 const storage = new Storage({
   projectId: process.env.GOOGLE_CLOUD_PROJECT_ID,
@@ -15,7 +18,7 @@ export async function DELETE(request: NextRequest) {
   try {
     const body = await request.json();
     const imgUrl1 = String(body?.imageUrl).split(
-      `${process.env.GOOGLE_CLOUD_STORAGE_BUCKET}/`
+      `${process.env.GOOGLE_CLOUD_STORAGE_BUCKET}/`,
     );
     const itemId = body?.itemId;
     const type = body?.type;
@@ -41,6 +44,12 @@ export async function DELETE(request: NextRequest) {
       if (type === "form") {
         await sql`UPDATE members SET doc=${null} WHERE id=${itemId}`;
       }
+      if (type === "businessPhoto") {
+        await sql`UPDATE members SET business_photo=${null} WHERE id=${itemId}`;
+      }
+      if (type === "kinPhoto") {
+        await sql`UPDATE members SET kin_photo=${null} WHERE id=${itemId}`;
+      }
     } else {
       if (type === "passport") {
         await sql`UPDATE individuals SET passport=${null} WHERE id=${itemId}`;
@@ -57,6 +66,12 @@ export async function DELETE(request: NextRequest) {
       if (type === "form") {
         await sql`UPDATE individuals SET doc=${null} WHERE id=${itemId}`;
       }
+      if (type === "businessPhoto") {
+        await sql`UPDATE individuals SET business_photo=${null} WHERE id=${itemId}`;
+      }
+      if (type === "kinPhoto") {
+        await sql`UPDATE individuals SET kin_photo=${null} WHERE id=${itemId}`;
+      }
     }
 
     NextResponse.json({ message: `deleted.` });
@@ -66,7 +81,7 @@ export async function DELETE(request: NextRequest) {
     console.log(error);
     return NextResponse.json(
       { error: "Failed to delete event" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

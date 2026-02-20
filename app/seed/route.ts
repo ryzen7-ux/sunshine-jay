@@ -153,7 +153,13 @@ async function seedMembers() {
       id_front TEXT,
       id_back TEXT,
       passport TEXT,
-      doc TEXT
+      doc TEXT,
+      business_photo TEXT,
+      kin_photo TEXT,
+      kin_relationship VARCHAR(5000),
+      kin_name VARCHAR(5000),
+      kin_id INT,
+      kin_phone
     );
   `;
 }

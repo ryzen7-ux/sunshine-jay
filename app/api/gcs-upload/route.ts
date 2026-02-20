@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     if (!checkRateLimit(clientIp)) {
       return NextResponse.json(
         { error: "Rate limit exceeded. Please try again later." },
-        { status: 429 }
+        { status: 429 },
       );
     }
 
@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
     if (!userId) {
       return NextResponse.json(
         { error: "User ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -82,10 +82,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error: `File size ${(file.size / 1024 / 1024).toFixed(
-            1
+            1,
           )}MB exceeds 20MB limit`,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
             file.type
           } not supported. Allowed types: ${ALLOWED_TYPES.join(", ")}`,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
         {
           error: `File type ${file.type} not supported. Allowed type: PDF`,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -126,8 +126,8 @@ export async function POST(request: NextRequest) {
     const fileExtension = fileName
       ? fileName.split(".").pop() || "bin"
       : file.name
-      ? file.name.split(".").pop() || "bin"
-      : "bin";
+        ? file.name.split(".").pop() || "bin"
+        : "bin";
     const uniqueFileName = `${fileId}.${fileExtension}`;
 
     // Convert file to buffer
@@ -140,7 +140,7 @@ export async function POST(request: NextRequest) {
       fileBuffer,
       userId,
       uniqueFileName,
-      file.type || "application/octet-stream"
+      file.type || "application/octet-stream",
     );
 
     if (!uploadResult.success) {
@@ -149,56 +149,77 @@ export async function POST(request: NextRequest) {
           error: "Upload failed",
           details: uploadResult.error,
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
     // Update db
     if (userType === "member") {
       if (type === "passport") {
         await sql`UPDATE members SET passport=${String(
-          uploadResult.gcsUri
+          uploadResult.gcsUri,
         )} WHERE id=${itemId}`;
       }
 
       if (type === "front") {
         await sql`UPDATE members SET id_front=${String(
-          uploadResult.gcsUri
+          uploadResult.gcsUri,
         )} WHERE id=${itemId}`;
       }
 
       if (type === "back") {
         await sql`UPDATE members SET id_back=${String(
-          uploadResult.gcsUri
+          uploadResult.gcsUri,
         )} WHERE id=${itemId}`;
       }
 
       if (type === "form") {
         await sql`UPDATE members SET doc=${String(
-          uploadResult.gcsUri
+          uploadResult.gcsUri,
+        )} WHERE id=${itemId}`;
+      }
+      if (type === "businessPhoto") {
+        await sql`UPDATE members SET business_photo=${String(
+          uploadResult.gcsUri,
+        )} WHERE id=${itemId}`;
+      }
+      if (type === "kinPhoto") {
+        await sql`UPDATE members SET kin_photo=${String(
+          uploadResult.gcsUri,
         )} WHERE id=${itemId}`;
       }
     } else {
       if (type === "passport") {
         await sql`UPDATE individuals SET passport=${String(
-          uploadResult.gcsUri
+          uploadResult.gcsUri,
         )} WHERE id=${itemId}`;
       }
 
       if (type === "front") {
         await sql`UPDATE individuals SET id_front=${String(
-          uploadResult.gcsUri
+          uploadResult.gcsUri,
         )} WHERE id=${itemId}`;
       }
 
       if (type === "back") {
         await sql`UPDATE individuals SET id_back=${String(
-          uploadResult.gcsUri
+          uploadResult.gcsUri,
         )} WHERE id=${itemId}`;
       }
 
       if (type === "form") {
         await sql`UPDATE individuals SET doc=${String(
-          uploadResult.gcsUri
+          uploadResult.gcsUri,
+        )} WHERE id=${itemId}`;
+      }
+
+      if (type === "businessPhoto") {
+        await sql`UPDATE individuals SET business_photo=${String(
+          uploadResult.gcsUri,
+        )} WHERE id=${itemId}`;
+      }
+      if (type === "kinPhoto") {
+        await sql`UPDATE individuals SET kin_photo=${String(
+          uploadResult.gcsUri,
         )} WHERE id=${itemId}`;
       }
     }
@@ -225,7 +246,7 @@ export async function POST(request: NextRequest) {
         details: error.message,
         errorId,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

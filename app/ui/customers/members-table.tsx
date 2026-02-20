@@ -32,7 +32,6 @@ export const columns = [
   { name: "ID NO", uid: "idnumber" },
   { name: "NAME", uid: "firstname" },
   { name: "PHONE", uid: "phone" },
-  { name: "LOCATION", uid: "location" },
   { name: "BUSINESS", uid: "business" },
   { name: "ACTIONS", uid: "actions" },
 ];
@@ -77,13 +76,6 @@ export default function MembersTable({
             </p>
           </div>
         );
-
-      case "location":
-        return (
-          <div>
-            <p className="text-bold text-xs ">{member.location}</p>
-          </div>
-        );
       case "business":
         return (
           <div>
@@ -100,8 +92,7 @@ export default function MembersTable({
                 onClick={() => {
                   setIsOpenLoan(true);
                   setMemberData(member);
-                }}
-              >
+                }}>
                 <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
                   <BanknotesIcon className="h-5 w-5 fill-blue-500" />
                 </span>
@@ -109,7 +100,7 @@ export default function MembersTable({
             </Tooltip>
             <>
               {" "}
-              <MemberModal memberData={member} loan={loan} />
+              <MemberModal memberData={member} loan={loan} group={group} />
             </>
 
             <Tooltip color="success" content="Edit member">
@@ -132,14 +123,12 @@ export default function MembersTable({
         isStriped
         aria-label="Example table with custom cells"
         color="success"
-        className="pb-12 mb-12"
-      >
+        className="pb-12 mb-12">
         <TableHeader columns={columns}>
           {(column) => (
             <TableColumn
               key={column.uid}
-              align={column.uid === "actions" ? "center" : "start"}
-            >
+              align={column.uid === "actions" ? "center" : "start"}>
               {column.name}
             </TableColumn>
           )}

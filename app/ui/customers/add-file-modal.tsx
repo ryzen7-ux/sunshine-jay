@@ -113,6 +113,30 @@ export function AddFileModal({
                   userId="SUNSHINE"
                   onUploadComplete={handleUploadComplete}
                 />
+                <FileUpload
+                  userType={loanee}
+                  fileUrl={member?.business_photo}
+                  member={member}
+                  itemId={member?.id}
+                  uploadedTitle="Business Photo"
+                  title="Upload Business Photo"
+                  currentInput="businessPhoto"
+                  type="businessPhoto"
+                  userId="SUNSHINE"
+                  onUploadComplete={handleUploadComplete}
+                />
+                <FileUpload
+                  userType={loanee}
+                  fileUrl={member?.kin_photo}
+                  member={member}
+                  itemId={member?.id}
+                  uploadedTitle="Next of Kin Photo"
+                  title="Upload Next of Kin Photo"
+                  currentInput="kinPhoto"
+                  type="kinPhoto"
+                  userId="SUNSHINE"
+                  onUploadComplete={handleUploadComplete}
+                />
               </ModalBody>
             </>
           )}

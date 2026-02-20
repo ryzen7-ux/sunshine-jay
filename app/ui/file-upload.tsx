@@ -38,7 +38,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   userId,
   onUploadComplete,
   acceptedTypes = ["audio/*", "image/*"],
-  maxFileSize = 20 * 1024 * 1024, // 20MB
+  maxFileSize = 8 * 1024 * 1024, // 20MB
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -54,7 +54,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
       alert(
         `File size ${(file.size / 1024 / 1024).toFixed(1)}MB exceeds ${
           maxFileSize / 1024 / 1024
-        }MB limit`
+        }MB limit`,
       );
       return;
     }
@@ -99,7 +99,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
       selectedFile,
       userId,
       type,
-      itemId
+      itemId,
     );
 
     if (result.success && onUploadComplete) {

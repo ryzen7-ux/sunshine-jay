@@ -61,7 +61,7 @@ export default function MemberForm({
   return (
     <Form onSubmit={handleSubmit}>
       <div className="flex flex-col  w-full">
-        <div className="grid grid-cols-1 md:grid-cols-2  gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2  gap-4 pb-4">
           <div className="w-full">
             <NumberInput
               isRequired
@@ -109,23 +109,70 @@ export default function MemberForm({
           </div>
           <div className="w-full">
             <Input
-              isRequired
-              name="location"
+              name="nature"
               type="text"
               className="outline-2 outline-blue-500  "
-              label="Location"
+              label="Nature of business"
               labelPlacement="outside"
               color="success"
               size="md"
               variant="faded"
             />
           </div>
-          <div className="w-full col-span-1 md:col-span-2">
+        </div>
+        <hr />
+        <h3 className="w-full py-2">Next of kin</h3>
+        <hr />
+        <div className="grid grid-cols-1 md:grid-cols-2  gap-4">
+          <div className="w-full ">
             <Input
-              name="nature"
+              name="kin_relationship"
               type="text"
               className="outline-2 outline-blue-500  "
-              label="Nature of business"
+              label="Relationship"
+              labelPlacement="outside"
+              color="success"
+              size="md"
+              variant="faded"
+              description="eg: Husband, son.. etc."
+            />
+          </div>
+          <div className="w-full ">
+            <Input
+              name="kin_name"
+              type="text"
+              className="outline-2 outline-blue-500  "
+              label="Name"
+              labelPlacement="outside"
+              color="success"
+              size="md"
+              variant="faded"
+            />
+          </div>
+          <div className="w-full">
+            <NumberInput
+              name="kin_id"
+              className="outline-2 outline-blue-500"
+              label="ID Number"
+              color="success"
+              labelPlacement="outside"
+              size="md"
+              variant="faded"
+              placeholder="0"
+              formatOptions={{ useGrouping: false }}
+              startContent={
+                <div className="pointer-events-none flex items-center">
+                  <span className="text-default-400 text-small"></span>
+                </div>
+              }
+            />
+          </div>
+          <div className="w-full ">
+            <Input
+              name="kin_phone"
+              type="text"
+              className="outline-2 outline-blue-500  "
+              label="Phone Number"
               labelPlacement="outside"
               color="success"
               size="md"
@@ -145,8 +192,7 @@ export default function MemberForm({
             type="submit"
             color="success"
             className="w-full"
-            disabled={isLoading}
-          >
+            disabled={isLoading}>
             {isLoading ? (
               <Spinner color="default" size="md" className="py-4" />
             ) : (

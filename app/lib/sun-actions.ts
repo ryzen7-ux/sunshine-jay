@@ -34,10 +34,6 @@ const MembersFormSchema = z.object({
   phone: z.string().min(1, { message: "Please enter a value" }),
   nature: z.string(),
   location: z.string().min(1, { message: "Please enter a value" }),
-  id_front_name: z.string(),
-  id_back_name: z.string(),
-  passport_name: z.string(),
-  doc_name: z.string(),
 });
 
 const LoanFormSchema = z.object({
@@ -95,12 +91,9 @@ const CreateGroup = FormSchema.omit({
 const UpdateGroup = FormSchema.omit({ id: true });
 
 const CreateMembers = MembersFormSchema.omit({
-  id_front_name: true,
-  id_back_name: true,
-  passport_name: true,
-  doc_name: true,
+  location: true,
 });
-const UpdateMember = MembersFormSchema.omit({ groupId: true });
+const UpdateMember = MembersFormSchema.omit({ groupId: true, location: true });
 
 const CreateLoan = LoanFormSchema.omit({ date: true, notes: true });
 const UpdateLoan = UpdateLoanFormSchema.omit({
@@ -524,8 +517,11 @@ export async function createMembers(formData: FormData) {
   const surname = "";
   const firstName = formData.get("firstName") as string;
   const phone = formData.get("phone") as string;
-  const location = formData.get("location") as string;
   const nature = formData.get("nature") as string;
+  const kin_relationship = formData.get("kin_relationship") as string;
+  const kin_name = formData.get("kin_name") as string;
+  const kin_id = formData.get("kin_id") as string;
+  const kin_phone = formData.get("kin_phone") as string;
 
   const newIdNumber: bigint = BigInt(idNumber);
   if (newIdNumber > 9223372036854775000n) {
@@ -539,12 +535,15 @@ export async function createMembers(formData: FormData) {
   }
 
   const date = new Date();
+  const location = "none";
   try {
     await sql`
-        INSERT INTO members (groupid, idnumber, surname, firstname, phone, location, nature, date)
+        INSERT INTO members (groupid, idnumber, surname, firstname, phone, location, 
+        nature, date, kin_relationship, kin_name, kin_id, kin_phone)
         VALUES (${groupId}, ${Number(
           idNumber,
-        )}, ${surname}, ${firstName}, ${phone}, ${location}, ${nature}, ${date})
+        )}, ${surname}, ${firstName}, ${phone}, ${location}, ${nature}, ${date},
+        ${kin_relationship}, ${kin_name}, ${Number(kin_id)}, ${kin_phone})
       `;
     revalidatePath(`/dashboard/customers/${groupId}/details`);
     return { success: true, message: "Member created successfuly!" };
@@ -555,31 +554,20 @@ export async function createMembers(formData: FormData) {
 }
 
 export async function updateMember(formData: FormData) {
-  const {
-    idNumber,
-    firstName,
-    phone,
-    location,
-    nature,
-    id_front_name,
-    id_back_name,
-    passport_name,
-    doc_name,
-  } = UpdateMember.parse({
+  const { idNumber, firstName, phone, nature } = UpdateMember.parse({
     idNumber: formData.get("idNumber"),
     firstName: formData.get("firstName"),
     phone: formData.get("phone"),
-    location: formData.get("location"),
     nature: formData.get("nature"),
-    id_front_name: formData.get("id_front_name"),
-    id_back_name: formData.get("id_back_name"),
-    passport_name: formData.get("passport_name"),
-    doc_name: formData.get("doc_name"),
   });
 
   const id = formData.get("groupId");
   const mid = formData.get("id") as string;
   const surname = "";
+  const kin_relationship = formData.get("kin_relationship") as string;
+  const kin_name = formData.get("kin_name") as string;
+  const kin_id = formData.get("kin_id") as string;
+  const kin_phone = formData.get("kin_phone") as string;
 
   const newIdNumber: bigint = BigInt(idNumber);
 
@@ -594,76 +582,19 @@ export async function updateMember(formData: FormData) {
     }
   }
 
-  // File logic
-  // const id_front_file = formData.get("id_front") as File;
-  // const id_back_file = formData.get("id_back") as File;
-  // const passport_file = formData.get("passport") as File;
-  // const doc_file = formData.get("doc") as File;
-
-  // const arrayBuffer1 = await id_front_file.arrayBuffer();
-  // const arrayBuffer2 = await id_back_file.arrayBuffer();
-  // const arrayBuffer3 = await passport_file.arrayBuffer();
-  // const arrayBuffer4 = await doc_file.arrayBuffer();
-
-  // const buffer = new Uint8Array(arrayBuffer1);
-  // const buffer2 = new Uint8Array(arrayBuffer2);
-  // const buffer3 = new Uint8Array(arrayBuffer3);
-  // const buffer4 = new Uint8Array(arrayBuffer4);
-
-  // let id_front = `id-front-${mid}-${id_front_file.name}`;
-  // let id_back = `id-back-${mid}-${id_back_file.name}`;
-  // let passport = `passport-${mid}-${passport_file.name}`;
-  // let doc = `doc-${mid}-${doc_file.name}`;
-
-  // if (id_front_file.name === "undefined") {
-  //   id_front = id_front_name;
-  // }
-
-  // if (id_back_file.name === "undefined") {
-  //   id_back = id_back_name;
-  // }
-
-  // if (passport_file.name === "undefined") {
-  //   passport = passport_name;
-  // }
-  // if (doc_file.name === "undefined") {
-  //   doc = doc_name;
-  // }
-
   try {
     await sql`
         UPDATE members
         SET idnumber = ${Number(
           idNumber,
-        )}, surname = ${surname}, firstname= ${firstName}, phone=${phone}, location = ${location}, nature = ${nature}
+        )}, surname = ${surname}, firstname= ${firstName}, phone=${phone}, nature = ${nature},
+        kin_relationship = ${kin_relationship}, kin_name=${kin_name}, kin_id=${kin_id}, kin_phone=${kin_phone} 
         WHERE id = ${mid}
       `;
   } catch (error) {
-    // We'll log the error to the console for now
     console.error(error);
     return { success: false, message: "Some error occured!" };
   }
-  // if (id_front_file.name !== "undefined") {
-  //   await fs.writeFile(
-  //     `./public/uploads/id-front-${mid}-${id_front_file.name}`,
-  //     buffer
-  //   );
-  // }
-  // if (id_back_file.name !== "undefined") {
-  //   await fs.writeFile(
-  //     `./public/uploads/id-back-${mid}-${id_back_file.name}`,
-  //     buffer2
-  //   );
-  // }
-  // if (passport_file.name !== "undefined") {
-  //   await fs.writeFile(
-  //     `./public/uploads/passport-${mid}-${passport_file.name}`,
-  //     buffer3
-  //   );
-  // }
-  // if (doc_file.name !== "undefined") {
-  //   await fs.writeFile(`./public/uploads/doc-${mid}-${doc_file.name}`, buffer4);
-  // }
   revalidatePath(`/dashboard/customers/${id}/details`);
   return { success: true, message: "Datails updated!" };
 }

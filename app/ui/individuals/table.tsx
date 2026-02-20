@@ -37,8 +37,7 @@ export default function InvoicesTable({
             {filtredIndividuals?.map((individual: any) => (
               <div
                 key={individual?.id}
-                className="mb-2 w-full rounded-md bg-white p-4"
-              >
+                className="mb-2 w-full rounded-md bg-white p-4">
                 <div className=" border-b pb-4">
                   <div>
                     <div className="mb-2 flex justify-between w-full">
@@ -98,8 +97,7 @@ export default function InvoicesTable({
               {filtredIndividuals?.map((individual: any) => (
                 <tr
                   key={individual.id}
-                  className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
-                >
+                  className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg">
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex items-center gap-3">
                       <p className="text-xs">{individual?.name}</p>
@@ -120,7 +118,11 @@ export default function InvoicesTable({
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex gap-4">
                       <AddFileModal member={individual} loanee="individual" />
-                      <MemberModal memberData={individual} loan={detailLoans} />
+                      <MemberModal
+                        memberData={individual}
+                        loan={detailLoans}
+                        group={{ name: "" }}
+                      />
                       <EditIndividual
                         individual={individual}
                         regions={regions}

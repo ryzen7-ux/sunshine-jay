@@ -7,9 +7,12 @@ import {
   Spinner,
   addToast,
   NumberInput,
+  Switch,
+  cn,
 } from "@heroui/react";
 import { updateMember, MembersState } from "@/app/lib/sun-actions";
-import { useState } from "react";
+import React, { useState } from "react";
+import MemberStatus from "@/app/ui/customers/status";
 
 export default function EditMemberForm({
   member,
@@ -19,12 +22,16 @@ export default function EditMemberForm({
   onClose: any;
 }) {
   const [isLoading, setIsLoading] = useState(false);
+  const [isSelected, setIsSelected] = useState(member?.status === "active");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
 
     const formData = new FormData(e.currentTarget);
+    const status = isSelected ? "active" : "inactive";
+    formData.append("status", status);
+
     const res = await updateMember(formData);
 
     if (res?.success === false) {
@@ -98,7 +105,8 @@ export default function EditMemberForm({
               <div
                 id="customer-error"
                 aria-live="polite"
-                aria-atomic="true"></div>
+                aria-atomic="true"
+              ></div>
             </div>
             <div className="w-full">
               <Input
@@ -116,7 +124,8 @@ export default function EditMemberForm({
               <div
                 id="customer-error"
                 aria-live="polite"
-                aria-atomic="true"></div>
+                aria-atomic="true"
+              ></div>
             </div>
             <div className="w-full ">
               <Input
@@ -133,7 +142,8 @@ export default function EditMemberForm({
               <div
                 id="customer-error"
                 aria-live="polite"
-                aria-atomic="true"></div>
+                aria-atomic="true"
+              ></div>
             </div>
           </div>
           <hr />
@@ -199,6 +209,48 @@ export default function EditMemberForm({
               />
             </div>
           </div>
+          <div className="w-full pt-6">
+            <Switch
+              size="lg"
+              color="success"
+              className="w-full"
+              classNames={{
+                base: cn(
+                  `inline-flex flex-row-reverse w-full max-w-xl ${isSelected ? "bg-green-100 hover:bg-green-200" : "bg-red-100 hover:bg-red-200"} items-center`,
+                  "justify-between cursor-pointer rounded-lg gap-2 p-4 border-2 border-danger",
+                  "data-[selected=true]:border-success",
+                ),
+                wrapper: "p-0 h-4 overflow-visible",
+                thumb: cn(
+                  "w-6 h-6 border-2 shadow-lg ",
+                  "border-danger",
+                  //selected
+                  "group-data-[selected=true]:ms-6 ",
+                  "group-data-[selected=true]:border-success",
+                  // pressed
+                  "group-data-[pressed=true]:w-7",
+                  "group-data-pressed:group-data-selected:ms-4",
+                ),
+              }}
+              isSelected={isSelected}
+              onValueChange={setIsSelected}
+            >
+              <div className="flex flex-col gap-1">
+                <div className="flex gap-2">
+                  {" "}
+                  <p
+                    className={`text-large ${isSelected ? "text-green-900" : "text-red-900"}`}
+                  >
+                    Member Status
+                  </p>
+                  <MemberStatus status={isSelected ? "active" : "inactive"} />
+                </div>
+                <p className="text-tiny text-default-600">
+                  Switch member status between Active and Inactive.
+                </p>
+              </div>
+            </Switch>
+          </div>
           <Input
             className="hidden"
             name="groupId"
@@ -212,7 +264,8 @@ export default function EditMemberForm({
               type="submit"
               color="success"
               className="w-full"
-              isDisabled={isLoading}>
+              isDisabled={isLoading}
+            >
               {isLoading ? <Spinner color="default" /> : "Edit"}
             </Button>
           </div>

@@ -530,8 +530,11 @@ export async function createMembers(formData: FormData) {
 
   const member = await fetchMemberByIdNumber(Number(idNumber));
 
-  if (member) {
-    return { success: false, message: "Member with that ID number exists" };
+  if (member && member.status === "active") {
+    return {
+      success: false,
+      message: "Active member with that ID number exists",
+    };
   }
 
   const date = new Date();
@@ -561,6 +564,7 @@ export async function updateMember(formData: FormData) {
     nature: formData.get("nature"),
   });
 
+  const status = formData.get("status") as string;
   const id = formData.get("groupId");
   const mid = formData.get("id") as string;
   const surname = "";
@@ -588,7 +592,8 @@ export async function updateMember(formData: FormData) {
         SET idnumber = ${Number(
           idNumber,
         )}, surname = ${surname}, firstname= ${firstName}, phone=${phone}, nature = ${nature},
-        kin_relationship = ${kin_relationship}, kin_name=${kin_name}, kin_id=${kin_id}, kin_phone=${kin_phone} 
+        kin_relationship = ${kin_relationship}, kin_name=${kin_name}, kin_id=${kin_id}, 
+        kin_phone=${kin_phone}, status= ${status} 
         WHERE id = ${mid}
       `;
   } catch (error) {

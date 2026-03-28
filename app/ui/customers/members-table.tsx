@@ -27,12 +27,14 @@ import { AddFileModal } from "@/app/ui/customers/add-file-modal";
 import LoanModal from "@/app/ui/customers/loan-modal";
 import { BanknotesIcon } from "@heroicons/react/20/solid";
 import { EditIcon, DeleteIcon, EyeIcon, File } from "lucide-react";
+import MemberStatus from "@/app/ui/customers/status";
 
 export const columns = [
   { name: "ID NO", uid: "idnumber" },
   { name: "NAME", uid: "firstname" },
   { name: "PHONE", uid: "phone" },
   { name: "BUSINESS", uid: "business" },
+  { name: "MEMBERSHIP STATUS", uid: "status" },
   { name: "ACTIONS", uid: "actions" },
 ];
 
@@ -82,6 +84,8 @@ export default function MembersTable({
             <p className="text-bold text-xs ">{member.nature}</p>
           </div>
         );
+      case "status":
+        return <MemberStatus status={member.status} />;
 
       case "actions":
         return (
@@ -92,7 +96,8 @@ export default function MembersTable({
                 onClick={() => {
                   setIsOpenLoan(true);
                   setMemberData(member);
-                }}>
+                }}
+              >
                 <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
                   <BanknotesIcon className="h-5 w-5 fill-blue-500" />
                 </span>
@@ -123,12 +128,14 @@ export default function MembersTable({
         isStriped
         aria-label="Example table with custom cells"
         color="success"
-        className="pb-12 mb-12">
+        className="pb-12 mb-12"
+      >
         <TableHeader columns={columns}>
           {(column) => (
             <TableColumn
               key={column.uid}
-              align={column.uid === "actions" ? "center" : "start"}>
+              align={column.uid === "actions" ? "center" : "start"}
+            >
               {column.name}
             </TableColumn>
           )}

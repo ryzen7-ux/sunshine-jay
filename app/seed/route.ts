@@ -159,7 +159,8 @@ async function seedMembers() {
       kin_relationship VARCHAR(5000),
       kin_name VARCHAR(5000),
       kin_id INT,
-      kin_phone
+      kin_phone,
+      status VARCHAR(255) NOT NULL DEFAULT 'active'
     );
   `;
 }

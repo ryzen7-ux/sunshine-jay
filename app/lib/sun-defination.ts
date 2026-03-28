@@ -57,6 +57,7 @@ export type MemberForm = {
   passport: string;
   doc: string;
   name: string;
+  status: string;
 };
 
 export type LoanForm = {

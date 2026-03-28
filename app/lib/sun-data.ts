@@ -472,7 +472,8 @@ export async function fetchMembers(id: string) {
         members.kin_relationship,
         members.kin_name,
         members.kin_id,
-        members.kin_phone
+        members.kin_phone,
+        members.status
       FROM members
       WHERE members.groupId = ${id}
       ORDER BY members.date DESC
@@ -557,14 +558,16 @@ export async function fetchMemberByIdNumber(mid: any) {
         members.id_back,
         members.passport,
         members.doc,
-                members.business_photo,
+        members.business_photo,
         members.kin_photo,
         members.kin_relationship,
         members.kin_name,
         members.kin_id,
-        members.kin_phone
+        members.kin_phone,
+        members.date,
+        members.status
       FROM members
-      WHERE members.idnumber = ${mid};
+      WHERE members.idnumber = ${mid} ORDER BY date DESC;
     `;
 
     return data[0];
@@ -881,7 +884,7 @@ export async function fetchDashboardCardData(query: string, region: any) {
 
     const membersCountPromise = sql`SELECT 
         COUNT(*) FROM members JOIN groups on groups.id::TEXT = members.groupid JOIN  regions ON regions.id
-        = groups.region WHERE region = ANY(${region})`;
+        = groups.region WHERE region = ANY(${region}) AND status = 'active'`;
     const loanStatusPromise = sql`SELECT
          SUM(CASE WHEN status = 'approved' THEN amount ELSE 0 END) AS "approved",
          SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS "pending",
@@ -1485,7 +1488,7 @@ export async function fectchGroupCardData(id: string) {
     const data = await sql<MembersTable[]>`
       SELECT COUNT(*) 
       FROM members
-      WHERE members.groupid = ${id}
+      WHERE members.groupid = ${id} AND members.status = 'active'
     `;
 
     return Number(data[0] ?? "0");
@@ -1623,7 +1626,7 @@ export async function fetchGroupCardData(
         SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END)
         FROM groupinvoice WHERE group_id = ${id}`;
     const totalMembersPromise = sql`SELECT 
-        COUNT(*) AS total FROM members WHERE groupid = ${id}`;
+        COUNT(*) AS total FROM members WHERE groupid = ${id} AND status = 'active'`;
     const collectedMpesaPromise = sql`SELECT 
         SUM(transamount) AS mpesa FROM mpesainvoice WHERE mpesainvoice.refnumber ILIKE ${`%${name}%`} 
         AND cycle = ANY(${cycleAllArayy})  `;

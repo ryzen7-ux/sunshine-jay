@@ -15,41 +15,30 @@ const months = [
   "Dec",
 ];
 
-function getLastFourMonthsIndexes() {
-  const monthIndexes = [];
-  const currentDate = new Date(); // Get the current date
+function getPastMonthsIndexes() {
+  const months = [];
+  const date = new Date(); // Current date
 
-  // Loop from the current month (i=0) to three months ago (i=3)
-  for (let i = 0; i < 5; i++) {
-    // Create a new Date object in each iteration to avoid modifying the original date for subsequent calculations
-    const date = new Date(currentDate);
-    // Set the month to the correct past month.
-    // JavaScript's setMonth handles negative values by wrapping to the previous year.
-    date.setMonth(date.getMonth() - i);
-
-    // Get the zero-based month index
-    const monthIndex = date.getMonth();
-
-    // Add to the beginning of the array so the result is ordered chronologically (oldest to newest)
-    // or to the end for reverse chronological order (newest to oldest)
-    monthIndexes.unshift(monthIndex);
+  for (let i = 0; i < 12; i++) {
+    // Subtract i months from the current date
+    const d = new Date(date.getFullYear(), date.getMonth() - i, 1);
+    const monthIdx = d.getMonth();
+    months.unshift(monthIdx);
   }
-
-  return monthIndexes;
+  return months;
 }
 
 function getIndex(arr: any, num: any) {
-  const index = arr?.indexOf(num);
-  return index;
+  return arr?.indexOf(num);
 }
 
-export async function fethcDashboarChartData(region: any) {
+export async function fetchDashboardChartData(region: any) {
   try {
-    const groupDisbursment = await sql`SELECT 
+    const groupDisbursement = await sql`SELECT 
     TO_CHAR(gs.month_start_date, 'MM') AS month,
     COALESCE(SUM(CASE WHEN status = 'approved' OR status = 'inactive' THEN amount ELSE 0 END), 0) AS total_amount,
     COALESCE(SUM(CEIL(CEIL(CASE WHEN status = 'approved' OR status = 'inactive' THEN amount ELSE 0 END / term + CASE WHEN status = 'approved' OR status = 'inactive' THEN amount ELSE 0 END * (interest/4/100)) * term)), 0) as total_loan
-FROM 
+                                        FROM 
     GENERATE_SERIES(
         DATE_TRUNC('month', NOW() - INTERVAL '4 months'), 
         DATE_TRUNC('month', NOW()), 
@@ -59,10 +48,10 @@ LEFT JOIN
     loans ot ON DATE_TRUNC('month', ot.date) = gs.month_start_date
 JOIN groups ON ot.groupid = groups.id JOIN regions ON regions.id
         = groups.region
-WHERE regions.id = ANY(${region})
-GROUP BY 
+                                        WHERE regions.id = ANY(${region})
+                                        GROUP BY 
     gs.month_start_date
-ORDER BY 
+                                        ORDER BY 
     gs.month_start_date`;
 
     const individualDisbursement = await sql`SELECT 
@@ -131,11 +120,11 @@ GROUP BY
 ORDER BY 
     gs.month_start_date`;
 
-    const last_five_months = getLastFourMonthsIndexes();
+    const last_five_months = getPastMonthsIndexes();
     const individuals_months = individualDisbursement.map(
       (item: any) => Number(item?.month) - 1,
     );
-    const groups_months = groupDisbursment.map(
+    const groups_months = groupDisbursement.map(
       (item: any) => Number(item?.month) - 1,
     );
     const paid_months = paid.map((item: any) => Number(item?.month) - 1);
@@ -143,20 +132,22 @@ ORDER BY
       (item: any) => Number(item?.month) - 1,
     );
 
-    const series = last_five_months.map((item: any, index: number) => {
+    // console.log(last_five_months);
+
+    return last_five_months.map((item: any, index: number) => {
       const includes_group = groups_months.includes(item);
       const includes_individual = individuals_months.includes(item);
       const includes_paid = paid_months.includes(item);
       const includes_individual_paid = paid_individuals_months.includes(item);
       const group_disbursed = includes_group
-        ? groupDisbursment[getIndex(groups_months, item)]?.total_amount
+        ? groupDisbursement[getIndex(groups_months, item)]?.total_amount
         : 0;
       const individual_disbursed = includes_individual
         ? individualDisbursement[getIndex(individuals_months, item)]
             ?.total_amount
         : 0;
       const group_loan = includes_group
-        ? groupDisbursment[getIndex(groups_months, item)]?.total_loan
+        ? groupDisbursement[getIndex(groups_months, item)]?.total_loan
         : 0;
       const individual_loan = includes_individual
         ? individualDisbursement[getIndex(individuals_months, item)]?.total_loan
@@ -176,8 +167,6 @@ ORDER BY
         paid: Number(paid_amount) + Number(paid_individual_amount),
       };
     });
-
-    return series;
   } catch (error) {
     console.log(error);
   }

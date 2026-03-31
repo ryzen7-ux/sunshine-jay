@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
   const firstName = res.FirstName ?? "";
   const middleName = res.MiddleName ?? "";
   const lastName = res.LastName ?? "";
-  const number = res.MSISDN ?? "";
+  const number: any = res.MSISDN ?? "";
 
   const year = parseInt(dateString.substring(0, 4));
   // Month is 0-indexed in JavaScript Date objects, so subtract 1
@@ -27,15 +27,18 @@ export async function POST(request: NextRequest) {
 
   const dt = DateTime.fromObject(
     { year, month, day, hour, minute },
-    { zone: "Africa/Nairobi" }
+    { zone: "Africa/Nairobi" },
   );
 
   const dateObject = dt.toISO();
 
   const num: any = await decodeMsisdnValue(number);
-  let phoneNumber = num?.msisdn ?? "null";
+  let phoneNumber: any = num?.msisdn ?? "null";
   if (phoneNumber === "null") {
     phoneNumber = number;
+    if (phoneNumber.length > 10) {
+      phoneNumber = "000000000000";
+    }
   }
   const cycle: any = 0;
   try {

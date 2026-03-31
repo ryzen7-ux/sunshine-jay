@@ -17,7 +17,7 @@ export default function RegionFilter({
     (x, i) => ({
       value: String(i),
       label: `Cycle ${i}`,
-    })
+    }),
   );
 
   const searchParams = useSearchParams();
@@ -38,29 +38,58 @@ export default function RegionFilter({
 
   return (
     <>
-      <div className=" w-full py-2">
-        <Select
-          size="sm"
-          variant="faded"
-          color="success"
-          className="w-full "
-          defaultSelectedKeys={[select]}
-          endContent={<HandCoins className="text-green-700" />}
-          placeholder="Regions"
-          description={`Change to view region data for both groups and indiviudal loanees`}
-          selectedKeys={[select]}
-          onChange={(e) => {
-            setSelect(e.target.value);
-            handleSearch(e.target.value);
-          }}
-        >
-          <SelectItem key="all">All Regions</SelectItem>
-          {selectRegions.map((item: any, index: any) => (
-            <SelectItem className={``} key={item.id}>
-              {item.name}
-            </SelectItem>
-          ))}
-        </Select>
+      <div className=" border border-green-500 p-2 rounded-md mb-3">
+        <h1 className="text-md font-bold">Region Filter</h1>
+        <div className="flex gap-2">
+          <div className=" w-full py-2">
+            <Select
+              size="sm"
+              variant="faded"
+              color="success"
+              className="w-full "
+              defaultSelectedKeys={[select]}
+              endContent={<HandCoins className="text-green-700" />}
+              placeholder="Regions"
+              description={`Change to view region data for both groups and indiviudal loanees`}
+              selectedKeys={[select]}
+              onChange={(e) => {
+                setSelect(e.target.value);
+                handleSearch(e.target.value);
+              }}
+            >
+              <SelectItem key="all">All Regions</SelectItem>
+              {selectRegions.map((item: any, index: any) => (
+                <SelectItem className={``} key={item.id}>
+                  {item.name}
+                </SelectItem>
+              ))}
+            </Select>
+          </div>{" "}
+          {/*<div className=" w-full py-2">*/}
+          {/*  <Select*/}
+          {/*    size="sm"*/}
+          {/*    variant="faded"*/}
+          {/*    color="success"*/}
+          {/*    className="w-full "*/}
+          {/*    defaultSelectedKeys={[select]}*/}
+          {/*    endContent={<HandCoins className="text-green-700" />}*/}
+          {/*    placeholder="Regions"*/}
+          {/*    description={`Change to view region data for both groups and indiviudal loanees`}*/}
+          {/*    selectedKeys={[select]}*/}
+          {/*    onChange={(e) => {*/}
+          {/*      setSelect(e.target.value);*/}
+          {/*      handleSearch(e.target.value);*/}
+          {/*    }}*/}
+          {/*  >*/}
+          {/*    <SelectItem key="all">All Regions</SelectItem>*/}
+          {/*    {selectRegions.map((item: any, index: any) => (*/}
+          {/*      <SelectItem className={``} key={item.id}>*/}
+          {/*        {item.name}*/}
+          {/*      </SelectItem>*/}
+          {/*    ))}*/}
+          {/*  </Select>*/}
+          {/*</div>*/}
+        </div>
       </div>
     </>
   );

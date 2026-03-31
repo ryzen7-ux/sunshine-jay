@@ -33,7 +33,7 @@ import { getSession } from "@/app/lib/session";
 import Regions from "@/app/ui/system-management/regions";
 import { map } from "zod";
 import { decodeMsisdnValue } from "@/app/lib/utils";
-import { fethcDashboarChartData } from "@/app/lib/analytics-data";
+import { fetchDashboardChartData } from "@/app/lib/analytics-data";
 import { RadixRevenueChart } from "@/app/ui/dashboard/radix-revenue-chart";
 
 const months = [
@@ -93,7 +93,7 @@ export default async function Page(props: {
 
   const groupLoansData = await fetchDashboardCardData(query, regionArr);
 
-  // const revenue = await fetchRevenue();
+  const revenue = await fetchRevenue();
 
   const maxCycle: any = await fetchDashboardMaxCycle();
 
@@ -113,7 +113,8 @@ export default async function Page(props: {
     individualsCycle = iQuery;
   }
 
-  const chartData = await fethcDashboarChartData(regionArr);
+  const chartData = await fetchDashboardChartData(regionArr);
+
   const latestInvoices = await fetchLatestMpesaInvoices(regionArr, isAdmin);
 
   return (
@@ -121,7 +122,8 @@ export default async function Page(props: {
       {" "}
       <main>
         <h1
-          className={`mb-4 text-xl md:text-xl flex gap-2 p-2 border rounded-md  `}>
+          className={`mb-4 text-xl md:text-xl flex gap-2 p-2 border rounded-md  `}
+        >
           <LayoutDashboard className="h-6 w-6 text-green-500" /> Dashboard
         </h1>
         <RegionFilter maxCycle={maxCycle} selectRegions={selectRegions} />

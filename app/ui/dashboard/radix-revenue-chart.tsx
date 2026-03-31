@@ -101,7 +101,7 @@ export function RadixRevenueChart({ charData }: { charData: any }) {
         <CardHeader>
           <CardTitle className="font-bold flex gap-2 items-center">
             <PieChart className="text-indigo-500 w-6 h-6" />
-            Loans Overview (Last 5 months)
+            Loans Overview (Last 12 months)
           </CardTitle>
           <CardDescription className=""></CardDescription>
         </CardHeader>

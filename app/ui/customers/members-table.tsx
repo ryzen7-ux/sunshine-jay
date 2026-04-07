@@ -109,7 +109,7 @@ export default function MembersTable({
             </>
 
             <Tooltip color="success" content="Edit member">
-              <EditMemberModal member={member} />
+              <EditMemberModal member={member} user={user} />
             </Tooltip>
 
             {user.role === "admin" && (

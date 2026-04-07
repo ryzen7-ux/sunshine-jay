@@ -11,7 +11,7 @@ import {
 } from "@heroui/react";
 import EditMemberForm from "./edit-member-form";
 
-export function EditMemberModal({ member }: { member: any }) {
+export function EditMemberModal({ member, user }: { member: any; user: any }) {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [isOpenLoan, setIsOpenLoan] = useState(false);
@@ -39,7 +39,7 @@ export function EditMemberModal({ member }: { member: any }) {
                 Edit Member Details
               </ModalHeader>
               <ModalBody>
-                <EditMemberForm member={member} onClose={onClose} />
+                <EditMemberForm member={member} onClose={onClose} user={user} />
               </ModalBody>
             </>
           )}

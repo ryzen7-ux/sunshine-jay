@@ -14,7 +14,7 @@ import {
   fetchMemberByIdNumber,
   fetchLoanById,
   fetchMaxCycle,
-} from "@/app/lib/sun-data";
+} from "@/app/lib/data/sun-data";
 import bcrypt from "bcryptjs";
 import { DateTime } from "luxon";
 
@@ -622,7 +622,7 @@ export async function deleteMember(id: string, gid: string) {
 }
 
 // LOANS
-export async function createLoan(formData: FormData) {
+export async function createLoan(formData: FormData, isGroup: any) {
   const validatedFields = CreateLoan.safeParse({
     group_id: formData.get("group_id"),
     member_id: formData.get("member_id"),
@@ -678,7 +678,13 @@ export async function createLoan(formData: FormData) {
         cycle,
       )}, ${newStartDate}, ${localDate}, ${Number(fee)})
     `;
-    revalidatePath(`/dashboard/loans`);
+    console.log(`/dashboard/customers/${group_id}/details`);
+    if (isGroup) {
+      revalidatePath(`/dashboard/customers/${group_id}/details`);
+    } else {
+      revalidatePath(`/dashboard/loans`);
+    }
+
     return { success: true, message: "Loan created successfully" };
   } catch (error) {
     console.log(error);

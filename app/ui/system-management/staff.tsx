@@ -24,7 +24,13 @@ import EditStaff from "@/app/ui/system-management/edit-staff";
 import { DeleteStaff } from "@/app/ui/system-management/buttons";
 import { boolean } from "zod";
 
-export default function Staff({ users }: { users: any }) {
+export default function Staff({
+  users,
+  currentUser,
+}: {
+  users: any;
+  currentUser: any;
+}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [res, setRes] = useState<{ success: boolean; message: string }>();
 
@@ -41,7 +47,7 @@ export default function Staff({ users }: { users: any }) {
             <div className="flex justify-between w-full">
               <div className="flex gap-3">
                 <Image
-                  alt="heroui logo"
+                  alt="user image"
                   height={50}
                   radius="sm"
                   src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTPyGNr2qL63Sfugk2Z1-KBEwMGOfycBribew&s"
@@ -55,7 +61,7 @@ export default function Staff({ users }: { users: any }) {
               </div>{" "}
               <div className="">
                 <EditStaff user={user} />
-                <DeleteStaff id={user.id} />
+                <DeleteStaff id={user.id} user={currentUser} />
               </div>
             </div>
           </CardHeader>
@@ -68,9 +74,16 @@ export default function Staff({ users }: { users: any }) {
                   {user?.role}
                 </Chip>
               </div>
-              <p className="text-small text-default-500">
-                Status: {user.status}
-              </p>
+              <div className="text-small text-default-500">
+                Status:{" "}
+                <Chip
+                  color={`${user?.status === "active" ? "success" : user?.status === "inactive" ? "danger" : "warning"}`}
+                  size="sm"
+                  variant="shadow"
+                >
+                  {user?.status}
+                </Chip>
+              </div>
               <p className="text-small text-default-500">Phone: {user.phone}</p>
             </div>
           </CardBody>

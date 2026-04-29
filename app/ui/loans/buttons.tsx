@@ -50,7 +50,8 @@ export function CreateInvoice({
       {" "}
       <button
         onClick={() => setIsAddModalOpen(true)}
-        className="flex h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+        className="flex h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+      >
         <span className="hidden md:block">New Loan</span>{" "}
         <PlusIcon className="h-5 md:ml-4" />
       </button>
@@ -62,7 +63,8 @@ export function CreateInvoice({
           handleDeleteParam();
         }}
         size="xl"
-        scrollBehavior="outside">
+        scrollBehavior="outside"
+      >
         <ModalContent>
           {(onClose) => (
             <>
@@ -84,18 +86,29 @@ export function CreateInvoice({
   );
 }
 
-export function UpdateLoan({ id, loan }: { id: string; loan: any }) {
+export function UpdateLoan({
+  id,
+  loan,
+  user,
+}: {
+  id: string;
+  loan: any;
+  user: any;
+}) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   return (
     <>
       {" "}
-      <Tooltip color="success" content="Edit Loan">
-        <button
-          onClick={() => setIsEditModalOpen(true)}
-          className="rounded-md border p-2 hover:bg-green-100">
-          <PencilIcon className="w-4 fill-green-500" />
-        </button>
+      <Tooltip color="secondary" content="Edit Loan">
+        <Button
+          size="sm"
+          onPress={() => setIsEditModalOpen(true)}
+          className="gap-0"
+          color="secondary"
+          startContent={<PencilIcon className="w-5" />}
+          isDisabled={user[0].role !== "admin"}
+        ></Button>
       </Tooltip>
       <Modal
         isOpen={isEditModalOpen}
@@ -103,8 +116,11 @@ export function UpdateLoan({ id, loan }: { id: string; loan: any }) {
         onClose={() => {
           setIsEditModalOpen(false);
         }}
-        size="xl"
-        scrollBehavior="outside">
+        size="2xl"
+        shadow="md"
+        placement="center"
+        scrollBehavior="outside"
+      >
         <ModalContent>
           {(onClose) => (
             <>
@@ -122,7 +138,7 @@ export function UpdateLoan({ id, loan }: { id: string; loan: any }) {
   );
 }
 
-export function DeleteLoan({ id }: { id: string }) {
+export function DeleteLoan({ id, user }: { id: string; user: any }) {
   const deleteLoanWithId = deleteLoan.bind(null, id);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [isDeleting, setIsDeleting] = useState(false);
@@ -151,19 +167,28 @@ export function DeleteLoan({ id }: { id: string }) {
   return (
     <>
       <Tooltip color="danger" content="Delete Loan Item">
-        <button
-          onClick={onOpen}
-          className="rounded-md border p-2 hover:bg-red-100">
+        <Button
+          onPress={onOpen}
+          className="gap-0"
+          size="sm"
+          color="danger"
+          startContent={<TrashIcon className="w-5" />}
+          isDisabled={user[0].name !== "henry-admin"}
+        >
           <span className="sr-only">Delete</span>
-          <TrashIcon className="w-4 fill-red-500" />
-        </button>
+        </Button>
       </Tooltip>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        size="2xl"
+        placement="center"
+      >
         <ModalContent>
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                <AlertTriangleIcon className="h-8 w-8 text-red-500" />
+                <AlertTriangleIcon className="h-8 w-8 text-red-800" />
               </ModalHeader>
               <ModalBody>
                 <p className="text-lg">
@@ -192,7 +217,8 @@ export function ProcessDisbursement() {
   return (
     <Link
       href="/dashboard/loans/process-disbursement"
-      className="flex h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+      className="flex h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+    >
       <span className="hidden md:block">Process Disbursement</span>{" "}
       <PlusIcon className="h-5 md:ml-4" />
     </Link>

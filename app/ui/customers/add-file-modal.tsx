@@ -21,9 +21,11 @@ import {
 export function AddFileModal({
   member,
   loanee,
+  user,
 }: {
   member: any;
   loanee: string;
+  user: any;
 }) {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
@@ -53,7 +55,8 @@ export function AddFileModal({
           setIsAddModalOpen(false);
         }}
         size="xl"
-        scrollBehavior="outside">
+        scrollBehavior="outside"
+      >
         <ModalContent>
           {(onClose) => (
             <>
@@ -66,6 +69,7 @@ export function AddFileModal({
               <ModalBody>
                 {/* <FilesForm member={member} onClose={onClose} loanee={loanee} /> */}
                 <FileUpload
+                  user={user}
                   userType={loanee}
                   fileUrl={member?.passport}
                   member={member}
@@ -78,6 +82,7 @@ export function AddFileModal({
                   onUploadComplete={handleUploadComplete}
                 />
                 <FileUpload
+                  user={user}
                   userType={loanee}
                   fileUrl={member?.id_front}
                   member={member}
@@ -90,6 +95,7 @@ export function AddFileModal({
                   onUploadComplete={handleUploadComplete}
                 />
                 <FileUpload
+                  user={user}
                   userType={loanee}
                   fileUrl={member?.id_back}
                   member={member}
@@ -102,6 +108,7 @@ export function AddFileModal({
                   onUploadComplete={handleUploadComplete}
                 />
                 <FileUpload
+                  user={user}
                   userType={loanee}
                   fileUrl={member?.doc}
                   member={member}
@@ -114,6 +121,7 @@ export function AddFileModal({
                   onUploadComplete={handleUploadComplete}
                 />
                 <FileUpload
+                  user={user}
                   userType={loanee}
                   fileUrl={member?.business_photo}
                   member={member}
@@ -126,6 +134,7 @@ export function AddFileModal({
                   onUploadComplete={handleUploadComplete}
                 />
                 <FileUpload
+                  user={user}
                   userType={loanee}
                   fileUrl={member?.kin_photo}
                   member={member}

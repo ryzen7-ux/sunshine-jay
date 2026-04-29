@@ -6,9 +6,11 @@ import { DeleteRegion } from "@/app/ui/system-management/delete-region";
 export default function Regions({
   users,
   regions,
+  currentUser,
 }: {
   users: any;
   regions: any;
+  currentUser: any;
 }) {
   return (
     <>
@@ -26,7 +28,7 @@ export default function Regions({
                   <Aperture className="h-5 w-5 text-green-700" />
                   <div className="flex">
                     <EditRegion users={users} region={region} />
-                    <DeleteRegion id={region.id} />
+                    <DeleteRegion id={region.id} currentUser={currentUser} />
                   </div>
                 </div>
                 <div className="flex flex-row items-center justify-between">

@@ -3,7 +3,7 @@ import {
   fetchGroupById,
   fetchMemberById,
   fetchLoanById,
-} from "@/app/lib/sun-data";
+} from "@/app/lib/data/sun-data";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import CardWrapper from "@/app/ui/customers/cards";

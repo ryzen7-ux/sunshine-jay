@@ -2,7 +2,7 @@
 
 import CreateLoan from "@/app/ui/loans/loan-from";
 import Breadcrumbs from "@/app/ui/invoices/breadcrumbs";
-import { fetchGroups, fetchGroupMembers } from "@/app/lib/sun-data";
+import { fetchGroups, fetchGroupMembers } from "@/app/lib/data/sun-data";
 
 export default async function Page(props: {
   searchParams?: Promise<{

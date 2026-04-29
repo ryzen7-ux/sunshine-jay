@@ -223,11 +223,11 @@ export default function GroupTable({
             </Tooltip>
 
             <Tooltip color="success" content="Edit group">
-              <EditGroupModal group={group} regions={regions} />
+              <EditGroupModal group={group} regions={regions} user={user} />
             </Tooltip>
             {user?.role === "admin" && (
               <Tooltip color="danger" content="Delete group info">
-                <DeleteGroupAction id={group.id} />
+                <DeleteGroupAction id={group.id} user={user} />
               </Tooltip>
             )}
           </div>

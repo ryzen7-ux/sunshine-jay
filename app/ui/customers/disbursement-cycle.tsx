@@ -30,11 +30,11 @@ export default function DisbursementCycle({ maxCycle }: { maxCycle: any }) {
 
   return (
     <>
-      <div className="py-4 w-full">
+      <div className="w-full bg-pink-700 pb-1.5 my-4 rounded-2xl">
         <Select
           size="sm"
           color="success"
-          className="w-full border border-green-500 rounded-md p-4 "
+          className=" bg-gray-300 rounded-xl py-4 px-2"
           defaultSelectedKeys={["cat"]}
           endContent={<HandCoins />}
           label="Disbursement Cycle"

@@ -11,7 +11,7 @@ export default function DisbursementCycle({ maxCycle }: { maxCycle: any }) {
     (x, i) => ({
       value: String(i),
       label: `Cycle ${i}`,
-    })
+    }),
   );
   cycles.push({ value: "all", label: "All" });
 
@@ -28,7 +28,7 @@ export default function DisbursementCycle({ maxCycle }: { maxCycle: any }) {
       params.delete("query");
     }
     replace(`${pathname}?${params.toString()}`);
-  }, 200);
+  }, 0);
   const [select, setSelect] = useState<any>("all");
 
   return (

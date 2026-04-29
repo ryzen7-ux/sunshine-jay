@@ -7,14 +7,23 @@ import {
   formatCurrency,
   formatCurrencyToLocal,
   formatPhoneNumber,
+  categorizeDate,
 } from "@/app/lib/utils";
-import { fetchFilteredInvoices } from "@/app/lib/data";
-import { fetchFilteredMpesaInvoices } from "@/app/lib/sun-data";
-import { fetchFilteredMpesaInvoices2 } from "@/app/lib/sun-data2";
+import { fetchFilteredInvoices } from "@/app/lib/data/data";
+import { fetchFilteredMpesaInvoices } from "@/app/lib/data/sun-data";
+import { fetchFilteredMpesaInvoices2 } from "@/app/lib/data/sun-data2";
 import EditMpesa from "@/app/ui/mpesa/edit-mpesa";
-import { Button } from "@heroui/react";
+import { Badge, Button, Chip } from "@heroui/react";
 import { Download } from "lucide-react";
 import { exportCvs } from "@/app/lib/cvs";
+import {
+  PhoneIcon,
+  UserIcon,
+  ClockIcon,
+  CalendarIcon,
+  DevicePhoneMobileIcon,
+} from "@heroicons/react/24/solid";
+import { invoices } from "@/app/lib/placeholder-data";
 
 export default function InvoicesTable({
   query,
@@ -31,6 +40,9 @@ export default function InvoicesTable({
   endDate: any;
   ginvoices: any;
 }) {
+  const isSuperAdmin = user.name === "henry-admin";
+
+  console.log(categorizeDate(ginvoices[0].transtime), ginvoices[0].transtime);
   if (!ginvoices || ginvoices.length === 0) {
     return (
       <div className="mt-6 text-center text-gray-500">
@@ -42,52 +54,91 @@ export default function InvoicesTable({
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">
-        <div className="rounded-lg bg-gray-200 p-2 md:pt-0">
+        <div className="rounded-lg  md:pt-0">
           <div className="md:hidden">
             {ginvoices?.map((invoice: any, index: any) => (
-              <div key={index} className="mb-2 w-full rounded-md bg-white p-4">
-                <div className="flex items-center justify-between border-b pb-4">
+              <div
+                key={index}
+                className="mb-2 w-full rounded-xl bg-gray-300 p-2 border-1.5 "
+              >
+                <div className="flex justify-between border-b border-green-600 pb-1">
                   <div>
-                    <div className="mb-2 flex items-center">
-                      <p className="text-sm font-bold uppercase">
-                        {invoice.refnumber}
-                      </p>
+                    <div className="flex gap-2 items-center">
+                      <UserIcon className="text-primary-600 h-10 w-10" />
+                      <div className="flex flex-col">
+                        <p className="text-sm font-bold uppercase">
+                          {invoice.refnumber}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          <span className="uppercase">
+                            {invoice.first_name}
+                          </span>
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex flex-col ">
+                      {" "}
+                      <Chip
+                        size="md"
+                        radius="sm"
+                        color="secondary"
+                        variant="light"
+                        startContent={
+                          <DevicePhoneMobileIcon className="h-4 w-4" />
+                        }
+                      >
+                        {formatPhoneNumber(invoice.phone_number)}
+                      </Chip>
+                      <Chip
+                        size="sm"
+                        radius="sm"
+                        color="secondary"
+                        variant="light"
+                        startContent={<CalendarIcon className="h-4 w-4" />}
+                      >
+                        {`${categorizeDate(invoice.transtime)}`}
+                      </Chip>
                     </div>
                   </div>
-                  <p className="text-sm text-green-500 font-extrabold">
-                    {invoice.transid}
-                  </p>
-                </div>
-                <div className="flex w-full items-center justify-between pt-4">
-                  <div>
-                    <p className="text-sm text-gray-500">
-                      <strong>Name:</strong>{" "}
-                      <span className="uppercase">{invoice.first_name}</span>
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      <strong>Cycle:</strong> {invoice.cycle}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      <strong>Phone:</strong>{" "}
-                      {formatPhoneNumber(invoice.phone_number)}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      <strong>Date:</strong>{" "}
+                  <div className="flex flex-col justify-end gap-2">
+                    <Chip
+                      className="flex w-full"
+                      size="md"
+                      radius="sm"
+                      color="secondary"
+                      variant="light"
+                      startContent={<ClockIcon className={" h-4 w-4"} />}
+                    >
                       {formatDateToLocal(invoice.transtime)}
+                    </Chip>
+                    <div className="flex justify-end w-full mb-2">
+                      <Chip
+                        className="text-xs"
+                        size="sm"
+                        color="secondary"
+                        variant="bordered"
+                      >
+                        {`Cycle: ${invoice.cycle}`}
+                      </Chip>
+                    </div>
+                    <p className="flex justify-end w-full text-xs font-extrabold text-purple-500">
+                      {invoice.transid}
                     </p>
-                    <p className="text-md font-extrabold text-green-600">
+                  </div>
+                </div>
+                <div className="flex w-full items-center justify-between pt-1.5">
+                  <div>
+                    <p className="text-lg font-extrabold text-emerald-700">
                       {formatCurrencyToLocal(invoice.transamount)}
                     </p>
                   </div>
-                  <div className="flex flex-col gap-4">
-                    {user?.role === "admin" && (
-                      <>
-                        {" "}
-                        <EditMpesa mpesa={invoice} />
-                        <DeleteInvoice id={invoice.id} />
-                      </>
-                    )}
-                  </div>
+                  {user?.role === "admin" && (
+                    <div className="flex gap-3 justify-end">
+                      {" "}
+                      <EditMpesa mpesa={invoice} user={user} />
+                      <DeleteInvoice id={invoice.id} user={user} />
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -122,7 +173,8 @@ export default function InvoicesTable({
               {ginvoices?.map((invoice: any, index: any) => (
                 <tr
                   key={index}
-                  className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg">
+                  className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
+                >
                   <td className="whitespace-nowrap py-1 pr-3 pl-2">
                     <div className="flex items-center gap-3">
                       <p className="text-xs">{invoice.refnumber}</p>
@@ -159,8 +211,8 @@ export default function InvoicesTable({
                     {user?.role === "admin" && (
                       <>
                         {" "}
-                        <EditMpesa mpesa={invoice} />
-                        <DeleteInvoice id={invoice.id} />
+                        <EditMpesa mpesa={invoice} user={user} />
+                        <DeleteInvoice id={invoice.id} user={user} />
                       </>
                     )}
                   </td>

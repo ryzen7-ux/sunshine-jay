@@ -5,6 +5,8 @@ import { useState } from "react";
 import { HandCoins } from "lucide-react";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
+import { Card } from "@/app/ui/radix-components/card";
+import { FunnelIcon } from "@heroicons/react/16/solid";
 
 export default function RegionFilter({
   maxCycle,
@@ -33,20 +35,23 @@ export default function RegionFilter({
       params.delete("regionQuery");
     }
     replace(`${pathname}?${params.toString()}`);
-  }, 200);
+  }, 0);
   const [select, setSelect] = useState<any>("all");
 
   return (
-    <>
-      <div className=" border border-green-500 p-2 rounded-md mb-3">
-        <h1 className="text-md font-bold">Region Filter</h1>
+    <div className="rounded-2xl  pb-1 bg-fuchsia-800 shadow-xl shadow-green-100 mb-4 mt-6">
+      <Card className="rounded-xl rounded-b-2xl bg-white dark:bg-slate-700 px-4 py-0 pt-2 dark:border-0">
+        <div className="flex items-center gap-2">
+          <FunnelIcon className="h-8 w-8 fill-amber-600" />
+          <h1 className="text-xl font-extrabold">REGIONS FILTER</h1>
+        </div>
         <div className="flex gap-2">
           <div className=" w-full py-2">
             <Select
               size="sm"
               variant="faded"
               color="success"
-              className="w-full "
+              className="w-full dark:dark "
               defaultSelectedKeys={[select]}
               endContent={<HandCoins className="text-green-700" />}
               placeholder="Regions"
@@ -57,7 +62,9 @@ export default function RegionFilter({
                 handleSearch(e.target.value);
               }}
             >
-              <SelectItem key="all">All Regions</SelectItem>
+              <SelectItem key="all" className="dark">
+                All Regions
+              </SelectItem>
               {selectRegions.map((item: any, index: any) => (
                 <SelectItem className={``} key={item.id}>
                   {item.name}
@@ -90,7 +97,7 @@ export default function RegionFilter({
           {/*  </Select>*/}
           {/*</div>*/}
         </div>
-      </div>
-    </>
+      </Card>
+    </div>
   );
 }

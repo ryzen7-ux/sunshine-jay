@@ -82,7 +82,7 @@ export default function LoanModal({
       return;
     }
     const formData = new FormData(e.currentTarget);
-    const res = await createLoan(formData);
+    const res = await createLoan(formData, true);
 
     if (res?.success === false) {
       setIsLoading(false);
@@ -121,28 +121,32 @@ export default function LoanModal({
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         size="xl"
-        scrollBehavior="outside">
+        scrollBehavior="outside"
+      >
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex justify-center">
-                Loan Application
+              <ModalHeader className="flex flex-col w-full gap-4 justify-center">
+                <p className="text-md font-extrabold uppercase">
+                  {" "}
+                  Loan Application
+                </p>
+                <div className="flex gap-4 items-center w-fulll ">
+                  <p className="">
+                    <strong>Borrower:</strong>{" "}
+                    <span className="text-sm">
+                      {memberData.firstname} {memberData.surname}
+                    </span>
+                  </p>
+                  <p className="">
+                    <strong>ID number:</strong>{" "}
+                    <span className="text-sm">{memberData.idnumber}</span>
+                  </p>
+                </div>
               </ModalHeader>
               <Divider />
               <ModalBody>
                 <form onSubmit={handleSubmit}>
-                  <div className="flex gap-4  items-center ">
-                    <p>
-                      <strong>Borrower:</strong>{" "}
-                      <span className="text-sm">
-                        {memberData.firstname} {memberData.surname}
-                      </span>
-                    </p>
-                    <p className="">
-                      <strong>ID number:</strong>{" "}
-                      <span className="text-sm">{memberData.idnumber}</span>
-                    </p>
-                  </div>
                   <input
                     type="hidden"
                     name="group_id"
@@ -174,7 +178,8 @@ export default function LoanModal({
                       <div
                         id="amount-error"
                         aria-live="polite"
-                        aria-atomic="true"></div>
+                        aria-atomic="true"
+                      ></div>
                     </div>
                     <div className="w-full">
                       <Input
@@ -216,7 +221,8 @@ export default function LoanModal({
                       <div
                         id="amount-error"
                         aria-live="polite"
-                        aria-atomic="true"></div>
+                        aria-atomic="true"
+                      ></div>
                     </div>
                     <div className="w-full">
                       <Input
@@ -242,7 +248,8 @@ export default function LoanModal({
                       <div
                         id="term-error"
                         aria-live="polite"
-                        aria-atomic="true"></div>
+                        aria-atomic="true"
+                      ></div>
                     </div>
                   </div>
                   <div className="flex flex-row gap-4 py-2">
@@ -344,33 +351,25 @@ export default function LoanModal({
                             type="radio"
                             value="pending"
                             className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"
+                            checked
+                            readOnly
+                            disabled
                           />
                           <label
                             htmlFor="pending"
-                            className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-600">
+                            className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-600"
+                          >
                             Pending <ClockIcon className="h-4 w-4" />
                           </label>
                         </div>
-                        <div className="flex items-center">
-                          <input
-                            id="approved"
-                            name="status"
-                            type="radio"
-                            value="approved"
-                            className="h-4 w-4 cursor-pointer border-gray-500 bg-gray-100 text-gray-600 focus:ring-2"
-                          />
-                          <label
-                            htmlFor="paid"
-                            className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-green-500 px-3 py-1.5 text-xs font-medium text-white">
-                            Approved <CheckIcon className="h-4 w-4" />
-                          </label>
-                        </div>
+                        <div className="flex items-center"></div>
                       </div>
                     </div>
                     <div
                       id="status-error"
                       aria-live="polite"
-                      aria-atomic="true"></div>
+                      aria-atomic="true"
+                    ></div>
                   </fieldset>
                   <div className="py-2">
                     <p className="text-xl py-2">Loan Summary</p>

@@ -1,6 +1,6 @@
 "use server";
 import { cookies } from "next/headers";
-import { fetchUserByEmail } from "./sun-data";
+import { fetchUserByEmail } from "./data/sun-data";
 import { deleteSession } from "@/app/lib/session";
 
 export async function getCurrentUser() {

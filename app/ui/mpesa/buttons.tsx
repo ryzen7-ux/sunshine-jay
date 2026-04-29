@@ -74,28 +74,16 @@ export function CreateInvoice({ user }: { user: any }) {
   );
 }
 
-export function UpdateInvoice({ id }: { id: string }) {
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-  return (
-    <Link
-      href={`/dashboard/invoices/${id}/edit`}
-      className="rounded-md border p-2 bg-green-100 hover:bg-green-200"
-    >
-      <PencilIcon className="w-5 text-green-500" />
-    </Link>
-  );
-}
-
-export function DeleteInvoice({ id }: { id: string }) {
+export function DeleteInvoice({ id, user }: { id: string; user: any }) {
   const [isDeleting, setIsDeleting] = useState(false);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const isSuperAdmin = user.name === "henry-admin";
 
   const handleDelete = async (e: React.FormEvent<HTMLFormElement>) => {
     setIsDeleting(true);
     e.preventDefault();
     const deleteInvoiceWithId = await deleteMpesaInvoice(id);
-    if (deleteInvoiceWithId.success === true) {
+    if (deleteInvoiceWithId.success) {
       setIsDeleting(false);
       addToast({
         color: "warning",
@@ -108,9 +96,10 @@ export function DeleteInvoice({ id }: { id: string }) {
   return (
     <>
       <Tooltip content="Delete transaction" color="danger" placement="bottom">
-        <button onClick={onOpen} className="">
-          <span className="sr-only">Delete</span>
-          <TrashIcon className="w-6 h-6 text-red-500" />
+        <button onClick={onOpen} className="" disabled={!isSuperAdmin}>
+          <TrashIcon
+            className={`w-6 h-6 ${isSuperAdmin ? "text-red-500" : "text-red-300"}`}
+          />
         </button>
       </Tooltip>
 

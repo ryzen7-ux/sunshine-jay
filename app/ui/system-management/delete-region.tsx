@@ -18,7 +18,13 @@ import {
 } from "@heroui/react";
 import { Trash2Icon, Trash2, Eye, Pen, AlertTriangleIcon } from "lucide-react";
 
-export function DeleteRegion({ id }: { id: string }) {
+export function DeleteRegion({
+  id,
+  currentUser,
+}: {
+  id: string;
+  currentUser: any;
+}) {
   const [isDelete, setIsDelete] = useState(false);
 
   const handleDelete = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -44,9 +50,15 @@ export function DeleteRegion({ id }: { id: string }) {
   return (
     <>
       <Tooltip color="danger" content="Delete Region">
-        <button onClick={onOpen} className="">
+        <button
+          onClick={onOpen}
+          className=""
+          disabled={currentUser?.name !== "henry-admin"}
+        >
           <span className="sr-only">Delete</span>
-          <TrashIcon className="w-4 fill-red-500" />
+          <TrashIcon
+            className={`w-4 ${currentUser?.name !== "henry-admin" ? "text-red-200" : "text-red-500"}`}
+          />
         </button>
       </Tooltip>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>

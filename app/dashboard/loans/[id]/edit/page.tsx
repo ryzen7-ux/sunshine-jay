@@ -1,8 +1,8 @@
 import Form from "@/app/ui/loans/edit-form";
 import Breadcrumbs from "@/app/ui/loans/breadcrumbs";
-import { fetchInvoiceById, fetchCustomers } from "@/app/lib/data";
+import { fetchInvoiceById, fetchCustomers } from "@/app/lib/data/data";
 import { notFound } from "next/navigation";
-import { fetchLoanByIdNew } from "@/app/lib/sun-data";
+import { fetchLoanByIdNew } from "@/app/lib/data/sun-data";
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;

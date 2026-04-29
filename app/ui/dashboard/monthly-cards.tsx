@@ -8,23 +8,26 @@ import {
   CalendarDaysIcon,
   CalendarIcon,
   CircleStackIcon,
+  CreditCardIcon,
 } from "@heroicons/react/24/solid";
 import { lusitana } from "@/app/ui/fonts";
-import { fetchCardData } from "@/app/lib/data";
+import { fetchCardData } from "@/app/lib/data/data";
 import {
   formatDateToLocal,
   formatCurrency,
   formatCurrencyToLocal,
 } from "@/app/lib/utils";
-import { fetchDashboardCardData } from "@/app/lib/sun-data";
+import { fetchDashboardCardData } from "@/app/lib/data/sun-data";
 import { select } from "@heroui/theme";
+import { Card as RadixCard } from "@/app/ui/radix-components/card";
+import { HandCoinsIcon } from "lucide-react";
 
 const iconMap = {
-  disbursed: ScaleIcon,
+  disbursed: HandCoinsIcon,
   collected: BanknotesIcon,
   customers: UsersIcon,
-  active: ClockIcon,
-  pending: CircleStackIcon,
+  active: ScaleIcon,
+  pending: CreditCardIcon,
 };
 
 interface tabsProps {
@@ -53,49 +56,54 @@ export default function MothlyCardWrapper({
       {/* NOTE: Uncomment this code in Chapter 9 */}
 
       <Card
-        title="Disbursed"
+        title="DISBURSED"
         value={monthlyDisbursement ?? 0}
         type="disbursed"
-        color="text-indigo-800"
+        color="text-indigo-600"
         span=""
         user={user}
         selected={select}
+        background="bg-indigo-700"
       />
       <Card
-        title="Paid"
+        title="PAID"
         value={Number(monthlyCollected) ?? 0}
         type="collected"
-        color="text-green-800"
+        color="text-rose-600"
         span=""
         user={user}
         selected={select}
+        background="bg-rose-700"
       />
       <Card
-        title="Loans"
+        title="LOANS"
         value={Number(monthlyTotalLoan ?? 0)}
         type="pending"
-        color="text-yellow-800"
+        color="text-orange-600"
         span=""
         user={user}
         selected={select}
+        background="bg-orange-700"
       />
       <Card
-        title={`Cycle: ${groupCycle} ~ Loan Balance`}
+        title={`LOAN BALANCE`}
         value={monthlyLoanBalance ?? 0}
         type="active"
-        color="text-indigo-800 "
+        color="text-teal-600"
         span=""
         user={user}
         selected={select}
+        background="bg-teal-700"
       />
       <Card
-        title="Total Loanees"
+        title="TOTAL LOANEES"
         value={numberOfMembers ?? 0}
         type="customers"
-        color="text-pink-800"
+        color="text-pink-600"
         span="col-span-2 md:col-span-2"
         user={user}
         selected={select}
+        background="bg-pink-700"
       />
     </>
   );
@@ -109,6 +117,7 @@ export function Card({
   span,
   user,
   selected,
+  background,
 }: {
   title: string;
   value: number;
@@ -117,21 +126,26 @@ export function Card({
   span: string;
   user: any;
   selected: any;
+  background: string;
 }) {
   const Icon = iconMap[type];
 
   return (
-    <div className={`ring-2 ring-blue-700 rounded-xl bg-gray-50  ${span}`}>
-      <div className="flex p-2">
-        {Icon ? <Icon className={`h-6 w-6 ${color}`} /> : null}
-        <h3 className="ml-2 text-sm font-medium">{title}</h3>
-      </div>
-      <p
-        className={`
-          truncate rounded-b-xl bg-white px-2 py-2 text-center text-green-600 text-sm font-black`}
+    <div className={`rounded-3xl pl-1.5 ${background} ${span} `}>
+      <RadixCard
+        className={`rounded-2xl rounded-b-2xl bg-gray-300 py-0 border-0`}
       >
-        {type === "customers" ? value ?? 0 : formatCurrencyToLocal(value)}
-      </p>
+        <div className="flex items-center p-2">
+          {Icon ? <Icon className={`h-6 w-6 ${color}`} /> : null}
+          <h3 className="ml-2 text-xs font-extrabold">{title}</h3>
+        </div>
+        <p
+          className={`
+          truncate pb-1.5 text-center justify-center text-green-800 text-sm font-black`}
+        >
+          {type === "customers" ? (value ?? 0) : formatCurrencyToLocal(value)}
+        </p>
+      </RadixCard>
     </div>
   );
 }

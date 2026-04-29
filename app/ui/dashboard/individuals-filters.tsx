@@ -17,7 +17,7 @@ export default function IndividualFilters({
     (x, i) => ({
       value: String(i),
       label: `Cycle ${i}`,
-    })
+    }),
   );
   cycles.push({ value: "all", label: "All" });
 
@@ -34,7 +34,7 @@ export default function IndividualFilters({
       params.delete("Iquery");
     }
     replace(`${pathname}?${params.toString()}`);
-  }, 200);
+  }, 0);
   const [select, setSelect] = useState<any>("all");
 
   return (

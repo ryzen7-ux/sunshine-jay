@@ -43,7 +43,7 @@ export function UpdateLoan({ id }: { id: string }) {
   );
 }
 
-export function DeleteStaff({ id }: { id: string }) {
+export function DeleteStaff({ id, user }: { id: string; user: any }) {
   const [isDelete, setIsDelete] = useState(false);
 
   const handleDelete = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -66,12 +66,19 @@ export function DeleteStaff({ id }: { id: string }) {
     }
   };
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  console.log(user);
   return (
     <>
       <Tooltip color="danger" content="Delete Loan Item">
-        <button onClick={onOpen} className="">
+        <button
+          onClick={onOpen}
+          className=""
+          disabled={user?.name !== "henry-admin"}
+        >
           <span className="sr-only">Delete</span>
-          <TrashIcon className="w-4 fill-red-500" />
+          <TrashIcon
+            className={`w-4 ${user?.name !== "henry-admin" ? "text-red-200" : "text-red-500"}`}
+          />
         </button>
       </Tooltip>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>

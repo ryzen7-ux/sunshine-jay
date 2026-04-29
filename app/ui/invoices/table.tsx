@@ -6,8 +6,8 @@ import {
   formatCurrency,
   formatCurrencyToLocal,
 } from "@/app/lib/utils";
-import { fetchFilteredInvoices } from "@/app/lib/data";
-import { fetchFilteredGroupInvoices } from "@/app/lib/sun-data";
+import { fetchFilteredInvoices } from "@/app/lib/data/data";
+import { fetchFilteredGroupInvoices } from "@/app/lib/data/sun-data";
 
 export default async function InvoicesTable({
   query,

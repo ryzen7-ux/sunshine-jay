@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { UpdateLoan, DeleteLoan } from "@/app/ui/loans/buttons";
 import InvoiceStatus from "@/app/ui/loans/status";
@@ -5,13 +7,26 @@ import {
   formatDateToLocal,
   formatCurrency,
   formatCurrencyToLocal,
+  formatPhoneNumber,
+  categorizeDate,
+  formatPercentage,
 } from "@/app/lib/utils";
-import { fetchFilteredInvoices } from "@/app/lib/data";
-import { fetchFilteredLoans } from "@/app/lib/sun-data";
-import { fetchFilteredLoans2 } from "@/app/lib/sun-data2";
-import { Tooltip } from "@heroui/react";
+import { fetchFilteredInvoices } from "@/app/lib/data/data";
+import { fetchFilteredLoans } from "@/app/lib/data/sun-data";
+import { fetchFilteredLoans2 } from "@/app/lib/data/sun-data2";
+import { Chip, Tooltip } from "@heroui/react";
+import {
+  CalendarIcon,
+  ClockIcon,
+  DevicePhoneMobileIcon,
+  UserIcon,
+} from "@heroicons/react/24/solid";
+import EditMpesa from "@/app/ui/mpesa/edit-mpesa";
+import { DeleteInvoice } from "@/app/ui/mpesa/buttons";
+import { CalendarArrowDownIcon, CalendarArrowUpIcon } from "lucide-react";
+import { LoansHeroTable } from "@/app/ui/loans/loans-table";
 
-export default async function InvoicesTable({
+export default function InvoicesTable({
   query,
   currentPage,
   loan,
@@ -27,182 +42,124 @@ export default async function InvoicesTable({
   const isAdmin: any = user[0].role === "admin";
 
   return (
-    <div className="mt-6 ">
+    <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">
-        <div className="rounded-lg bg-gray-100 p-2 md:pt-0">
+        <div className="rounded-lg bg-gray-100 p-2 md:pt-0 w-full">
           <div className="md:hidden">
-            {loans?.map((loan: any) => (
+            {loans?.map((loan: any, index: any) => (
               <div
-                key={loan.id}
-                className="mb-2 w-full rounded-md bg-white p-4">
-                <div className="border-b pb-4 w-full">
+                key={index}
+                className="mb-2 w-full rounded-xl bg-gray-300 p-2 border-1.5 "
+              >
+                <div className="flex justify-between border-b border-green-600 pb-1">
                   <div>
-                    <div className="mb-2 flex items-center justify-between w-full">
-                      <p className="uppercase font-bold text-sm">
-                        {loan.firstname} {loan.surname}
-                      </p>
-                      <div className="flex gap-2 items-center">
-                        <p className="text-xs">
-                          {formatDateToLocal(loan.date)}
+                    <div className="flex gap-2 items-center">
+                      <UserIcon className="text-success-600 h-10 w-10" />
+                      <div className="flex flex-col">
+                        <p className="text-sm font-bold uppercase">
+                          {loan.firstname} {loan.surname}
                         </p>
-                        <InvoiceStatus status={loan.status} />
+                        <p className="text-sm text-gray-500">
+                          <span className="uppercase">{loan.name}</span>
+                        </p>
                       </div>
                     </div>
-                    <p className="text-sm text-gray-500 uppercase">
-                      <strong>Group:</strong> {loan.name}
-                    </p>
-                    {/* <p className="text-sm text-gray-500">{loan.loanid}</p> */}
-                    <p className="text-sm text-gray-500">
-                      <strong>Start Date: </strong>
-                      {formatDateToLocal(loan.start_date) ?? "Nill"}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      <strong>End Date:</strong>{" "}
-                      {formatDateToLocal(loan.end_date) ?? "Nill"}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      <strong>Cycle:</strong> {loan.cycle ?? 0}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      <strong>Term:</strong> {Math.trunc(loan.term) ?? 0} weeks
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      <strong>Interest:</strong> {loan.interest ?? 0} %
+                    <div className="flex flex-col ">
+                      {" "}
+                      <Chip
+                        size="sm"
+                        radius="sm"
+                        color="secondary"
+                        variant="light"
+                        startContent={
+                          <CalendarArrowUpIcon className="h-4 w-4" />
+                        }
+                      >
+                        Start - {formatDateToLocal(loan.start_date) ?? "Nill"}
+                      </Chip>
+                      <Chip
+                        size="sm"
+                        radius="sm"
+                        color="secondary"
+                        variant="light"
+                        startContent={
+                          <CalendarArrowDownIcon className="h-4 w-4" />
+                        }
+                      >
+                        End - {formatDateToLocal(loan.end_date) ?? "Nill"}
+                      </Chip>
+                    </div>
+                  </div>
+                  <div className="flex flex-col justify-end gap-2">
+                    <Chip
+                      className="flex w-full"
+                      size="md"
+                      radius="sm"
+                      color="secondary"
+                      variant="light"
+                      startContent={<ClockIcon className={" h-4 w-4"} />}
+                    >
+                      {formatDateToLocal(loan.date)}
+                    </Chip>
+                    <div className="flex justify-end w-full mb-2">
+                      <Chip
+                        className="text-xs"
+                        size="sm"
+                        color="secondary"
+                        variant="bordered"
+                      >
+                        {`Cycle: ${loan.cycle}`}
+                      </Chip>
+                    </div>
+                    <p className="flex justify-end w-full text-xs font-extrabold text-purple-500">
+                      {" "}
+                      <InvoiceStatus status={loan.status} />
                     </p>
                   </div>
                 </div>
-                <div className="flex w-full items-center justify-between pt-4">
-                  <div>
-                    <p className="text-sm font-bold text-gray-500">
-                      Processing Fee and Charges:{" "}
-                      {formatCurrencyToLocal(Number(loan.fee))}
-                    </p>
-                    <p className="text-sm font-bold text-gray-500">
-                      Principal: {formatCurrencyToLocal(Number(loan.amount))}
-                    </p>
-                    <p className="text-sm font-bold text-gray-500">
+                <div className="flex w-full items-center justify-between pt-1.5">
+                  <div className="flex flex-col gap-1.5">
+                    <Chip color="success" size="md" variant="flat">
+                      Fee: {formatCurrencyToLocal(Number(loan.fee))}
+                    </Chip>
+                    <Chip color="success" size="md" variant="flat">
+                      Principle: {formatCurrencyToLocal(Number(loan.amount))}
+                    </Chip>
+                    <Chip color="success" size="md" variant="flat">
                       Loan Amount: {formatCurrencyToLocal(Number(loan.total))}
-                    </p>
+                    </Chip>
 
-                    <p className="text-sm font-bold text-green-500">
-                      Total:{" "}
+                    <p className="text-lg font-extrabold text-emerald-700">
+                      TOTAL:{" "}
                       {formatCurrencyToLocal(
                         Number(loan.total) + Number(loan.fee),
                       )}
                     </p>
                   </div>
-                  <div className="flex justify-end gap-2">
-                    <UpdateLoan id={loan.id} loan={loan} />
-                    {isAdmin && <DeleteLoan id={loan.id} />}
+                  <div className="flex flex-col gap-4">
+                    <Chip color="success" size="md" variant="flat">
+                      Term: {Math.trunc(loan.term) ?? 0} weeks
+                    </Chip>
+                    <Chip color="success" size="md" variant="flat">
+                      Interest:{" "}
+                      {formatPercentage.format(
+                        Math.trunc(Number(loan.interest ?? 0)) / 100,
+                      )}
+                    </Chip>
+
+                    <div className="flex gap-3 justify-end">
+                      {" "}
+                      <UpdateLoan id={loan.id} loan={loan} user={user} />
+                      <DeleteLoan id={loan.id} user={user} />
+                    </div>
                   </div>
                 </div>
               </div>
             ))}
           </div>
-          <table className="hidden min-w-full text-gray-900 md:table">
-            <thead className="rounded-lg text-left text-sm font-normal">
-              <tr>
-                <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                  Borrower
-                </th>
-                <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                  Group
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  Amount
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  Fee
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  Loan
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  Total
-                </th>
-
-                <th scope="col" className="px-3 py-5 font-medium">
-                  Cycle
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  Rate
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  Status
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  Start Date
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  End Date
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  Created
-                </th>
-                <th scope="col" className=" py-3 pl-6 pr-3">
-                  <span className="sr-only">Edit</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white">
-              {loans?.map((loan: any) => (
-                <tr
-                  key={loan.id}
-                  className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg">
-                  <td className="whitespace-nowrap py-3 pl-6 pr-3">
-                    <div className="flex items-center gap-3">
-                      <p className="text-xs">
-                        {loan.firstname} {loan.surname}
-                      </p>
-                    </div>
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-3 text-xs uppercase ">
-                    {loan.name}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-3 text-xs">
-                    {formatCurrencyToLocal(Number(loan.amount))}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-3 text-xs">
-                    {formatCurrencyToLocal(Number(loan.fee))}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-3 text-xs">
-                    {formatCurrencyToLocal(Number(loan.total))}
-                  </td>
-
-                  <td className="whitespace-nowrap px-3 py-3 text-xs">
-                    {formatCurrencyToLocal(
-                      Number(loan.total) + Number(loan.fee),
-                    )}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-3 text-xs">
-                    {loan?.cycle ?? 0}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-3 text-xs">
-                    {loan.interest} %
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-3">
-                    <InvoiceStatus status={loan.status} />
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-3 text-xs">
-                    {formatDateToLocal(loan.start_date) ?? "Nil"}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-3 text-xs">
-                    {formatDateToLocal(loan.end_date) ?? "Nil"}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-3 text-xs">
-                    {formatDateToLocal(loan.date)}
-                  </td>
-
-                  <td className="whitespace-nowrap py-3 pl-6 pr-3">
-                    <div className="flex justify-end gap-3">
-                      {isAdmin && <UpdateLoan id={loan.id} loan={loan} />}
-                      {isAdmin && <DeleteLoan id={loan.id} />}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="overflow-x-auto hidden md:block">
+            <LoansHeroTable loan={loans} user={user} />
+          </div>
         </div>
       </div>
       <div>

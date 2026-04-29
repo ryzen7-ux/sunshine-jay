@@ -17,7 +17,7 @@ import {
   fetchIndividualsCardsData,
   fetchIndividualsMaxCycle,
   fetchUserByEmail,
-} from "@/app/lib/sun-data";
+} from "@/app/lib/data/sun-data";
 import { getCurrentUser } from "@/app/lib/current-user";
 import Table from "@/app/ui/individuals/table";
 import LoansTable from "@/app/ui/individuals/loans-table";

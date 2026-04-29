@@ -56,22 +56,25 @@ export const formatDateToLocal = (
   dateStr: string,
   locale: string = "en-US",
 ) => {
-  const date = new Date(dateStr);
-  const options: Intl.DateTimeFormatOptions = {
-    timeZone: "Africa/Nairobi",
-    minute: "numeric",
-    hour: "numeric",
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  };
-  const formatter = new Intl.DateTimeFormat(locale, options);
-  return formatter?.format(date);
+  if (dateStr) {
+    const date = new Date(dateStr);
+    const options: Intl.DateTimeFormatOptions = {
+      timeZone: "Africa/Nairobi",
+      minute: "numeric",
+      hour: "numeric",
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    };
+    const formatter = new Intl.DateTimeFormat(locale, options);
+    return formatter?.format(date);
+  }
+  return "No date";
 };
 
 export const generateYAxis = (revenue: Revenue[]) => {
   // Calculate what labels we need to display on the y-axis
-  // based on highest record and in 1000s
+  // based on highest record and in the 1000s
   const yAxisLabels = [];
   const highestRecord = Math.max(...revenue.map((month) => month.revenue));
   const topLabel = Math.ceil(highestRecord / 1000) * 1000;
@@ -169,3 +172,38 @@ export const computeTotalLoan = (
   const payment = Math.ceil(wpay * term);
   return Math.trunc(payment);
 };
+
+export const categorizeDate = (dateToCompare: any) => {
+  const itemDate = new Date(dateToCompare);
+  const today = new Date();
+
+  // Calculate Yesterday
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1); // Automatically handles month/year rollovers
+
+  // Calculate Last Week (7 days ago)
+  const lastWeek = new Date(today);
+  lastWeek.setDate(today.getDate() - 7);
+
+  // Compare using toDateString() for exact days
+  if (itemDate.toDateString() === today.toDateString()) {
+    return "Today";
+  } else if (itemDate.toDateString() === yesterday.toDateString()) {
+    return "Yesterday";
+  } else if (itemDate > lastWeek) {
+    return "Past days";
+  } else if (
+    itemDate.getMonth() === today.getMonth() &&
+    itemDate.getFullYear() === today.getFullYear()
+  ) {
+    return "This Month";
+  } else {
+    return "Older";
+  }
+};
+
+export const formatPercentage = new Intl.NumberFormat("en-US", {
+  style: "percent",
+  minimumFractionDigits: 2, // Optional: forces 2 decimal places
+  maximumFractionDigits: 2, // Optional: limits to 2 decimal places
+});

@@ -8,9 +8,7 @@ import {
   CircleStackIcon,
   DocumentChartBarIcon,
 } from "@heroicons/react/24/solid";
-import { lusitana } from "@/app/ui/fonts";
-import { fetchCardData } from "@/app/lib/data";
-import { fectchGroupCardData, fetchGroupCardData } from "@/app/lib/sun-data";
+import { Card as RadixCard } from "@/app/ui/radix-components/card";
 
 const iconMap = {
   disbursed: ScaleIcon,
@@ -41,43 +39,41 @@ export default async function CardWrapper({
         title="Disbursed"
         value={groupDisbusredAmount}
         type="disbursed"
-        color="text-blue-800"
+        color="text-blue-600"
         span=""
+        background="bg-blue-700"
       />
       <Card
         title="Collected"
         value={totalMpesa}
         type="collected"
-        color="text-green-800"
+        color="text-green-600"
         span=""
+        background="bg-green-700"
       />
       <Card
         title="Total Loans"
         value={totalPayment}
         type="totalLoan"
-        color="text-pink-800"
+        color="text-pink-600"
         span=""
+        background="bg-pink-700"
       />
       <Card
         title="Loan Balance"
         value={balance}
         type="loanBalance"
-        color="text-cyan-800"
+        color="text-cyan-600"
         span="col-span-1 md:col-span-2"
+        background="bg-cyan-700"
       />
-      {/* <Card
-        title="Pending Payments"
-        value={groupPendingPayments}
-        type="pending"
-        color="text-yellow-800"
-        span="col-span-1 md:col-span-2"
-      /> */}
       <Card
         title="Total Members"
         value={totalMembers}
         type="total"
-        color="text-indigo-800"
+        color="text-indigo-600"
         span="col-span-1 md:col-span-1"
+        background="bg-indigo-700"
       />
     </>
   );
@@ -89,6 +85,7 @@ export function Card({
   type,
   color,
   span,
+  background,
 }: {
   title: string;
   value: number | string;
@@ -101,21 +98,26 @@ export function Card({
     | "total";
   color: string;
   span: string;
+  background: string;
 }) {
   const Icon = iconMap[type];
 
   return (
-    <div className={`ring-2 ring-green-700 rounded-xl bg-gray-50  ${span}`}>
-      <div className="flex p-4">
-        {Icon ? <Icon className={`h-6 w-6 ${color}`} /> : null}
-        <h3 className="ml-2 text-sm font-medium">{title}</h3>
-      </div>
-      <p
-        className={`
-          truncate rounded-b-xl bg-white px-4 py-2 text-center text-gray-600 text-lg font-black`}
+    <div className={`rounded-3xl pl-1.5  ${background}  ${span}`}>
+      <RadixCard
+        className={`rounded-2xl rounded-b-2xl bg-gray-300 py-0 border-0`}
       >
-        {value}
-      </p>
+        <div className="flex p-4">
+          {Icon ? <Icon className={`h-6 w-6 ${color}`} /> : null}
+          <h3 className="ml-2 text-sm font-medium">{title}</h3>
+        </div>
+        <p
+          className={`
+          truncate rounded-b-xl  px-4 py-2 text-center text-green-800 text-lg font-black`}
+        >
+          {value}
+        </p>
+      </RadixCard>
     </div>
   );
 }

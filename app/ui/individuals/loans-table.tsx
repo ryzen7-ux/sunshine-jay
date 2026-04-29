@@ -6,13 +6,13 @@ import {
   formatCurrency,
   formatCurrencyToLocal,
 } from "@/app/lib/utils";
-import { fetchFilteredInvoices } from "@/app/lib/data";
+import { fetchFilteredInvoices } from "@/app/lib/data/data";
 import {
   fetchFilteredIndividuals,
   fetchRegions,
   fetchIndividuals,
   fetchFilteredIndividualLoans,
-} from "@/app/lib/sun-data";
+} from "@/app/lib/data/sun-data";
 import { Tooltip } from "@heroui/react";
 import EditLoan from "@/app/ui/individuals/edit-loan";
 import DeleteIndividualLoan from "@/app/ui/individuals/delete-loan";
@@ -83,7 +83,7 @@ export default function LoansTable({
                         <p className="text-md font-bold">
                           Total Loan:{" "}
                           {formatCurrencyToLocal(
-                            individual.payment + individual.fee
+                            individual.payment + individual.fee,
                           )}
                         </p>
                         <p className="pt-2">

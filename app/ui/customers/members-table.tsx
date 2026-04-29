@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Table,
   TableHeader,
@@ -28,6 +28,7 @@ import LoanModal from "@/app/ui/customers/loan-modal";
 import { BanknotesIcon } from "@heroicons/react/20/solid";
 import { EditIcon, DeleteIcon, EyeIcon, File } from "lucide-react";
 import MemberStatus from "@/app/ui/customers/status";
+import { loans } from "@/app/lib/placeholder-data";
 
 export const columns = [
   { name: "ID NO", uid: "idnumber" },
@@ -55,11 +56,18 @@ export default function MembersTable({
   loan: any;
   user: any;
 }) {
+  const [isAddModalOpen, setIsAddModalOpen] = React.useState(false);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [isOpenLoan, setIsOpenLoan] = React.useState(false);
+  const [memberLoan, setMemberLoan] = React.useState([]);
+  const [modalMember, setModalMember] = React.useState(null);
 
   const [memberData, setMemberData] = React.useState({});
 
+  useEffect(() => {
+    setMemberLoan(loan);
+  }, [loan]);
+  console.log(memberLoan);
   const renderCell = React.useCallback((member: any, columnKey: any) => {
     const cellValue = member[columnKey];
 
@@ -85,12 +93,16 @@ export default function MembersTable({
           </div>
         );
       case "status":
-        return <MemberStatus status={member.status} />;
+        return (
+          <>
+            <MemberStatus status={member.status} />
+          </>
+        );
 
       case "actions":
         return (
           <div className="relative flex justify-center gap-4">
-            <AddFileModal member={member} loanee="member" />
+            <AddFileModal member={member} loanee="member" user={user} />
             <Tooltip color="primary" content="New loan">
               <button
                 onClick={() => {
@@ -104,8 +116,18 @@ export default function MembersTable({
               </button>
             </Tooltip>
             <>
-              {" "}
-              <MemberModal memberData={member} loan={loan} group={group} />
+              <Tooltip color="warning" content="Member Details">
+                <button
+                  onClick={() => {
+                    setModalMember(member);
+                    setIsAddModalOpen(true);
+                  }}
+                >
+                  <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                    <EyeIcon className="h-6 w-6 text-yellow-500" />
+                  </span>
+                </button>
+              </Tooltip>
             </>
 
             <Tooltip color="success" content="Edit member">
@@ -113,7 +135,7 @@ export default function MembersTable({
             </Tooltip>
 
             {user.role === "admin" && (
-              <DeleteMemberAction id={member.id} gid={group.id} />
+              <DeleteMemberAction id={member.id} gid={group.id} user={user} />
             )}
           </div>
         );
@@ -159,6 +181,13 @@ export default function MembersTable({
         onOpenChange={setIsOpenLoan}
         memberData={memberData}
         onClose={onClose}
+      />
+      <MemberModal
+        memberData={modalMember}
+        loan={memberLoan}
+        group={group}
+        isAddModalOpen={isAddModalOpen}
+        setIsAddModalOpen={setIsAddModalOpen}
       />
     </>
   );

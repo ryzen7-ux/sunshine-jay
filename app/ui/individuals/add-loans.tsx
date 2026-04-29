@@ -31,7 +31,7 @@ import { useDebouncedCallback } from "use-debounce";
 import { formatCurrencyToLocal, formatDateToLocal } from "@/app/lib/utils";
 import { Cuboid } from "lucide-react";
 import { now, getLocalTimeZone, parseDate } from "@internationalized/date";
-import { fetchIndividualsMaxCycle } from "@/app/lib/sun-data";
+import { fetchIndividualsMaxCycle } from "@/app/lib/data/sun-data";
 
 const roles = [
   { key: "admin", label: "Admin" },
@@ -71,10 +71,10 @@ export default function AddLoan({
   const [term, setTerm] = useState<number>(0);
   const [fee, setFee] = useState<number>(0);
   const [endDate, setEndDate] = useState<any>(
-    startDate.add({ weeks: Number(term) })
+    startDate.add({ weeks: Number(term) }),
   );
   const [maxCycleControl, setMaxCycleControl] = useState(
-    maxCycle[0].max ? maxCycle[0].max : 0
+    maxCycle[0].max ? maxCycle[0].max : 0,
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
 

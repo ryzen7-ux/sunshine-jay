@@ -10,6 +10,7 @@ import {
   WrenchScrewdriverIcon,
   UserPlusIcon,
   BanknotesIcon,
+  ChartBarIcon,
 } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -26,12 +27,6 @@ const links = [
     icon: HomeIcon,
     dash: "/dashboard",
   },
-  //   {
-  //   name: "Individuals",
-  //   href: "/dashboard/invoices",
-  //   path: "/invoices",
-  //   icon: UserPlusIcon,
-  // },
 
   {
     name: "Mpesa Invoices",
@@ -57,12 +52,12 @@ const links = [
     path: "/loans",
     icon: DocumentCurrencyDollarIcon,
   },
-  // {
-  //   name: "Analytics",
-  //   href: "/dashboard/analytics",
-  //   path: "/analytics",
-  //   icon: ChartNoAxesCombined,
-  // },
+  {
+    name: "Analytics",
+    href: "/dashboard/analytics",
+    path: "/analytics",
+    icon: ChartBarIcon,
+  },
 
   {
     name: "System Management",
@@ -89,7 +84,8 @@ export default function NavLinks({ onClose }: { onClose: any }) {
                 "bg-green-200 text-green-600":
                   pathname === link?.dash || pathname.match(link?.path),
               },
-            )}>
+            )}
+          >
             <LinkIcon className="w-5 md:w-5 fill-green-700 text-green-700" />
             <p className="">{link.name}</p>
           </Link>

@@ -1,21 +1,20 @@
 import sql from "@/app/lib/db";
 import {
-  GroupsTable,
   GroupForm,
-  MembersTable,
-  MemberForm,
-  LoanForm,
-  InvoicesTable,
+  GroupsTable,
   InvoicesForm,
+  InvoicesTable,
   LatestInvoice,
+  LoanForm,
+  MemberForm,
+  MembersTable,
   MpesaInvoice,
-} from "./sun-defination";
+} from "../sun-defination";
 import {
+  computeTotalLoan,
   formatCurrencyToLocal,
   formatDateToLocal,
-  computeTotalLoan,
 } from "@/app/lib/utils";
-import { AArrowDown } from "lucide-react";
 
 // CLSOE DB COONECTIONS
 
@@ -823,8 +822,8 @@ export async function fetchDashboardMaxCycle() {
 export async function fetchDashboardCardData(query: string, region: any) {
   try {
     const highestCyclePromise = await sql`SELECT MAX(cycle) FROM loans`;
-    const highestCyle = highestCyclePromise[0].max;
-    if (highestCyle === null || highestCyle < 1) {
+    const highestCycle = highestCyclePromise[0].max;
+    if (highestCycle === null || highestCycle < 1) {
       const groupCountPromise = 0;
       const membersCountPromise = 0;
       const loanStatusPromise = 0;
@@ -834,8 +833,8 @@ export async function fetchDashboardCardData(query: string, region: any) {
       const totalLoanThisMonthPromise = 0;
       const collectedThisMonthPromise = 0;
       const groupCountLastFourPromise = 0;
-      const individualDisbursedPromsie = 0;
-      const countIndividualsPromsie = 0;
+      const individualDisbursedPromise = 0;
+      const countIndividualsPromise = 0;
       const totalIndividualLoanPromise = 0;
       const individualDisbursedThisMonthPromise = 0;
       const individualCountLastFourPromise = [{ disbursedSeries: 0 }];
@@ -850,8 +849,8 @@ export async function fetchDashboardCardData(query: string, region: any) {
         totalLoanThisMonthPromise,
         collectedThisMonthPromise,
         groupCountLastFourPromise,
-        individualDisbursedPromsie,
-        countIndividualsPromsie,
+        individualDisbursedPromise: individualDisbursedPromise,
+        countIndividualsPromise: countIndividualsPromise,
         totalIndividualLoanPromise,
         individualDisbursedThisMonthPromise,
         individualCountLastFourPromise,
@@ -860,7 +859,7 @@ export async function fetchDashboardCardData(query: string, region: any) {
     }
 
     const cycleArray = Array.from(
-      { length: highestCyle },
+      { length: highestCycle },
       (_, index) => index + 1,
     );
 
@@ -890,6 +889,7 @@ export async function fetchDashboardCardData(query: string, region: any) {
          SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS "pending",
          SUM(CASE WHEN status = 'inactive' THEN amount ELSE 0 END) AS "inactive"
          FROM loans`;
+
     const totalLoanPromise = sql`SELECT 
         CEIL(SUM(CEIL(CASE WHEN cycle = ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive') THEN amount ELSE 0 END/term + CASE WHEN cycle = ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive')
         THEN amount ELSE 0 END * (interest/4/100)) * term )) AS sum FROM groups JOIN loans ON groupid = groups.id JOIN regions ON
@@ -908,6 +908,7 @@ export async function fetchDashboardCardData(query: string, region: any) {
         regions.id = groups.region WHERE regions.id = ANY(${region}) AND loans.date 
         >= DATE_TRUNC('month', current_timestamp) AND loans.date < 
         DATE_TRUNC('month', current_timestamp) + INTERVAL '1 month'`;
+
     const totalLoanThisMonthPromise = sql`SELECT 
         CEIL(SUM(CEIL(CASE WHEN cycle = ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive') THEN amount ELSE 0 
         END/term + CASE WHEN cycle = ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive')
@@ -917,6 +918,7 @@ export async function fetchDashboardCardData(query: string, region: any) {
         regions.id = groups.region WHERE regions.id = ANY(${region}) AND 
         loans.date >= DATE_TRUNC('month', current_timestamp)
         AND loans.date < DATE_TRUNC('month', current_timestamp) + INTERVAL '1 month'`;
+
     const collectedThisMonthPromise = sql`SELECT 
         SUM(transamount) AS total FROM mpesainvoice JOIN groups
        ON refnumber % groups.name JOIN regions ON regions.id = groups.region WHERE
@@ -924,12 +926,14 @@ export async function fetchDashboardCardData(query: string, region: any) {
         ANY(${region}) AND cycle = ANY(${cycleAllArayy}) 
          AND transtime >= DATE_TRUNC('month', current_timestamp)
       AND transtime < DATE_TRUNC('month', current_timestamp) + INTERVAL '1 month'`;
+
     // WEEK
     const groupCountThisWeekPromise = await sql`SELECT 
         SUM(CASE WHEN cycle = ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive') THEN amount ELSE 0 END) FROM groups JOIN 
         loans ON groupid = groups.id JOIN regions ON
         regions.id = groups.region WHERE regions.id = ANY(${region}) AND  loans.date >= DATE_TRUNC('week', NOW())
         AND loans.date < DATE_TRUNC('week', NOW()) + INTERVAL '1 week'`;
+
     const totalLoanThisWeekPromise = await sql`SELECT 
         CEIL(SUM(CEIL(CASE WHEN cycle = ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive') THEN amount ELSE 0 
         END/term + CASE WHEN cycle = ANY(${cycleAllArayy}) AND (status = 'approved' OR status = 'inactive')
@@ -939,6 +943,7 @@ export async function fetchDashboardCardData(query: string, region: any) {
         regions.id = groups.region WHERE regions.id = ANY(${region}) AND 
         loans.date >= DATE_TRUNC('week', NOW())
         AND loans.date < DATE_TRUNC('week', NOW()) + INTERVAL '1 week'`;
+
     const collectedThisWeekPromise = await sql`SELECT 
         SUM(transamount) AS total FROM mpesainvoice JOIN groups
        ON refnumber % groups.name JOIN regions ON regions.id = groups.region WHERE
@@ -1524,30 +1529,30 @@ export async function fetchLatestMpesaInvoices(region: any, isAdmin: boolean) {
   try {
     if (isAdmin) {
       data = await sql<MpesaInvoice[]>`
-      SELECT mpesainvoice.transamount, mpesainvoice.refnumber, mpesainvoice.transtime, mpesainvoice.transid, first_name, middle_name, last_name, phone_number
+      SELECT mpesainvoice.id,mpesainvoice.transamount, mpesainvoice.refnumber, mpesainvoice.transtime, mpesainvoice.transid, first_name, middle_name, last_name, phone_number
       FROM mpesainvoice
     
       ORDER BY mpesainvoice.transtime DESC
-      LIMIT 5`;
+      LIMIT 6`;
     } else {
       data = await sql<MpesaInvoice[]>`
-      SELECT mpesainvoice.transamount, mpesainvoice.refnumber, mpesainvoice.transtime, mpesainvoice.transid, first_name, middle_name, last_name, phone_number
+      SELECT mpesainvoice.id, mpesainvoice.transamount, mpesainvoice.refnumber, mpesainvoice.transtime, mpesainvoice.transid, first_name, middle_name, last_name, phone_number
       FROM mpesainvoice
       JOIN groups
        ON refnumber % groups.name
       JOIN regions ON regions.id = groups.region WHERE SIMILARITY(groups.name, refnumber)
       >= 0.7 AND regions.id = ANY(${region}) 
       ORDER BY mpesainvoice.transtime DESC
-      LIMIT 5`;
+      LIMIT 6`;
     }
 
-    const latestInvoices = data.map((invoice: any) => ({
+    return data.map((invoice: any) => ({
       ...invoice,
       transamount: formatCurrencyToLocal(invoice.transamount),
       transtime: formatDateToLocal(invoice.transtime),
+      first_name: String(invoice.first_name).toUpperCase(),
+      refnumber: String(invoice.refnumber).toUpperCase(),
     }));
-
-    return latestInvoices;
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch the latest invoices.");
@@ -1603,7 +1608,7 @@ export async function fetchGroupCardData(
       const totalMpesa = formatCurrencyToLocal(Number("0"));
 
       return {
-        groupDisbusredAmount,
+        groupDisbursedAmount,
         totalPayment,
         groupCollectedAmount,
         groupPendingPayments,
@@ -1640,7 +1645,7 @@ export async function fetchGroupCardData(
       totalGroupLoan,
     ]);
 
-    const groupDisbusredAmount = formatCurrencyToLocal(
+    const groupDisbursedAmount = formatCurrencyToLocal(
       Number(data[0][0]?.sum || "0"),
     );
     const totalPayment = formatCurrencyToLocal(Number(data[5][0]?.sum ?? "0"));
@@ -1661,7 +1666,7 @@ export async function fetchGroupCardData(
     // console.log({ start: startDate, end: endDate, paid: totalMpesa });
 
     return {
-      groupDisbusredAmount,
+      groupDisbursedAmount,
       totalPayment,
       groupCollectedAmount,
       groupPendingPayments,

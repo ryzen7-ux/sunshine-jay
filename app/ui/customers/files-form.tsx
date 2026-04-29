@@ -280,7 +280,8 @@ export default function FilesForm({
               onPress={onClose}
               type="button"
               color="success"
-              className="w-full">
+              className="w-full"
+            >
               Close
             </Button>
           </div>
@@ -353,7 +354,8 @@ function DocumentUploadField({
                 href={documentUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-green-600 hover:underline">
+                className="text-xs text-green-600 hover:underline"
+              >
                 View document
               </a>
             </div>
@@ -372,7 +374,8 @@ function DocumentUploadField({
                 onPress={() => onDelete()}
                 disabled={isUploading || isDeleting}
                 className="text-red-600 hover:text-red-700 bg-red-200"
-                startContent={<Trash className="h-4 w-4 text-red-700" />}>
+                startContent={<Trash className="h-4 w-4 text-red-700" />}
+              >
                 Delete
               </Button>
             )}
@@ -390,7 +393,8 @@ function DocumentUploadField({
             isDragging
               ? "border-primary bg-primary/5"
               : "border-green-300 hover:border-green-400"
-          }`}>
+          }`}
+        >
           <input
             type="file"
             accept={fileType === "pdf" ? ".pdf" : "image/*"}

@@ -10,7 +10,7 @@ import {
   CircleStackIcon,
 } from "@heroicons/react/24/solid";
 import { lusitana } from "@/app/ui/fonts";
-import { fetchCardData } from "@/app/lib/data";
+import { fetchCardData } from "@/app/lib/data/data";
 import {
   formatDateToLocal,
   formatCurrency,
@@ -113,7 +113,7 @@ export function Card({
   const Icon = iconMap[type];
 
   return (
-    <div className={`ring-2 ring-blue-700 rounded-xl bg-gray-50  ${span}`}>
+    <div className={`ring-2 rounded-xl bg-gray-50  ${span}`}>
       <div className="flex p-2">
         {Icon ? <Icon className={`h-6 w-6 ${color}`} /> : null}
         <h3 className="ml-2 text-sm font-medium">{title}</h3>

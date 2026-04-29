@@ -12,6 +12,7 @@ import {
 import Link from "next/link";
 
 interface FileUploadProps {
+  user: any;
   userType: string;
   fileUrl: any;
   member: any;
@@ -27,6 +28,7 @@ interface FileUploadProps {
 }
 
 export const FileUpload: React.FC<FileUploadProps> = ({
+  user,
   userType,
   fileUrl,
   member,
@@ -157,7 +159,8 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                 href={fileUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-green-600 hover:underline">
+                className="text-xs text-green-600 hover:underline"
+              >
                 Download document
               </Link>
             </div>
@@ -176,7 +179,9 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                 disabled={isUploading || isDeleting}
                 className="text-red-600 hover:text-red-700 bg-red-200"
                 startContent={<Trash className="h-4 w-4 text-red-700" />}
-                onPress={() => handleDeleteImage()}>
+                onPress={() => handleDeleteImage()}
+                isDisabled={user?.role !== "admin"}
+              >
                 Delete
               </Button>
             )}
@@ -196,7 +201,8 @@ export const FileUpload: React.FC<FileUploadProps> = ({
             onDragEnter={handleDrag}
             onDragLeave={handleDrag}
             onDragOver={handleDrag}
-            onDrop={handleDrop}>
+            onDrop={handleDrop}
+          >
             <input
               ref={fileInputRef}
               type="file"
@@ -219,7 +225,8 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="text-blue-500 hover:text-blue-600 font-medium">
+                    className="text-blue-500 hover:text-blue-600 font-medium"
+                  >
                     browse
                   </button>
                 </p>
@@ -253,7 +260,8 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                 uploadResult.success
                   ? "bg-green-50 text-green-800"
                   : "bg-red-50 text-red-800"
-              }`}>
+              }`}
+            >
               {uploadResult.success ? (
                 <div>
                   <p className="font-medium">Upload successful!</p>
@@ -270,7 +278,8 @@ export const FileUpload: React.FC<FileUploadProps> = ({
             {selectedFile && !isUploading && !uploadResult?.success && (
               <button
                 onClick={handleUpload}
-                className="flex-1 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors">
+                className="flex-1 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors"
+              >
                 {title}
               </button>
             )}
@@ -279,7 +288,8 @@ export const FileUpload: React.FC<FileUploadProps> = ({
               <button
                 onClick={handleReset}
                 disabled={isUploading}
-                className="px-4 py-2 border border-orange-300 rounded hover:bg-orange-100 transition-colors disabled:opacity-50 text-orange-600">
+                className="px-4 py-2 border border-orange-300 rounded hover:bg-orange-100 transition-colors disabled:opacity-50 text-orange-600"
+              >
                 Reset
               </button>
             )}

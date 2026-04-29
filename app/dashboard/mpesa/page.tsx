@@ -9,20 +9,22 @@ import {
   fetchFilteredMpesaInvoices,
   fetchMpesaInvoicesPages,
   fetchUserByEmail,
-} from "@/app/lib/sun-data";
+} from "@/app/lib/data/sun-data";
 import {
   fetchFilteredMpesaInvoices2,
   fetchMpesaInvoicesPages2,
-} from "@/app/lib/sun-data2";
+} from "@/app/lib/data/sun-data2";
 import { Metadata } from "next";
 import { Coins } from "lucide-react";
 import { getSession } from "@/app/lib/session";
 import { ExportMpesaCvs } from "@/app/ui/mpesa/export-cvs";
+import { invoices } from "@/app/lib/placeholder-data";
+import { categorizeDate } from "@/app/lib/utils";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Mpesa Invoices",
+  title: "Mpesa Transactions",
 };
 
 export default async function Page(props: {
@@ -85,17 +87,19 @@ export default async function Page(props: {
     <div className="w-full pt-24">
       <div className="">
         <h1
-          className={`text-2xl flex gap-2 items-center border p-2 rounded-md`}>
-          <Coins className="h-6 w-6 text-green-500" /> Mpesa Invoices
+          className={`text-2xl flex gap-2 items-center border p-2 rounded-md font-extrabold py-4 uppercase`}
+        >
+          <Coins className="h-10 w-10 text-pink-600 uppercase " /> Mpesa
+          Invoices
         </h1>
       </div>
 
+      <div>
+        <ExportMpesaCvs ginvoices={ginvoices} />
+      </div>
       <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
         <Search placeholder="Search invoices, eg name, group name..." />
         <CreateInvoice user={user} />
-      </div>
-      <div>
-        <ExportMpesaCvs ginvoices={ginvoices} />
       </div>
       <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
         <Table

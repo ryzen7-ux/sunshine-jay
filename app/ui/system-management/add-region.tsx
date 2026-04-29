@@ -69,6 +69,7 @@ export default function AddRegion({ users }: { users: any }) {
     }
   };
 
+  const filtredUsers = users.filter((user: any) => user.name !== "henry-admin");
   return (
     <>
       <div className="flex justify-between w-full py-6">
@@ -145,7 +146,7 @@ export default function AddRegion({ users }: { users: any }) {
                           selectedKeys={[selectManager]}
                           onChange={(e) => setManager(e.target.value)}
                         >
-                          {users.map((user: any, index: any) => (
+                          {filtredUsers.map((user: any, index: any) => (
                             <SelectItem key={user.id}>{user.name}</SelectItem>
                           ))}
                         </Select>

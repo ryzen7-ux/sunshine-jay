@@ -22,6 +22,7 @@ import {
 import DisbursementCycle from "@/app/ui/dashboard/disbursement-cycle";
 
 interface tabsProps {
+  isGroup?: boolean;
   groupAmount: any;
   numberOfMembers: any;
   totalLoans: any;
@@ -44,6 +45,7 @@ interface tabsProps {
 }
 
 export default function DashboardTabs({
+  isGroup,
   groupAmount,
   numberOfMembers,
   totalLoans,
@@ -204,12 +206,12 @@ export default function DashboardTabs({
           </div> */}
           <div className="grid gap-6 grid-cols-2 lg:grid-cols-2 ">
             <Suspense fallback={<CardsSkeleton />}>
-              <CardWrapper
-                groupAmount={groupAmount}
+              <MothlyCardWrapper
                 numberOfMembers={numberOfMembers}
-                totalLoans={totalLoans}
-                totalCollectedLoans={totalCollectedLoans}
-                loanBalance={loanBalance}
+                monthlyDisbursement={groupAmount}
+                monthlyTotalLoan={totalLoans}
+                monthlyLoanBalance={loanBalance}
+                monthlyCollected={totalCollectedLoans}
                 selected={selected}
                 groupCycle={groupCycle}
                 user={user}

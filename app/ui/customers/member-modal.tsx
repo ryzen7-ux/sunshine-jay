@@ -20,46 +20,48 @@ export default function MemberModal({
   memberData,
   loan,
   group,
+  isAddModalOpen,
+  setIsAddModalOpen,
 }: {
   memberData: any;
   loan: any;
   group: any;
+  isAddModalOpen: any;
+  setIsAddModalOpen: any;
 }) {
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   const filteredLoans = loan
-    ?.filter((item: any) => item.memberid === memberData.id)
-    .sort((a: any, b: any) => b.date.localeCompare(a.date));
+    ?.filter((item: any) => item?.memberid === memberData?.id)
+    ?.sort((a: any, b: any) => b?.date.localeCompare(a?.date));
 
   return (
     <>
-      <Tooltip color="warning" content="Member Details">
-        <button
-          onClick={() => {
-            setIsAddModalOpen(true);
-          }}>
-          <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-            <EyeIcon className="h-6 w-6 text-yellow-500" />
-          </span>
-        </button>
-      </Tooltip>
       <Modal
         isOpen={isAddModalOpen}
         onOpenChange={onOpenChange}
         size="full"
         className="overflow-auto"
-        onClose={() => setIsAddModalOpen(false)}>
+        onClose={() => setIsAddModalOpen(false)}
+      >
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">
+              <ModalHeader className="flex flex-col gap-1 uppercase font-extrabold">
                 Member Details
               </ModalHeader>
               <ModalBody>
-                <div className="flex flex-col md:flex-row gap-4">
-                  <LeftContent memberData={memberData} group={group} />
-                  <RightContent memberData={memberData} loans={filteredLoans} />
+                <div className="flex flex-col gap-4">
+                  <div className="">
+                    <LeftContent memberData={memberData} group={group} />
+                  </div>
+                  <div className="">
+                    {" "}
+                    <RightContent
+                      memberData={memberData}
+                      loans={filteredLoans}
+                    />
+                  </div>
                 </div>
               </ModalBody>
               <ModalFooter>

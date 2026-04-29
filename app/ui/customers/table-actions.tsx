@@ -17,19 +17,21 @@ import {
 import { useActionState, useState } from "react";
 import { SuccessToast, DeleteSuccessToast } from "@/app/ui/toast";
 
-export function DeleteGroupAction({ id }: { id: string }) {
+export function DeleteGroupAction({ id, user }: { id: string; user: any }) {
   // const deleteGroupWithId = deleteGroup.bind(null, id);
   const initialState = { success: false };
   const [formstate, formAction, isLoading] = useActionState(
     deleteGroup,
-    initialState
+    initialState,
   );
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   return (
     <>
       <Tooltip color="danger" content="Delete Group">
-        <button onClick={onOpen}>
-          <span className="text-lg text-danger cursor-pointer active:opacity-50">
+        <button onClick={onOpen} disabled={!user?.name === "henry-admin"}>
+          <span
+            className={`text-lg ${!user?.name === "henry-admin" ? "text-red-200" : "text-danger"} cursor-pointer active:opacity-50`}
+          >
             <Trash2 className="h-5 w-5" />
           </span>
         </button>
@@ -66,13 +68,24 @@ export function DeleteGroupAction({ id }: { id: string }) {
   );
 }
 
-export function DeleteMemberAction({ id, gid }: { id: string; gid: string }) {
+export function DeleteMemberAction({
+  id,
+  gid,
+  user,
+}: {
+  id: string;
+  gid: string;
+  user: any;
+}) {
   const deleteMemberWithId = deleteMember.bind(null, id, gid);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const isSuperAdmin = user?.name === "henry-admin";
   return (
     <>
-      <button onClick={onOpen}>
-        <span className="text-lg text-danger cursor-pointer active:opacity-50">
+      <button onClick={onOpen} disabled={!isSuperAdmin}>
+        <span
+          className={`text-lg  cursor-pointer active:opacity-50 ${!isSuperAdmin ? "text-red-200" : "text-danger"}`}
+        >
           <Trash2 className="h-5 w-5" />
         </span>
       </button>

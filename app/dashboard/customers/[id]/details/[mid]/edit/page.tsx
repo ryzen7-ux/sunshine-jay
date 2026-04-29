@@ -1,6 +1,6 @@
 import EditMemberForm from "@/app/ui/customers/edit-member-form";
 import Breadcrumbs from "@/app/ui/invoices/breadcrumbs";
-import { fetchMemberById } from "@/app/lib/sun-data";
+import { fetchMemberById } from "@/app/lib/data/sun-data";
 import { notFound } from "next/navigation";
 import HeroBreadcrumbs from "@/app/ui/customers/hero-breadcrumbs";
 import {

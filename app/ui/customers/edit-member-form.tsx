@@ -23,6 +23,7 @@ export default function EditMemberForm({
   onClose: any;
   user: any;
 }) {
+  const isAdmin = user.role === "admin";
   const [isLoading, setIsLoading] = useState(false);
   const [isSelected, setIsSelected] = useState(member?.status === "active");
 
@@ -88,6 +89,7 @@ export default function EditMemberForm({
                     <span className="text-default-400 text-small"></span>
                   </div>
                 }
+                isDisabled={!isAdmin}
               />
             </div>
 
@@ -97,12 +99,13 @@ export default function EditMemberForm({
                 name="firstName"
                 type="text"
                 className="outline-2 outline-blue-500  "
-                label="First Name"
+                label="Name"
                 color="success"
                 labelPlacement="outside"
                 size="md"
                 variant="faded"
                 defaultValue={member.firstname}
+                isDisabled={!isAdmin}
               />
               <div
                 id="customer-error"
@@ -164,6 +167,7 @@ export default function EditMemberForm({
                 variant="faded"
                 description="eg: Husband, son.. etc."
                 defaultValue={member.kin_relationship || ""}
+                isDisabled={!isAdmin}
               />
             </div>
             <div className="w-full ">
@@ -177,6 +181,7 @@ export default function EditMemberForm({
                 size="md"
                 variant="faded"
                 defaultValue={member.kin_name || ""}
+                isDisabled={!isAdmin}
               />
             </div>
             <div className="w-full">
@@ -195,6 +200,7 @@ export default function EditMemberForm({
                   </div>
                 }
                 defaultValue={member.kin_id || ""}
+                isDisabled={!isAdmin}
               />
             </div>
             <div className="w-full ">
@@ -268,7 +274,7 @@ export default function EditMemberForm({
               type="submit"
               color="success"
               className="w-full"
-              isDisabled={isLoading}
+              isDisabled={isLoading || !isAdmin}
             >
               {isLoading ? <Spinner color="default" /> : "Edit"}
             </Button>

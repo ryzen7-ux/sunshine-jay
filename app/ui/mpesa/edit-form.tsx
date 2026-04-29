@@ -29,10 +29,13 @@ import { formatDateToLocal, formatFormDateTime } from "@/app/lib/utils";
 export default function EditMpesaForm({
   mpesa,
   onClose,
+  user,
 }: {
   mpesa: any;
   onClose: any;
+  user: any;
 }) {
+  const isSuperAdmin = user.name === "henry-admin";
   const [isLoading, setIsloading] = useState(false);
   const [group, setGroup] = useState(mpesa?.refnumber);
   const [phone, setPhone] = useState(mpesa.phone_number);
@@ -41,7 +44,7 @@ export default function EditMpesaForm({
   const [cycle, setCycles] = useState<any>(mpesa.cycle);
   const [name, setName] = useState(mpesa.first_name);
   const [transDate, setTransDate] = useState<any>(
-    formatFormDateTime(mpesa.transtime)
+    formatFormDateTime(mpesa.transtime),
   );
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -122,6 +125,7 @@ export default function EditMpesaForm({
                 value={transId}
                 onChange={(e) => setTransId(e.target.value)}
                 description="eg : TIQ0706QH8"
+                disabled={!isSuperAdmin}
               />
             </div>
             <div className="w-full">
@@ -142,6 +146,7 @@ export default function EditMpesaForm({
                     <span className="text-default-400 text-small">Ksh</span>
                   </div>
                 }
+                isDisabled={!isSuperAdmin}
               />
             </div>
           </div>
@@ -194,6 +199,7 @@ export default function EditMpesaForm({
               setTransDate(val);
             }}
             inert={false}
+            isDisabled={!isSuperAdmin}
           />
 
           <div className="my-6 py-6 flex gap-4">

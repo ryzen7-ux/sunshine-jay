@@ -26,10 +26,13 @@ import { updateGroup, State } from "@/app/lib/sun-actions";
 export default function EditGroupModal({
   group,
   regions,
+  user,
 }: {
   group: any;
   regions: any;
+  user: any;
 }) {
+  const isAdmin = user?.role === "admin";
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsloading] = useState(false);
   const [selectRegion, setRegion] = useState(group.region);
@@ -104,6 +107,7 @@ export default function EditGroupModal({
                           variant="faded"
                           value={reg}
                           onChange={(e) => setReg(e.target.value)}
+                          isDisabled
                         />
                       </div>
                       <div className="w-full">
@@ -119,6 +123,7 @@ export default function EditGroupModal({
                           variant="faded"
                           value={name}
                           onChange={(e) => setName(e.target.value)}
+                          isDisabled={!isAdmin}
                         />
                       </div>
                     </div>
@@ -136,6 +141,7 @@ export default function EditGroupModal({
                           variant="faded"
                           value={location}
                           onChange={(e) => setLocation(e.target.value)}
+                          isDisabled={!isAdmin}
                         />
                       </div>
                       <div className="w-full">
@@ -152,6 +158,7 @@ export default function EditGroupModal({
                           onChange={(e) => {
                             setRegion(e.target.value);
                           }}
+                          isDisabled={!isAdmin}
                         >
                           {regions.map((region: any, index: any) => (
                             <SelectItem key={region.id}>
@@ -166,7 +173,7 @@ export default function EditGroupModal({
                         type="submit"
                         color="success"
                         className="w-full"
-                        disabled={isLoading}
+                        isDisabled={isLoading || !isAdmin}
                       >
                         {isLoading ? (
                           <Spinner color="default" size="md" className="py-4" />

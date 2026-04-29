@@ -12,16 +12,17 @@ import {
   fetchLoanByIdNew,
   fetchUserByEmail,
   fetchFilteredLoans,
-} from "@/app/lib/sun-data";
+} from "@/app/lib/data/sun-data";
 import {
   fetchFilteredLoans2,
   fetchGroups2,
   fetchLoansPages2,
-} from "@/app/lib/sun-data2";
+} from "@/app/lib/data/sun-data2";
 import { Metadata } from "next";
 import { ProcessDisbursement } from "@/app/ui/loans/buttons";
 import { getSession } from "@/app/lib/session";
 import { ExportLoanCvs } from "@/app/ui/loans/export-cvs";
+import { CubeIcon } from "@heroicons/react/16/solid";
 
 export const metadata: Metadata = {
   title: "Loans",
@@ -103,20 +104,21 @@ export default async function Page(props: {
 
   return (
     <div className="w-full pt-24">
-      <div className="flex w-full items-center justify-between">
-        <h1 className={`text-xl font-bold text-gray-900`}>
-          Loans and Disbursments
+      <div className="flex w-full items-center gap-2 border-1 rounded-lg p-4">
+        <CubeIcon className="h-10 w-10 text-teal-700" />
+        <h1 className={`text-xl font-extrabold uppercase`}>
+          Loans and Disbursements
         </h1>
       </div>
-
+      <div>
+        <ExportLoanCvs loans={loans} />
+      </div>
       <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
         <Search placeholder="Search loans..." />
 
         <CreateInvoice groups={groups} members={members} isAdmin={isAdmin} />
       </div>
-      <div>
-        <ExportLoanCvs loans={loans} />
-      </div>
+
       <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
         <Table
           query={query}

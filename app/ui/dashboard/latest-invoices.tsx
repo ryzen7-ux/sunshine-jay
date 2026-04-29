@@ -1,3 +1,5 @@
+"use client";
+
 import {
   ArrowPathIcon,
   UserGroupIcon,
@@ -7,16 +9,7 @@ import {
   DocumentArrowDownIcon,
 } from "@heroicons/react/24/solid";
 import clsx from "clsx";
-import Image from "next/image";
-import { lusitana } from "@/app/ui/fonts";
-import { LatestInvoice } from "@/app/lib/definitions";
-import { fetchLatestInvoices } from "@/app/lib/data";
-import {
-  fetchLatestGroupInvoices,
-  fetchLatestMpesaInvoices,
-} from "@/app/lib/sun-data";
 import { formatDateToLocal, formatPhoneNumber } from "@/app/lib/utils";
-import { Coins } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -25,80 +18,107 @@ import {
   CardTitle,
 } from "../radix-components/card";
 import { CurrencyDollarIcon } from "@heroicons/react/24/outline";
+import {
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+  User,
+  Chip,
+  Tooltip,
+} from "@heroui/react";
+import React from "react";
 
-export default async function LatestInvoices({
+export default function LatestInvoices({
   latestInvoices,
 }: {
   latestInvoices: any;
 }) {
   // const latestInvoices = await fetchLatestInvoices();
+  return (
+    <div className="flex w-full flex-col col-span-4 gap-4">
+      <div className="font-bold flex gap-2 items-center">
+        <CurrencyDollarIcon className="text-green-500 w-6 h-6" />
+        LATEST MPESA TRANSACTIONS
+      </div>
+      <div>
+        <InvoiceTable latestInvoices={latestInvoices} />
+      </div>
+    </div>
+  );
+}
+
+export const columns = [
+  { name: "NAME", uid: "name" },
+  { name: "AMOUNT", uid: "amount" },
+  { name: "TIME", uid: "time" },
+];
+
+export function InvoiceTable({ latestInvoices }: { latestInvoices: any }) {
+  const renderCell = React.useCallback((trans: any, columnKey: any) => {
+    const cellValue = trans[columnKey];
+
+    switch (columnKey) {
+      case "name":
+        return (
+          <User
+            avatarProps={{ radius: "lg" }}
+            description={`${trans.refnumber}`}
+            name={trans.first_name}
+          ></User>
+        );
+      case "amount":
+        return (
+          <div className="flex flex-col">
+            <p className="text-bold text-md font-bold text-green-600">
+              {trans.transamount}
+            </p>
+            <p className="text-bold text-sm capitalize text-default-400">
+              {trans.transid}
+            </p>
+          </div>
+        );
+      case "time":
+        return (
+          <Chip
+            className="capitalize"
+            color="secondary"
+            size="sm"
+            variant="flat"
+          >
+            {trans.transtime}
+          </Chip>
+        );
+
+      default:
+        return cellValue;
+    }
+  }, []);
 
   return (
-    <div className="flex w-full flex-col col-span-4">
-      <Card className="">
-        <CardHeader>
-          <CardTitle className="font-bold flex gap-2 items-center">
-            <CurrencyDollarIcon className="text-green-500 w-6 h-6" />
-            Latest Mpesa Transactions
-          </CardTitle>
-          <CardDescription className=""></CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex grow flex-col justify-between rounded-xl bg-green-200 p-2">
-            {/* NOTE: Uncomment this code in Chapter 7 */}
-
-            <div className="bg-white pr-2 rounded-xl shadow-lg">
-              {latestInvoices.map((invoice: any, i: number) => {
-                return (
-                  <div
-                    key={i}
-                    className={clsx("py-1", {
-                      "border-t": i !== 0,
-                    })}>
-                    <div className="pl-2">
-                      <DocumentArrowDownIcon className="h-5 w-5 fill-green-700" />
-                    </div>
-                    <div className="flex flex-row items-center justify-between">
-                      <div className="flex items-center flex-wrap">
-                        <div className="min-w-0 ml-6">
-                          <p className="truncate text-sm font-semibold md:text-base">
-                            Group: {invoice.refnumber}
-                          </p>
-                          <p className=" text-sm text-gray-700 sm:block">
-                            Name: {invoice.first_name} {invoice.middle_name}{" "}
-                            {invoice.last_name}
-                          </p>
-                          <p className=" text-sm text-gray-500 sm:block flex flex-wrap">
-                            Phone Number:{" "}
-                            {formatPhoneNumber(invoice.phone_number)}
-                          </p>
-                          <p className=" text-sm text-gray-500 sm:block">
-                            Time: {invoice.transtime}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex flex-col">
-                        <p
-                          className={`truncate text-sm font-extrabold md:text-lg flex justify-center`}>
-                          {invoice.transamount}
-                        </p>
-                        <p
-                          className={`truncate text-md text-green-500 font-extrabold pt-2 flex justify-center`}>
-                          {invoice.transid}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            <div className="flex items-center pb-2 pt-6">
-              <ArrowPathIcon className="h-5 w-5 text-gray-500" />
-              <h3 className="ml-2 text-sm text-gray-500 ">Updated just now</h3>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+    <Table
+      aria-label="Example table with custom cells"
+      className="rounded-none"
+      isStriped
+    >
+      <TableHeader columns={columns}>
+        {(column) => (
+          <TableColumn key={column.uid} align={"start"}>
+            {column.name}
+          </TableColumn>
+        )}
+      </TableHeader>
+      <TableBody items={latestInvoices}>
+        {(item: any) => (
+          <TableRow key={item.id}>
+            {(columnKey) => (
+              <TableCell>{renderCell(item, columnKey)}</TableCell>
+            )}
+          </TableRow>
+        )}
+      </TableBody>
+    </Table>
   );
 }

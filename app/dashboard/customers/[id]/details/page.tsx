@@ -5,7 +5,7 @@ import {
   fetchGroupCardData,
   fetchMaxCycle,
   fetchMemberLoanById,
-} from "@/app/lib/sun-data";
+} from "@/app/lib/data/sun-data";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import CardWrapper from "@/app/ui/customers/cards";
@@ -22,6 +22,7 @@ import { UsersBRoundIcon } from "@/app/ui/customers/icons";
 import { Divider } from "@heroui/react";
 import DisbursementCycle from "@/app/ui/customers/disbursement-cycle";
 import { getSession } from "@/app/lib/session";
+import { UsersIcon } from "@heroicons/react/24/solid";
 
 export default async function Page(props: {
   searchParams?: Promise<{
@@ -48,7 +49,7 @@ export default async function Page(props: {
   const maxCycle = await fetchMaxCycle(id);
 
   const {
-    groupDisbusredAmount,
+    groupDisbursedAmount: groupDisbursedAmount,
     totalPayment,
     totalMembers,
     balance,
@@ -71,14 +72,17 @@ export default async function Page(props: {
         ]}
       />
       <div className="border rounded-lg px-4 py-2 bg-gray-100">
-        <div className="flex w-full items-center pb-2">
-          <h1 className={`text-xl font-bold text-gray-900`}>{group.name}</h1>
+        <div className="flex gap-2 w-full items-center pb-2">
+          <UsersIcon className="h-8 w-8 text-teal-700" />
+          <h1 className={`text-xl font-bold text-gray-900 uppercase`}>
+            {group.name}
+          </h1>
         </div>
         <DisbursementCycle maxCycle={maxCycle} />
         <div className="grid gap-6 grid-cols-1 lg:grid-cols-3">
           <Suspense fallback={<CardsSkeleton />}>
             <CardWrapper
-              groupDisbusredAmount={groupDisbusredAmount}
+              groupDisbusredAmount={groupDisbursedAmount}
               totalPayment={totalPayment}
               totalMembers={totalMembers}
               balance={balance}

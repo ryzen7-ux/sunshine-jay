@@ -23,7 +23,7 @@ export default async function Layout({
 
   return (
     <main className="h-screen">
-      <div className="flex justify-between bg-blue-200 pr-4 fixed left-0 top-0 z-10 w-full">
+      <div className="flex justify-between bg-blue-100 pr-4 fixed left-0 top-0 z-50 w-full">
         <div className="flex ">
           <SidebarCollapsible user={user} />
           <Link href="/dashboard" className="pt-2">
@@ -36,6 +36,7 @@ export default async function Layout({
             />
           </Link>
         </div>
+
         <div className="pt-4">
           <UserAvatar user={user ?? userTypes} />
         </div>

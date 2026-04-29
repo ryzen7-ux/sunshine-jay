@@ -6,12 +6,12 @@ import {
   fetchGroupPages,
   fetchRegions,
   fetchUserByEmail,
-} from "@/app/lib/sun-data";
+} from "@/app/lib/data/sun-data";
 import {
   fetchFilteredGroups2,
   fetchGroupPages2,
   fetchRegion2,
-} from "@/app/lib/sun-data2";
+} from "@/app/lib/data/sun-data2";
 import { Suspense } from "react";
 import { InvoicesTableSkeleton } from "@/app/ui/skeletons";
 import GroupPagination from "@/app/ui/customers/pagination";
@@ -67,7 +67,8 @@ export default async function Page(props: {
 
         <Suspense
           key={query + currentPage}
-          fallback={<InvoicesTableSkeleton />}>
+          fallback={<InvoicesTableSkeleton />}
+        >
           <GroupTable groups={groups} regions={regions} user={user} />
         </Suspense>
         <div className="mt-5 mb-5 flex w-full justify-center">

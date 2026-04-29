@@ -9,7 +9,7 @@ import {
   InvoicesForm,
   LatestInvoice,
   MpesaInvoice,
-} from "./sun-defination";
+} from "../sun-defination";
 import {
   formatCurrencyToLocal,
   formatDateToLocal,

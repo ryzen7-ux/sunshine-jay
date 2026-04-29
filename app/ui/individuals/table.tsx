@@ -1,21 +1,9 @@
-import Image from "next/image";
-import { UpdateLoan, DeleteLoan } from "@/app/ui/loans/buttons";
-import InvoiceStatus from "@/app/ui/loans/status";
-import {
-  formatDateToLocal,
-  formatCurrency,
-  formatCurrencyToLocal,
-} from "@/app/lib/utils";
-import { fetchFilteredInvoices } from "@/app/lib/data/data";
-import {
-  fetchFilteredIndividuals,
-  fetchRegions,
-} from "@/app/lib/data/sun-data";
-import { Tooltip } from "@heroui/react";
+
 import EditIndividual from "@/app/ui/individuals/edit-individual";
 import DeleteIndividual from "@/app/ui/individuals/delete-individual";
 import { AddFileModal } from "@/app/ui/customers/add-file-modal";
 import MemberModal from "@/app/ui/customers/member-modal";
+import React from "react";
 
 export default function InvoicesTable({
   query,
@@ -32,6 +20,8 @@ export default function InvoicesTable({
   detailLoans: any;
   user: any;
 }) {
+  const [                        isAddModalOpen,
+    setIsAddModalOpen] = React.useState(false);
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">
@@ -122,11 +112,14 @@ export default function InvoicesTable({
                   </td>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex gap-4">
-                      <AddFileModal member={individual} loanee="individual" />
+                      <AddFileModal user={user} member={individual} loanee="individual" />
                       <MemberModal
+
                         memberData={individual}
                         loan={detailLoans}
-                        group={{ name: "" }}
+                        group={ {name: ""} }
+                        isAddModalOpen={isAddModalOpen}
+                      setIsAddModalOpen={setIsAddModalOpen}
                       />
                       <EditIndividual
                         individual={individual}

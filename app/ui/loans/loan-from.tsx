@@ -111,7 +111,7 @@ export default function CreateLoanForm({
       return;
     }
     const formData = new FormData(e.currentTarget);
-    const res = await createLoan(formData);
+    const res = await createLoan(formData, false);
 
     if (res?.success === false) {
       setIsLoading(false);
@@ -175,7 +175,8 @@ export default function CreateLoanForm({
               setSelect(e.target.value);
               handleSearch(e.target.value);
               setSelectMember("");
-            }}>
+            }}
+          >
             {groups.map((group: any) => (
               <SelectItem key={group.id}>{group.name}</SelectItem>
             ))}
@@ -196,7 +197,8 @@ export default function CreateLoanForm({
             labelPlacement="outside"
             onChange={(e) => {
               setSelectMember(e.target.value);
-            }}>
+            }}
+          >
             {members?.map((member) => (
               <SelectItem key={member.id}>{member.name}</SelectItem>
             ))}
@@ -377,7 +379,8 @@ export default function CreateLoanForm({
               />
               <label
                 htmlFor="pending"
-                className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-yellow-200 px-3 py-1.5 text-xs font-medium text-gray-600">
+                className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-yellow-200 px-3 py-1.5 text-xs font-medium text-gray-600"
+              >
                 Pending <ClockIcon className="h-4 w-4" />
               </label>
             </div>

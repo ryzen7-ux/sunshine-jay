@@ -1597,7 +1597,7 @@ export async function fetchGroupCardData(
     }
 
     if (cycle === 0 || cycle === null) {
-      const groupDisbusredAmount = formatCurrencyToLocal(Number("0"));
+      const groupDisbursedAmount = formatCurrencyToLocal(Number("0"));
       const totalPayment = formatCurrencyToLocal(Number("0"));
 
       const groupCollectedAmount = formatCurrencyToLocal(Number("0"));

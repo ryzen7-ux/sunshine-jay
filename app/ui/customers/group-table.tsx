@@ -21,7 +21,6 @@ import EditGroupModal from "@/app/ui/customers/edit-group-modal";
 import Regions from "../system-management/regions";
 
 export const columns = [
-  { name: "REG NO", uid: "reg" },
   { name: "NAME", uid: "name" },
   { name: "LOCATION", uid: "location" },
   { name: "REGION", uid: "region_name" },
@@ -170,28 +169,22 @@ export default function GroupTable({
     const cellValue = group[columnKey];
 
     switch (columnKey) {
-      case "reg":
-        return (
-          <div>
-            <p className="py-2">{cellValue}</p>
-          </div>
-        );
       case "name":
         return (
           <div className="flex flex-col">
-            <p className=" text-xs">{cellValue}</p>
+            <p className=" text-xs uppercase">{cellValue}</p>
           </div>
         );
       case "location":
         return (
           <div>
-            <p className="text-bold text-xs">{cellValue}</p>
+            <p className="text-bold text-xs uppercase">{cellValue}</p>
           </div>
         );
       case "region_name":
         return (
           <div>
-            <p className="text-bold text-xs">{cellValue}</p>
+            <p className="text-bold text-xs uppercase">{cellValue}</p>
           </div>
         );
       case "disbursed":

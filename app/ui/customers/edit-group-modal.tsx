@@ -105,9 +105,10 @@ export default function EditGroupModal({
                           size="md"
                           description="Example: GRP001"
                           variant="faded"
-                          value={reg}
+                          value="NILL"
                           onChange={(e) => setReg(e.target.value)}
                           isDisabled
+                          readOnly
                         />
                       </div>
                       <div className="w-full">

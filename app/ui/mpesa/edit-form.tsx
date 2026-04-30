@@ -125,7 +125,7 @@ export default function EditMpesaForm({
                 value={transId}
                 onChange={(e) => setTransId(e.target.value)}
                 description="eg : TIQ0706QH8"
-                disabled={!isSuperAdmin}
+                isDisabled={!isSuperAdmin}
               />
             </div>
             <div className="w-full">

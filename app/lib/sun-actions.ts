@@ -478,7 +478,7 @@ export async function createGroup(formData: FormData) {
 }
 
 export async function updateGroup(formData: FormData) {
-  const reg = formData.get("reg") as string;
+  const reg = "NIL";
   const name = formData.get("name") as string;
   const location = formData.get("location") as string;
   const region = formData.get("region") as string;
@@ -871,16 +871,14 @@ export async function updateMpesaInvoice(formData: FormData) {
 
   const id = formData.get("id") as string;
 
-  const splitDate1 = transTime.split("+");
-  const splitDate2 = splitDate1[0].split(".");
-  const newTransDate = new Date(splitDate2[0]);
-  const hours = newTransDate.getHours();
-  newTransDate.setHours(hours - 3);
+  // const splitDate1 = transTime?.split("+");
+  // const splitDate2 = splitDate1[0]?.split(".");
+  // const newTransDate = new Date(splitDate2[0]);
+  // const hours = newTransDate.getHours();
+  // newTransDate.setHours(hours - 3);
 
   try {
-    await sql`UPDATE mpesainvoice SET refnumber = ${refNumber}, transid =${transId}, transtime =${newTransDate}, transamount =${Number(
-      transAmount,
-    )}, first_name = ${firstName}, phone_number = ${phone}, cycle = ${Number(
+    await sql`UPDATE mpesainvoice SET refnumber = ${refNumber}, first_name = ${firstName}, phone_number = ${phone}, cycle = ${Number(
       cycle,
     )} WHERE id=${id}`;
     revalidatePath("dashboard/mpesa");

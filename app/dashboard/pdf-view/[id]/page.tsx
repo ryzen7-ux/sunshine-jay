@@ -2,9 +2,6 @@ import dynamic from "next/dynamic";
 import PdfWrapper from "@/app/pdf-view/pdf-wrapper";
 
 // Disable Server Side Rendering for the PDF component
-const PdfViewer = dynamic(() => import("@/app/ui/pdf-viewer"), {
-  ssr: false,
-});
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
   // Replace with your external, CORS-allowed resource URL

@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 // Configuration constants
 const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB limit
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/gif"];
+const PDF_UPLOAD_TYPES = ["form", "application"]
 
 // Simple rate limiting (in production, use Redis or a proper solution)
 const uploadAttempts = new Map<string, { count: number; resetTime: number }>();
@@ -94,7 +95,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate file type
-    if (type !== "form" && file.type && !ALLOWED_TYPES.includes(file.type)) {
+    if (
+      !PDF_UPLOAD_TYPES.includes(type)  &&
+      file.type &&
+      !ALLOWED_TYPES.includes(file.type)
+    ) {
       return NextResponse.json(
         {
           error: `File type ${
@@ -105,7 +110,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (type === "form" && file.type && file.type !== "application/pdf") {
+    if (
+      PDF_UPLOAD_TYPES.includes(type)
+     && file.type && file.type !== "application/pdf"
+    ) {
       return NextResponse.json(
         {
           error: `File type ${file.type} not supported. Allowed type: PDF`,
@@ -187,7 +195,8 @@ export async function POST(request: NextRequest) {
           uploadResult.gcsUri,
         )} WHERE id=${itemId}`;
       }
-    } else {
+    }
+    if (userType === "individual") {
       if (type === "passport") {
         await sql`UPDATE individuals SET passport=${String(
           uploadResult.gcsUri,
@@ -224,6 +233,18 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    if (userType === "staff") {
+      if (type === "passport") {
+        await sql`UPDATE users SET passport_url=${String(
+          uploadResult.gcsUri,
+        )} WHERE id=${itemId}`;
+      }
+      if (type === "application") {
+        await sql`UPDATE users SET application_form_url=${String(
+          uploadResult.gcsUri,
+        )} WHERE id=${itemId}`;
+      }
+    }
     // Return success response
     return NextResponse.json({
       success: true,

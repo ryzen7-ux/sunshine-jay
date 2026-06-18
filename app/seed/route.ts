@@ -4,24 +4,27 @@ import sql from "@/app/lib/db";
 
 async function seedUsers() {
   await sql`CREATE EXTENSION IF NOT EXISTS pg_trgm;`;
-  const password: string = "pass1234";
+  await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+  const password: string = process.env.ADMIN_PASSWORD!!;
   const hashedPassword = await bcrypt.hash(password, 10);
   const created = new Date();
-  // const admin =
-  //   await sql`INSERT INTO users (name, email, phone, role, status, password, created)
-  //   VALUES ('henry-admin','henryomosh7@gmail.com', '0708663296', 'admin', 'active', ${hashedPassword}, ${created})`;
+  const admin =
+    await sql`INSERT INTO users (name, email, phone, role, status, password, created)
+    VALUES ('henry-admin','henryomosh7@gmail.com', '0708663296', 'admin', 'active', ${hashedPassword}, ${created})`;
 
   // console.log(admin);
 
   // await sql`
   //   CREATE TABLE IF NOT EXISTS users (
-  //     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  //     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   //     name VARCHAR(255) NOT NULL,
   //     email TEXT NOT NULL UNIQUE,
   //     phone VARCHAR(255),
   //     role VARCHAR(255) NOT NULL,
   //     status VARCHAR(255) NOT NULL,
   //     password TEXT NOT NULL,
+  //     passport_url TEXT,
+  //     application_form_url TEXT,
   //     created TIMESTAMPTZ NOT NULL
   //   );
   // `;
@@ -29,10 +32,21 @@ async function seedUsers() {
   return;
 }
 
+async function seedBranches() {
+  await sql`
+  CREATE TABLE IF NOT EXISTS branches (
+      id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      created TIMESTAMPTZ NOT NULL
+    );
+  `;
+}
+
 async function seedRegions() {
   await sql`
   CREATE TABLE IF NOT EXISTS regions (
-      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+      id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+      branch UUID NOT NULL,
       manager UUID NOT NULL,
       name VARCHAR(255) NOT NULL,
       county VARCHAR(255) NOT NULL,
@@ -44,7 +58,7 @@ async function seedRegions() {
 async function seedIndividuals() {
   await sql`
   CREATE TABLE IF NOT EXISTS individuals (
-      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+      id UUID DEFAULT gen_random_uuid() PRIMARY KEY ,
       region UUID NOT NULL,
       name VARCHAR(255) NOT NULL,
       idnumber BIGINT NOT NULL UNIQUE,
@@ -62,7 +76,7 @@ async function seedIndividuals() {
 async function seedIndividualLoans() {
   await sql`
   CREATE TABLE IF NOT EXISTS individuals_loans (
-      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+      id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
       region UUID NOT NULL,
       loanee UUID NOT NULL,
       amount NUMERIC(10, 2) NOT NULL,
@@ -77,57 +91,10 @@ async function seedIndividualLoans() {
   `;
 }
 
-async function seedInvoices() {
-  await sql`
-    CREATE TABLE IF NOT EXISTS invoices (
-      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-      customer_id UUID NOT NULL,
-      amount INT NOT NULL,
-      status VARCHAR(255) NOT NULL,
-      date DATE NOT NULL
-    );
-  `;
-}
-
-async function seedCustomers() {
-  await sql`
-    CREATE TABLE IF NOT EXISTS customers (
-      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-      name VARCHAR(255) NOT NULL,
-      email VARCHAR(255) NOT NULL,
-      image_url VARCHAR(255) NOT NULL
-    );
-  `;
-}
-
-async function seedRevenue() {
-  await sql`
-    CREATE TABLE IF NOT EXISTS revenue (
-      month VARCHAR(4) NOT NULL UNIQUE,
-      revenue INT NOT NULL
-    );
-  `;
-}
-
-async function seedInvoicees() {
-  await sql`
-  CREATE TABLE IF NOT EXISTS invoicees (
-      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-      name VARCHAR(255) NOT NULL,
-      invoiceNumber VARCHAR(255) NOT NULL,
-      date TIMESTAMPTZ NOT NULL,
-      quantity INT NOT NULL,
-      price INT NOT NULL,
-      tax INT NOT NULL,
-      payment VARCHAR(255) NOT NULL
-    );
-  `;
-}
-
 async function seedGroups() {
   await sql`
   CREATE TABLE IF NOT EXISTS groups (
-      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+      id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
       region UUID NOT NULL,
       reg VARCHAR(255),
       name VARCHAR(255) NOT NULL,
@@ -141,7 +108,7 @@ async function seedGroups() {
 async function seedMembers() {
   await sql`
   CREATE TABLE IF NOT EXISTS members (
-      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+      id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
       groupId VARCHAR(255) NOT NULL,
       idNumber INT NOT NULL,
       surname VARCHAR(255) NOT NULL,
@@ -159,7 +126,7 @@ async function seedMembers() {
       kin_relationship VARCHAR(5000),
       kin_name VARCHAR(5000),
       kin_id INT,
-      kin_phone,
+      kin_phone TEXT,
       status VARCHAR(255) NOT NULL DEFAULT 'active'
     );
   `;
@@ -168,7 +135,7 @@ async function seedMembers() {
 async function seedLoans() {
   await sql`
   CREATE TABLE IF NOT EXISTS loans (
-      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+      id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
       groupid UUID NOT NULL,
       memberid UUID NOT NULL,
       amount INT NOT NULL,
@@ -188,7 +155,7 @@ async function seedLoans() {
 async function seedGroupInvoices() {
   await sql`
     CREATE TABLE IF NOT EXISTS groupinvoice (
-      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+      id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
       group_id UUID NOT NULL,
       amount INT NOT NULL,
       status VARCHAR(255) NOT NULL,
@@ -200,7 +167,7 @@ async function seedGroupInvoices() {
 async function seedMpesaInvoices() {
   await sql`
     CREATE TABLE IF NOT EXISTS mpesainvoice (
-      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+      id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
       first_name VARCHAR(255),
       middle_name VARCHAR(255),
       last_name VARCHAR(255),
@@ -213,22 +180,35 @@ async function seedMpesaInvoices() {
     );
   `;
 }
+
+async function seedLogs() {
+  await sql`
+    CREATE TABLE IF NOT EXISTS logs (
+      id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+      user_name VARCHAR(255),
+      route VARCHAR(10000),
+      description VARCHAR(1000),
+      date TIMESTAMPTZ
+    );
+  `;
+}
+
 export async function GET() {
   try {
-    const result = await sql.begin((sql) => [
+    //@ts-ignore
+    const result = await sql.begin(() => [
       seedUsers(),
+      // seedBranches(),
+      // seedMembers(),
       // seedRegions(),
       // seedIndividuals(),
       // seedIndividualLoans(),
-      // seedInvoices(),
-      // seedCustomers(),
-      // seedRevenue(),
-      // seedInvoicees(),
       // seedGroups(),
       // seedMembers(),
       // seedLoans(),
       // seedGroupInvoices(),
       // seedMpesaInvoices(),
+      // seedLogs(),
     ]);
 
     return Response.json({ message: "Database seeded successfully" });

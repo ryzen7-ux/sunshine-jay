@@ -15,8 +15,9 @@ import {
   SelectItem,
 } from "@heroui/react";
 import { Button } from "@heroui/react";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
+import { EyeIcon, EyeSlashIcon, PlusIcon } from "@heroicons/react/24/solid";
 import { createStaff } from "@/app/lib/sun-actions";
+import { Send } from "lucide-react";
 
 const roles = [
   { key: "admin", label: "Admin" },
@@ -79,12 +80,18 @@ export default function AddStaff() {
   return (
     <>
       <div className="flex justify-between w-full py-4">
-        <p className="text-md font-bold">Manage System Users</p>
+        <div className="flex items-center gap-1">
+          <Send className="h-5 w-5 text-indigo-800" />
+          <p className="text-md font-bold">Manage Staff</p>
+        </div>
         <Button
           color="success"
+          size="sm"
           className="w-1/2 md:w-1/4"
-          onPress={() => setIsModalOpen(true)}>
-          Add Staff
+          onPress={() => setIsModalOpen(true)}
+          startContent={<PlusIcon className="h-6 w-6" />}
+        >
+          ADD STAFF
         </Button>
       </div>
       {/* Is add staff Modal */}
@@ -93,7 +100,8 @@ export default function AddStaff() {
         onOpenChange={onOpenChange}
         onClose={() => setIsModalOpen(false)}
         size="xl"
-        scrollBehavior="outside">
+        scrollBehavior="outside"
+      >
         <ModalContent>
           {(onClose) => (
             <>
@@ -153,7 +161,8 @@ export default function AddStaff() {
                         <div
                           id="customer-error"
                           aria-live="polite"
-                          aria-atomic="true"></div>
+                          aria-atomic="true"
+                        ></div>
                       </div>
                       <div className="w-full">
                         <Select
@@ -166,7 +175,8 @@ export default function AddStaff() {
                           color="success"
                           labelPlacement="outside"
                           selectedKeys={[selectRole]}
-                          onChange={(e) => setRole(e.target.value)}>
+                          onChange={(e) => setRole(e.target.value)}
+                        >
                           {roles.map((role: any, index: any) => (
                             <SelectItem key={role.key}>{role.label}</SelectItem>
                           ))}
@@ -185,7 +195,8 @@ export default function AddStaff() {
                           color="success"
                           labelPlacement="outside"
                           selectedKeys={[selectStatus]}
-                          onChange={(e) => setStatus(e.target.value)}>
+                          onChange={(e) => setStatus(e.target.value)}
+                        >
                           {status.map((item: any, index: any) => (
                             <SelectItem key={item.key}>{item.label}</SelectItem>
                           ))}
@@ -207,7 +218,8 @@ export default function AddStaff() {
                               aria-label="toggle password visibility"
                               className="focus:outline-solid outline-transparent"
                               type="button"
-                              onClick={toggleVisibility}>
+                              onClick={toggleVisibility}
+                            >
                               {isVisible ? (
                                 <EyeSlashIcon className="h-6 w-6 text-gray-500" />
                               ) : (
@@ -228,7 +240,8 @@ export default function AddStaff() {
                         type="submit"
                         color="success"
                         className="w-full"
-                        disabled={isLoading}>
+                        disabled={isLoading}
+                      >
                         {isLoading ? (
                           <Spinner color="default" size="md" className="py-4" />
                         ) : (

@@ -25,7 +25,7 @@ const months = [
   { month: "Dec" },
 ];
 export default async function RevenueChart() {
-  const revenue = await fetchRevenue();
+  const revenue: any = await fetchRevenue();
   const chartHeight = 350;
   // NOTE: Uncomment this code in Chapter 7
 
@@ -54,7 +54,7 @@ export default async function RevenueChart() {
             ))}
           </div> */}
 
-          {revenue.map((month, key) => (
+          {revenue.map((month: any, key: any) => (
             <div key={month.month} className="flex flex-col items-center gap-2">
               <div
                 className="w-full rounded-md bg-indigo-500"

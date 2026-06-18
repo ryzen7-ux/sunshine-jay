@@ -2,6 +2,7 @@ import GroupTable from "@/app/ui/customers/group-table";
 import { Input } from "@heroui/react";
 import SearchGroup from "@/app/ui/customers/search-group";
 import {
+  fetchBranches,
   fetchFilteredGroups,
   fetchGroupPages,
   fetchRegions,
@@ -20,18 +21,23 @@ import { Divider } from "@heroui/react";
 import { SuccessToast, DeleteSuccessToast } from "@/app/ui/toast";
 import { getSession } from "@/app/lib/session";
 import { getCurrentUser } from "@/app/lib/current-user";
+import RegionFilterGroups from "@/app/ui/customers/region-filter";
 
 export default async function Page(props: {
   searchParams?: Promise<{
     query?: string;
     page?: string;
     success?: string;
+    branchQuery?: string;
+    regionQuery?: string;
   }>;
 }) {
   const searchParams = await props.searchParams;
   const query = searchParams?.query || "";
   const currentPage = Number(searchParams?.page) || 1;
   const success = searchParams?.success || "false";
+  const branchQuery = searchParams?.branchQuery || "all";
+  const regionQuery = searchParams?.regionQuery || "all";
 
   const user = await getSession();
   const isAdmin = user?.role === "admin";
@@ -40,16 +46,42 @@ export default async function Page(props: {
   let groups: any = [];
   let totalPages: any = 0;
   let regions: any = [];
+  let branches: any = [];
+
   if (isAdmin) {
-    groups = await fetchFilteredGroups(query, currentPage);
-    totalPages = await fetchGroupPages(query);
+    let regionArr: any = [];
+    branches = await fetchBranches();
     regions = await fetchRegions();
+    regionArr =
+      branchQuery === "all"
+        ? regions?.map((item: any) => item.id)
+        : regions
+            ?.filter((item: any) => item.branch === branchQuery)
+            ?.map((item: any) => item.id);
+
+    const regionArr2 =
+      regionQuery === "all"
+        ? regionArr
+        : regionArr?.filter((item: any) => item === regionQuery);
+    groups = await fetchFilteredGroups(query, currentPage, regionArr2);
+    totalPages = await fetchGroupPages(query, regionArr2);
   }
 
   if (!isAdmin) {
-    groups = await fetchFilteredGroups2(query, currentPage, curentUser[0]?.id);
-    totalPages = await fetchGroupPages2(query, curentUser[0]?.id);
     regions = await fetchRegion2(curentUser[0]?.id);
+    const regionArr =
+      regionQuery === "all"
+        ? regions?.map((item: any) => item.id)
+        : regions
+            ?.filter((item: any) => item.id === regionQuery)
+            ?.map((item: any) => item.id);
+    groups = await fetchFilteredGroups2(
+      query,
+      currentPage,
+      curentUser[0]?.id,
+      regionArr,
+    );
+    totalPages = await fetchGroupPages2(query, curentUser[0]?.id, regionArr);
   }
 
   return (
@@ -58,13 +90,18 @@ export default async function Page(props: {
         <SuccessToast success={success} />
         <div className="flex w-full items-center bg-gray-100 rounded-lg px-4 py-4">
           <UserGroupIcon className="h-8 w-8 fill-green-500" />
-          <h1 className={`text-2xl font-bold text-gray-900 pl-2`}>Groups</h1>
+          <h1 className={`text-2xl font-bold text-gray-900 pl-2`}>GROUPS</h1>
         </div>
 
         <div>
           <SearchGroup regions={regions} />
         </div>
-
+        <RegionFilterGroups
+          isAdmin={isAdmin}
+          currentUserId={curentUser[0]?.id}
+          selectBranches={branches}
+          selectRegions={regions}
+        />
         <Suspense
           key={query + currentPage}
           fallback={<InvoicesTableSkeleton />}

@@ -67,7 +67,7 @@ export default function MothlyCardWrapper({
       />
       <Card
         title="PAID"
-        value={Number(monthlyCollected) ?? 0}
+        value={Number(monthlyCollected ?? 0)}
         type="collected"
         color="text-rose-600"
         span=""

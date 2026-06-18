@@ -19,6 +19,9 @@ import { Button } from "@heroui/react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 import { createIndividual } from "@/app/lib/sun-actions";
 import { number } from "zod";
+import { useDebouncedCallback } from "use-debounce";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Search } from "lucide-react";
 
 const roles = [
   { key: "admin", label: "Admin" },
@@ -37,6 +40,10 @@ export default function EditIndividuals({ regions }: { regions: any }) {
     phone: "",
     business: "",
   });
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
+
   const [isLoading, setIsloading] = useState(false);
   const [selectRegion, setRegion] = useState("");
   const [idNumber, setIdNumber] = useState<number>();
@@ -48,6 +55,16 @@ export default function EditIndividuals({ regions }: { regions: any }) {
   const handleChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  const handleIndividualSearch = useDebouncedCallback((term) => {
+    const params = new URLSearchParams(searchParams);
+    if (term) {
+      params.set("indQuery", term);
+    } else {
+      params.delete("indQuery");
+    }
+    replace(`${pathname}?${params.toString()}`);
+  }, 200);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -75,8 +92,20 @@ export default function EditIndividuals({ regions }: { regions: any }) {
 
   return (
     <>
-      <div className="flex justify-between w-full pt-6">
-        <p className="text-md font-bold">Manage Individuals Loanees </p>
+      <h1 className="text-lg font-extrabold">Individuals Loanees </h1>
+      <div className="flex gap-2 w-full pt-2">
+        <Input
+          placeholder="Search loanee...."
+          radius="lg"
+          size="md"
+          variant="faded"
+          color="success"
+          onChange={(e) => {
+            handleIndividualSearch(e.target.value);
+          }}
+          defaultValue={searchParams.get("indQuery")?.toString()}
+          startContent={<Search className="h-6 w-6 text-green-600" />}
+        />
         <Button
           color="success"
           className="w-1/2 md:w-1/4"

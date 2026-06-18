@@ -3,20 +3,18 @@
 import { revalidatePath } from "next/cache";
 import fs from "node:fs/promises";
 import { redirect } from "next/navigation";
-import { date, z } from "zod";
+import { z } from "zod";
 import sql from "@/app/lib/db";
 import {
   fetchUserByEmail,
   fetchUserById,
   fetchIndividualsByIdNumber,
   fetchIndividualById,
-  fetchMemberById,
   fetchMemberByIdNumber,
   fetchLoanById,
   fetchMaxCycle,
 } from "@/app/lib/data/sun-data";
 import bcrypt from "bcryptjs";
-import { DateTime } from "luxon";
 
 const FormSchema = z.object({
   id: z.string(),
@@ -256,18 +254,19 @@ export async function createRegion(formData: FormData) {
   const name = formData.get("name") as string;
   const county = formData.get("county") as string;
   const manager = formData.get("manager") as string;
+  const branch = formData.get("branch") as string;
 
   const created = new Date();
 
   try {
-    await sql`INSERT INTO regions (name, county, manager,created) 
-    VALUES (${name}, ${county}, ${manager}, ${created})`;
+    await sql`INSERT INTO regions (name, county, manager, branch, created) 
+    VALUES (${name}, ${county}, ${manager}, ${branch}, ${created})`;
 
     revalidatePath("/dashboard/staff-management");
     return { success: true, message: "Region created successfully" };
   } catch (error) {
     console.log(error);
-    return { success: false, message: "Server error occured" };
+    return { success: false, message: "Server error occurred" };
   }
 }
 
@@ -275,10 +274,12 @@ export async function updateRegion(formData: FormData) {
   const name = formData.get("name") as string;
   const county = formData.get("county") as string;
   const manager = formData.get("manager") as string;
+  const branch = formData.get("branch") as string;
   const id = formData.get("id") as string;
 
   try {
-    await sql`UPDATE regions SET name = ${name}, county = ${county}, manager = ${manager} WHERE id=${id}`;
+    await sql`UPDATE regions SET name = ${name}, county = ${county}, manager = ${manager}, branch = ${branch} 
+               WHERE id=${id}`;
 
     revalidatePath("/dashboard/staff-management");
     return { success: true, message: "Region update successfully" };

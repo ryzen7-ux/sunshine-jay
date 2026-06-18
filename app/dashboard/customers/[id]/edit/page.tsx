@@ -23,7 +23,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
           },
         ]}
       />
-      <Form setIsSuccess={false} group={group} />
+      {/*<Form setIsSuccess={false} group={group} />*/}
     </main>
   );
 }

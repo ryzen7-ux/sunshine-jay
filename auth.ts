@@ -12,9 +12,7 @@ import { redirect } from "next/navigation";
 
 async function getUser(email: string): Promise<UserTypes | undefined> {
   try {
-    const user = await sql<
-      UserTypes[]
-    >`SELECT * FROM users WHERE email=${email}`;
+    const user = await sql<any>`SELECT * FROM users WHERE email=${email}`;
 
     return user[0];
   } catch (error) {
@@ -23,28 +21,28 @@ async function getUser(email: string): Promise<UserTypes | undefined> {
   }
 }
 
-export const { auth } = NextAuth({
-  ...authConfig,
-  providers: [
-    Credentials({
-      async authorize(credentials) {
-        const parsedCredentials = z
-          .object({ email: z.string().email(), password: z.string().min(6) })
-          .safeParse(credentials);
-
-        if (parsedCredentials.success) {
-          const { email, password } = parsedCredentials.data;
-          const user = await getUser(email);
-          if (!user) return null;
-          const passwordsMatch = await bcrypt.compare(password, user.password);
-          if (passwordsMatch) return user;
-        }
-
-        return null;
-      },
-    }),
-  ],
-});
+// export const { auth } = NextAuth({
+//   ...authConfig,
+//   providers: [
+//     Credentials({
+//       async authorize(credentials) {
+//         const parsedCredentials = z
+//           .object({ email: z.string().email(), password: z.string().min(6) })
+//           .safeParse(credentials);
+//
+//         if (parsedCredentials.success) {
+//           const { email, password } = parsedCredentials.data;
+//           const user = await getUser(email);
+//           if (!user) return null;
+//           const passwordsMatch = await bcrypt.compare(password, user.password);
+//           if (passwordsMatch) return user;
+//         }
+//
+//         return null;
+//       },
+//     }),
+//   ],
+// });
 
 export async function signIn(data: any, formData: FormData) {
   const email = formData.get("email") as string;

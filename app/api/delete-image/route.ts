@@ -50,7 +50,9 @@ export async function DELETE(request: NextRequest) {
       if (type === "kinPhoto") {
         await sql`UPDATE members SET kin_photo=${null} WHERE id=${itemId}`;
       }
-    } else {
+    }
+
+    if (userType === "individual") {
       if (type === "passport") {
         await sql`UPDATE individuals SET passport=${null} WHERE id=${itemId}`;
       }
@@ -71,6 +73,14 @@ export async function DELETE(request: NextRequest) {
       }
       if (type === "kinPhoto") {
         await sql`UPDATE individuals SET kin_photo=${null} WHERE id=${itemId}`;
+      }
+    }
+    if (userType === "staff") {
+      if (type === "passport") {
+        await sql`UPDATE users SET passport_url=${null} WHERE id=${itemId}`;
+      }
+      if (type === "application") {
+        await sql`UPDATE users SET application_form_url=${null} WHERE id=${itemId}`;
       }
     }
 

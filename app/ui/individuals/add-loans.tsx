@@ -29,7 +29,7 @@ import { number, string } from "zod";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
 import { formatCurrencyToLocal, formatDateToLocal } from "@/app/lib/utils";
-import { Cuboid } from "lucide-react";
+import { Cuboid, Search } from "lucide-react";
 import { now, getLocalTimeZone, parseDate } from "@internationalized/date";
 import { fetchIndividualsMaxCycle } from "@/app/lib/data/sun-data";
 
@@ -100,7 +100,17 @@ export default function AddLoan({
       params.delete("id");
     }
     replace(`${pathname}?${params.toString()}`);
-  }, 300);
+  }, 0);
+
+  const handleLoanSearch = useDebouncedCallback((term) => {
+    const params = new URLSearchParams(searchParams);
+    if (term) {
+      params.set("loanSearchQuery", term);
+    } else {
+      params.delete("loanSearchQuery");
+    }
+    replace(`${pathname}?${params.toString()}`);
+  }, 200);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -148,14 +158,26 @@ export default function AddLoan({
   };
   return (
     <>
-      <div className="flex justify-between w-full py-2">
-        <p className="text-md font-bold flex gap-4">Individual Loans </p>
+      <h1 className="text-ld font-extrabold flex gap-4">Individual Loans </h1>
+      <div className="flex gap-2 w-full py-2">
+        <Input
+          placeholder="Search loans...."
+          radius="lg"
+          size="md"
+          variant="faded"
+          color="success"
+          onChange={(e) => {
+            handleLoanSearch(e.target.value);
+          }}
+          defaultValue={searchParams.get("loanSearchQuery")?.toString()}
+          startContent={<Search className="h-6 w-6 text-green-600" />}
+        />
         <Button
           color="success"
           className=" md:w-1/4"
           onPress={() => setIsModalOpen(true)}
         >
-          Add Individual Loan
+          Add Loan
         </Button>
       </div>
       <Modal

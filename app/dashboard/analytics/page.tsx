@@ -1,7 +1,5 @@
 import { fetchRegions, fetchUserByEmail } from "@/app/lib/data/sun-data";
-
 import { Metadata } from "next";
-
 import { getSession } from "@/app/lib/session";
 
 import { ChartBarIcon } from "@heroicons/react/24/solid";
@@ -41,7 +39,6 @@ export default async function Page(props: {
   const currentUser: any = await fetchUserByEmail(user?.email);
 
   let regionArr: any = [];
-  let selectRegions: any = regions;
 
   if (isAdmin) {
     regionArr = regions?.map((item: any) => item.id);
@@ -56,7 +53,6 @@ export default async function Page(props: {
     const filteredRegions = regions?.filter(
       (item: any) => item?.manager === currentUser[0].id,
     );
-    selectRegions = filteredRegions;
     regionArr = filteredRegions?.map((item: any) => item.id);
     if (regionQuery) {
       if (regionQuery !== "all") {

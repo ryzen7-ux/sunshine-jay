@@ -19,7 +19,7 @@ export default async function Page() {
           },
         ]}
       />
-      <Form groups={groups} />
+      {/*<Form groups={groups} />*/}
     </main>
   );
 }

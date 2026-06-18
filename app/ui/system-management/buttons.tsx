@@ -66,10 +66,10 @@ export function DeleteStaff({ id, user }: { id: string; user: any }) {
     }
   };
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  console.log(user);
+
   return (
     <>
-      <Tooltip color="danger" content="Delete Loan Item">
+      <Tooltip color="danger" content="Delete Item">
         <button
           onClick={onOpen}
           className=""
@@ -77,7 +77,7 @@ export function DeleteStaff({ id, user }: { id: string; user: any }) {
         >
           <span className="sr-only">Delete</span>
           <TrashIcon
-            className={`w-4 ${user?.name !== "henry-admin" ? "text-red-200" : "text-red-500"}`}
+            className={`w-6 ${user?.name !== "henry-admin" ? "text-red-200" : "text-red-500"}`}
           />
         </button>
       </Tooltip>

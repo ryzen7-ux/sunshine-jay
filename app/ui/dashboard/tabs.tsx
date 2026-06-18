@@ -42,6 +42,7 @@ interface tabsProps {
   todayLoanBalance: any;
   groupCycle: any;
   user: any;
+  regionQuery: any;
 }
 
 export default function DashboardTabs({
@@ -65,6 +66,7 @@ export default function DashboardTabs({
   todayLoanBalance,
   groupCycle,
   user,
+  regionQuery,
 }: tabsProps) {
   const [selected, setSelected] = useState<any>("today");
 
@@ -98,18 +100,16 @@ export default function DashboardTabs({
         >
           {" "}
           <div className="grid gap-6 grid-cols-2 lg:grid-cols-2 ">
-            <Suspense fallback={<CardsSkeleton />}>
-              <MothlyCardWrapper
-                numberOfMembers={numberOfMembers}
-                monthlyDisbursement={todayDisbursed}
-                monthlyTotalLoan={todayTotalLoan}
-                monthlyLoanBalance={todayLoanBalance}
-                monthlyCollected={todayCollected}
-                selected={selected}
-                groupCycle={groupCycle}
-                user={user}
-              />
-            </Suspense>
+            <MothlyCardWrapper
+              numberOfMembers={numberOfMembers}
+              monthlyDisbursement={todayDisbursed}
+              monthlyTotalLoan={todayTotalLoan}
+              monthlyLoanBalance={todayLoanBalance}
+              monthlyCollected={todayCollected}
+              selected={selected}
+              groupCycle={groupCycle}
+              user={user}
+            />
           </div>
         </Tab>
         <Tab
@@ -133,18 +133,16 @@ export default function DashboardTabs({
         >
           {" "}
           <div className="grid gap-6 grid-cols-2 lg:grid-cols-2 ">
-            <Suspense fallback={<CardsSkeleton />}>
-              <MothlyCardWrapper
-                numberOfMembers={numberOfMembers}
-                monthlyDisbursement={weeklyDisbursed}
-                monthlyTotalLoan={weeklyTotalLoan}
-                monthlyLoanBalance={weeklyLoanBalance}
-                monthlyCollected={weeklyCollected}
-                selected={selected}
-                groupCycle={groupCycle}
-                user={user}
-              />
-            </Suspense>
+            <MothlyCardWrapper
+              numberOfMembers={numberOfMembers}
+              monthlyDisbursement={weeklyDisbursed}
+              monthlyTotalLoan={weeklyTotalLoan}
+              monthlyLoanBalance={weeklyLoanBalance}
+              monthlyCollected={weeklyCollected}
+              selected={selected}
+              groupCycle={groupCycle}
+              user={user}
+            />
           </div>
         </Tab>
         <Tab
@@ -168,18 +166,16 @@ export default function DashboardTabs({
         >
           {" "}
           <div className="grid gap-6 grid-cols-2 lg:grid-cols-2 ">
-            <Suspense fallback={<CardsSkeleton />}>
-              <MothlyCardWrapper
-                numberOfMembers={numberOfMembers}
-                monthlyDisbursement={monthlyDisbursement}
-                monthlyTotalLoan={monthlyTotalLoan}
-                monthlyLoanBalance={monthlyLoanBalance}
-                monthlyCollected={monthlyCollected}
-                selected={selected}
-                groupCycle={groupCycle}
-                user={user}
-              />
-            </Suspense>
+            <MothlyCardWrapper
+              numberOfMembers={numberOfMembers}
+              monthlyDisbursement={monthlyDisbursement}
+              monthlyTotalLoan={monthlyTotalLoan}
+              monthlyLoanBalance={monthlyLoanBalance}
+              monthlyCollected={monthlyCollected}
+              selected={selected}
+              groupCycle={groupCycle}
+              user={user}
+            />
           </div>
         </Tab>
         <Tab
@@ -205,18 +201,16 @@ export default function DashboardTabs({
             <CardsSkeleton />
           </div> */}
           <div className="grid gap-6 grid-cols-2 lg:grid-cols-2 ">
-            <Suspense fallback={<CardsSkeleton />}>
-              <MothlyCardWrapper
-                numberOfMembers={numberOfMembers}
-                monthlyDisbursement={groupAmount}
-                monthlyTotalLoan={totalLoans}
-                monthlyLoanBalance={loanBalance}
-                monthlyCollected={totalCollectedLoans}
-                selected={selected}
-                groupCycle={groupCycle}
-                user={user}
-              />
-            </Suspense>
+            <MothlyCardWrapper
+              numberOfMembers={numberOfMembers}
+              monthlyDisbursement={groupAmount}
+              monthlyTotalLoan={totalLoans}
+              monthlyLoanBalance={loanBalance}
+              monthlyCollected={totalCollectedLoans}
+              selected={selected}
+              groupCycle={groupCycle}
+              user={user}
+            />
           </div>
         </Tab>
       </Tabs>

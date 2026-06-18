@@ -22,7 +22,6 @@ interface tabsProps {
   loansCurrentPage: any;
   loansTotalPages: any;
   filtredIndividuals: any;
-  filteredLoanIndividuals: any;
   loans: any;
   maxCycle: any;
   detailLoans: any;
@@ -39,7 +38,6 @@ export default function IndividualsTab({
   loansCurrentPage,
   loansTotalPages,
   filtredIndividuals,
-  filteredLoanIndividuals,
   loans,
   maxCycle,
   detailLoans,
@@ -113,7 +111,6 @@ export default function IndividualsTab({
                   fallback={<InvoicesTableSkeleton />}
                 >
                   <LoansTable
-                    filteredLoanIndividuals={filteredLoanIndividuals}
                     loans={loans}
                     loansQuery={loansQuery}
                     loansCurrentPage={loansCurrentPage}

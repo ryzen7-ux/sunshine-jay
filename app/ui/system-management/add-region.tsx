@@ -15,27 +15,24 @@ import {
   SelectItem,
 } from "@heroui/react";
 import { Button } from "@heroui/react";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
+import { PlusIcon } from "@heroicons/react/24/solid";
 import { createRegion } from "@/app/lib/sun-actions";
+import { Send } from "lucide-react";
 
-const roles = [
-  { key: "admin", label: "Admin" },
-  { key: "manager", label: "Manager" },
-  { key: "staff", label: "Staff" },
-];
-const status = [
-  { key: "active", label: "Active" },
-  { key: "inactive", label: "Inactive" },
-  { key: "on-leave", label: "On-Leave" },
-];
-
-export default function AddRegion({ users }: { users: any }) {
+export default function AddRegion({
+  users,
+  branches,
+}: {
+  users: any;
+  branches: any;
+}) {
   const [formData, setFormData] = useState({
     name: "",
     county: "",
   });
   const [isLoading, setIsloading] = useState(false);
   const [selectManager, setManager] = useState("");
+  const [selectBranch, setSelectBranch] = useState("");
   const [isVisible, setIsVisible] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -50,7 +47,7 @@ export default function AddRegion({ users }: { users: any }) {
     setIsloading(true);
     const formData = new FormData(e.currentTarget);
     const results = await createRegion(formData);
-    console.log(results);
+
     if (results?.success === false) {
       setIsloading(false);
       addToast({
@@ -69,17 +66,24 @@ export default function AddRegion({ users }: { users: any }) {
     }
   };
 
-  const filtredUsers = users.filter((user: any) => user.name !== "henry-admin");
+  const filtredUsers = users?.filter(
+    (user: any) => user.name !== "henry-admin",
+  );
   return (
     <>
-      <div className="flex justify-between w-full py-6">
-        <p className="text-md font-bold">Manage regions</p>
+      <div className="flex justify-between w-full py-2">
+        <div className="flex items-center gap-1">
+          <Send className="h-5 w-5 text-indigo-800" />
+          <p className="text-md font-bold">Manage Regions</p>
+        </div>
         <Button
           color="success"
+          size="sm"
           className="w-1/2 md:w-1/4"
           onPress={() => setIsModalOpen(true)}
+          startContent={<PlusIcon className="h-6 w-6" />}
         >
-          Add Region
+          ADD REGION
         </Button>
       </div>
       {/* Is add staff Modal */}
@@ -136,6 +140,26 @@ export default function AddRegion({ users }: { users: any }) {
                       <div className="w-full">
                         <Select
                           isRequired
+                          name="branch"
+                          className=""
+                          label="Branch"
+                          variant="faded"
+                          size="md"
+                          color="success"
+                          labelPlacement="outside"
+                          selectedKeys={[selectBranch]}
+                          onChange={(e) => setSelectBranch(e.target.value)}
+                        >
+                          {branches?.map((user: any, index: any) => (
+                            <SelectItem key={user.id}>{user.name}</SelectItem>
+                          ))}
+                        </Select>
+                      </div>
+                    </div>
+                    <div className="flex flex-col md:flex-row gap-4 ">
+                      <div className="w-full">
+                        <Select
+                          isRequired
                           name="manager"
                           className=""
                           label="Region manager"
@@ -146,7 +170,7 @@ export default function AddRegion({ users }: { users: any }) {
                           selectedKeys={[selectManager]}
                           onChange={(e) => setManager(e.target.value)}
                         >
-                          {filtredUsers.map((user: any, index: any) => (
+                          {filtredUsers?.map((user: any, index: any) => (
                             <SelectItem key={user.id}>{user.name}</SelectItem>
                           ))}
                         </Select>

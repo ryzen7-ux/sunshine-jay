@@ -22,9 +22,11 @@ import { updateRegion } from "@/app/lib/sun-actions";
 export default function EditRegion({
   users,
   region,
+  branches,
 }: {
   users: any;
   region: any;
+  branches: any;
 }) {
   const [formData, setFormData] = useState({
     name: region?.name || "",
@@ -33,6 +35,7 @@ export default function EditRegion({
 
   const [isLoading, setIsloading] = useState(false);
   const [selectManager, setManager] = useState(region?.manager || "");
+  const [selectBranch, setSelectBranch] = useState(region?.branch || "");
   const [isVisible, setIsVisible] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -65,6 +68,9 @@ export default function EditRegion({
       setIsModalOpen(false);
     }
   };
+ const filteredUsers = users?.filter(
+    (user: any) => user.name !== "henry-admin",
+  );
 
   return (
     <>
@@ -74,7 +80,8 @@ export default function EditRegion({
             className="pr-3"
             onClick={(event) => {
               setIsModalOpen(true);
-            }}>
+            }}
+          >
             <Edit className="h-4 w-4 text-green-500 hover:text-green-600" />
           </button>
         </Tooltip>
@@ -85,7 +92,8 @@ export default function EditRegion({
         onOpenChange={onOpenChange}
         onClose={() => setIsModalOpen(false)}
         size="xl"
-        scrollBehavior="outside">
+        scrollBehavior="outside"
+      >
         <ModalContent>
           {(onClose) => (
             <>
@@ -138,6 +146,26 @@ export default function EditRegion({
                       <div className="w-full">
                         <Select
                           isRequired
+                          name="branch"
+                          className=""
+                          label="Branch"
+                          variant="faded"
+                          size="md"
+                          color="success"
+                          labelPlacement="outside"
+                          selectedKeys={[selectBranch]}
+                          onChange={(e) => setSelectBranch(e.target.value)}
+                        >
+                          {branches?.map((branch: any, index: any) => (
+                            <SelectItem key={branch.id}>
+                              {branch.name}
+                            </SelectItem>
+                          ))}
+                        </Select>
+                      </div>
+                      <div className="w-full">
+                        <Select
+                          isRequired
                           name="manager"
                           className=""
                           label="Region manager"
@@ -146,8 +174,9 @@ export default function EditRegion({
                           color="success"
                           labelPlacement="outside"
                           selectedKeys={[selectManager]}
-                          onChange={(e) => setManager(e.target.value)}>
-                          {users.map((user: any, index: any) => (
+                          onChange={(e) => setManager(e.target.value)}
+                        >
+                          {filteredUsers?.map((user: any, index: any) => (
                             <SelectItem key={user.id}>{user.name}</SelectItem>
                           ))}
                         </Select>
@@ -161,7 +190,8 @@ export default function EditRegion({
                         type="submit"
                         color="success"
                         className="w-full"
-                        disabled={isLoading}>
+                        disabled={isLoading}
+                      >
                         {isLoading ? (
                           <Spinner color="default" size="md" className="py-4" />
                         ) : (

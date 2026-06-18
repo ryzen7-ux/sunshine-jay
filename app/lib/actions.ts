@@ -131,3 +131,7 @@ export async function revalidateMemberFileUpload(groupId: string) {
 export async function revalidateIndividualFileUpload() {
   revalidatePath(`dashboard/individuals`);
 }
+
+export async function revalidateSystemFileUpload() {
+  revalidatePath(`dashboard/system-management`);
+}

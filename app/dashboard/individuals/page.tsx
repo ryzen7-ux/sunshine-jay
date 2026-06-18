@@ -1,29 +1,14 @@
-import { lusitana } from "@/app/ui/fonts";
-import { Suspense } from "react";
-import { InvoicesTableSkeleton } from "@/app/ui/skeletons";
-import AddIndividuals from "@/app/ui/individuals/add-individuals";
-import AddLoans from "@/app/ui/individuals/add-loans";
 import {
-  fetchUsers,
   fetchRegions,
-  fetchUserById,
   fetchIndividualPages,
   fetchIndividuals,
-  fetchIndividualsByIdNumber,
   fetchIndividualsById,
   fetchIndividualLoansPages,
   fetchFilteredIndividuals,
   fetchFilteredIndividualLoans,
-  fetchIndividualsCardsData,
   fetchIndividualsMaxCycle,
   fetchUserByEmail,
 } from "@/app/lib/data/sun-data";
-import { getCurrentUser } from "@/app/lib/current-user";
-import Table from "@/app/ui/individuals/table";
-import LoansTable from "@/app/ui/individuals/loans-table";
-import Pagination from "@/app/ui/individuals/pagination";
-import LoansPagination from "@/app/ui/individuals/loans-pagination";
-import AddLoan from "@/app/ui/individuals/add-loans";
 import IndividualsTab from "@/app/ui/individuals/tabs";
 import { Cuboid } from "lucide-react";
 import { getSession } from "@/app/lib/session";
@@ -35,11 +20,15 @@ export default async function Page(props: {
     id?: string;
     loansquery?: string;
     loanspage?: string;
+    loanSearchQuery?: string;
+    indQuery?: string;
   }>;
 }) {
   const searchParams = await props.searchParams;
   const query = searchParams?.loansquery || "";
   const loansquery = searchParams?.query || "";
+  const loanSearchQuery = searchParams?.loanSearchQuery || "";
+  const indQuery = searchParams?.indQuery || "";
   const indiviudalId = searchParams?.id || "";
   const currentPage = Number(searchParams?.page) || 1;
   const loansCurrentPage = Number(searchParams?.loanspage) || 1;
@@ -62,24 +51,23 @@ export default async function Page(props: {
     regionArr = filteredRegions?.map((item: any) => item.id);
   }
 
-  const totalPages = await fetchIndividualPages(query, regionArr);
-  const totalLoanPages = await fetchIndividualLoansPages(loansquery, regionArr);
+  const totalPages = await fetchIndividualPages(query, regionArr, indQuery);
+  const totalLoanPages = await fetchIndividualLoansPages(
+    loansquery,
+    regionArr,
+    loanSearchQuery,
+  );
 
   const loans = await fetchFilteredIndividualLoans(
     loansquery,
     loansCurrentPage,
     regionArr,
+    loanSearchQuery,
   );
 
   const { individualLoanees, individual_loans } =
-    await fetchFilteredIndividuals(query, currentPage, regionArr);
+    await fetchFilteredIndividuals(currentPage, regionArr, indQuery);
 
-  const filteredLoanIndividuals = await fetchFilteredIndividuals(
-    loansquery,
-    loansCurrentPage,
-    regionArr,
-  );
-  const users = await fetchUsers();
   const individuals = await fetchIndividuals(regionArr);
   const individual = await fetchIndividualsById(indiviudalId);
 
@@ -103,48 +91,12 @@ export default async function Page(props: {
           loansCurrentPage={loansCurrentPage}
           loansTotalPages={totalLoanPages}
           filtredIndividuals={individualLoanees}
-          filteredLoanIndividuals={filteredLoanIndividuals}
           loans={loans}
           maxCycle={maxCycle}
           detailLoans={individual_loans}
           user={user}
         />
-        {/* <AddIndividuals regions={regions} /> */}
       </div>
-      {/* <div className="mt-6 ">
-        <Suspense
-          key={query + currentPage}
-          fallback={<InvoicesTableSkeleton />}
-        >
-          <Table query={query} currentPage={currentPage} />
-        </Suspense>
-        <div className="my-5 flex w-full justify-center">
-          <Pagination totalPages={totalPages} />
-        </div>
-      </div> */}
-      {/* <hr /> */}
-      {/* INDIVIDUAL LOANS */}
-      {/* <div className="w-full">
-        <AddLoan
-          individual={individual}
-          individuals={individuals}
-          regions={regions}
-        />
-      </div>
-      <div className="mt-6 ">
-        <Suspense
-          key={loansquery + loansCurrentPage}
-          fallback={<InvoicesTableSkeleton />}
-        >
-          <LoansTable
-            loansQuery={loansquery}
-            loansCurrentPage={loansCurrentPage}
-          />
-        </Suspense>
-        <div className="mt-5 flex w-full justify-center">
-          <LoansPagination loansTotalPages={totalLoanPages} />
-        </div>
-      </div> */}
     </main>
   );
 }

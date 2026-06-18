@@ -34,7 +34,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
           },
         ]}
       />
-      <Form invoice={invoice} groups={groups} />
+      {/*<Form invoice={invoice} groups={groups} />*/}
     </main>
   );
 }

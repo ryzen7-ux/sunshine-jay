@@ -70,7 +70,7 @@ export function DeleteRegion({
               </ModalHeader>
               <ModalBody>
                 <p className="text-lg">
-                  Are you sure you want to delete this member?
+                  Are you sure you want to delete this item?
                 </p>
               </ModalBody>
               <ModalFooter>

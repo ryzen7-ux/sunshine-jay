@@ -60,7 +60,7 @@ export default function CardWrapper({
       />
       <Card
         title="Paid"
-        value={totalCollectedLoans ?? 0}
+        value={totalCollectedLoans || 0}
         type="collected"
         color="text-green-800"
         span=""

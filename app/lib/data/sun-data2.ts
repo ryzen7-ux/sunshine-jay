@@ -2,24 +2,11 @@ import sql from "@/app/lib/db";
 import {
   GroupsTable,
   GroupForm,
-  MembersTable,
-  MemberForm,
   LoanForm,
-  InvoicesTable,
-  InvoicesForm,
-  LatestInvoice,
   MpesaInvoice,
 } from "../sun-defination";
-import {
-  formatCurrencyToLocal,
-  formatDateToLocal,
-  computeTotalLoan,
-} from "@/app/lib/utils";
-import { getSession } from "@/app/lib/session";
 
-// CLSOE DB COONECTIONS
-
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 15;
 
 export async function fetchMpesaInvoicesPages2(
   query: string,
@@ -125,7 +112,7 @@ export async function fetchFilteredMpesaInvoices2(
       ORDER BY mpesainvoice.transtime DESC
      
     `;
-    const invoices2 = await sql<MpesaInvoice[]>`
+    const invoices2: any = await sql<MpesaInvoice[]>`
       SELECT
         mpesainvoice.id,
         mpesainvoice.transid,
@@ -172,6 +159,7 @@ export async function fetchFilteredGroups2(
   query: string,
   currentPage: number,
   userId: string,
+  regionArr: any,
 ) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
@@ -194,6 +182,7 @@ export async function fetchFilteredGroups2(
     JOIN regions ON regions.id = groups.region
       WHERE
     regions.manager = ${userId} AND 
+    groups.region = ANY(${regionArr}) AND
        ( groups.reg ILIKE ${`%${query}%`} OR
         groups.name ILIKE ${`%${query}%`} OR
         groups.location ILIKE ${`%${query}%`} OR
@@ -202,7 +191,7 @@ export async function fetchFilteredGroups2(
       ORDER BY groups.date DESC
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
     `;
-    console.log(groups);
+
     return groups;
   } catch (error) {
     console.error("Database Error:", error);
@@ -210,10 +199,23 @@ export async function fetchFilteredGroups2(
   }
 }
 
-export async function fetchGroupPages2(query: string, userId: string) {
+export async function fetchGroupPages2(
+  query: string,
+  userId: string,
+  regionArr: any,
+) {
   try {
     const data = await sql`SELECT COUNT(*)
-    FROM groups JOIN regions ON regions.id = groups.region WHERE regions.manager = ${userId}
+    FROM groups 
+      JOIN regions ON regions.id = groups.region
+      JOIN branches ON branches.id = regions.branch
+    WHERE regions.manager = ${userId} AND
+           groups.region = ANY(${regionArr}) AND (
+                groups.reg ILIKE ${`%${query}%`} OR
+                groups.name ILIKE ${`%${query}%`} OR
+                groups.location ILIKE ${`%${query}%`} OR
+                groups.date::text ILIKE ${`%${query}%`}
+                )
   `;
     const totalPages = Math.ceil(Number(data[0].count) / ITEMS_PER_PAGE);
     return totalPages;
@@ -249,6 +251,7 @@ export async function fetchLoansPages2(
   startDate: string,
   endDate: string,
   pageItems: number,
+  regionArr: any,
 ) {
   const today = new Date();
   const formattedDate = today.toISOString().split("T")[0];
@@ -257,13 +260,15 @@ export async function fetchLoansPages2(
   try {
     const data = await sql`SELECT COUNT(*)
     FROM loans JOIN groups ON groups.id = loans.groupid 
-    JOIN regions ON regions.id = groups.region 
+    JOIN regions ON regions.id = groups.region
+    JOIN branches ON branches.id = regions.branch
     JOIN members ON loans.memberid = members.id
     WHERE regions.manager = ${userId} AND
     loans.date >= ${startDate || defaultStartDate}::timestamp 
     AND loans.date < ${
       endDate || formattedDate
     }::timestamp  + interval '1 day' AND
+    regions.id =  ANY(${regionArr}) AND
      (loans.loanid ILIKE ${`%${query}%`} OR
         loans.cycle::TEXT ILIKE ${`%${query}%`} OR
         loans.fee::TEXT ILIKE ${`%${query}%`} OR
@@ -293,6 +298,7 @@ export async function fetchFilteredLoans2(
   startDate: string,
   endDate: string,
   pagetItems: number,
+  regionArr: any,
 ) {
   const offset = (currentPage - 1) * pagetItems;
 
@@ -327,12 +333,14 @@ export async function fetchFilteredLoans2(
       JOIN members ON loans.memberid = members.id
       JOIN groups ON members.groupid = groups.id:: text
       JOIN regions ON regions.id = groups.region
+      JOIN branches ON branches.id = regions.branch
       WHERE
       regions.manager = ${userId} AND  loans.date >=${
         startDate || defaultStartDate
       }::timestamp AND   loans.date  < ${
         endDate || formattedDate
       }::timestamp + interval '1 day' AND
+        regions.id =  ANY(${regionArr}) AND
        (loans.loanid ILIKE ${`%${query}%`} OR
         loans.cycle::TEXT ILIKE ${`%${query}%`} OR
         loans.fee::TEXT ILIKE ${`%${query}%`} OR
@@ -366,6 +374,25 @@ export async function fetchGroups2(userId: string) {
       ORDER BY groups.name ASC
     `;
     return groups;
+  } catch (error) {
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch invoice.");
+  }
+}
+
+export async function fetchSystemCardStats() {
+  try {
+    const staff = await sql`SELECT 
+        COUNT(*) FROM users WHERE name <> 'henry-admin'`;
+    const branches = await sql`SELECT 
+        COUNT(*) FROM branches  `;
+    const regions = await sql`SELECT 
+        COUNT(*) FROM regions `;
+    const staff_count = Number(staff[0].count) ?? 0;
+    const branches_count = Number(branches[0].count) ?? 0;
+    const regions_count = Number(regions[0].count) ?? 0;
+
+    return { staff_count, branches_count, regions_count };
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch invoice.");

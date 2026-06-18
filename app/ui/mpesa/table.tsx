@@ -42,11 +42,10 @@ export default function InvoicesTable({
 }) {
   const isSuperAdmin = user.name === "henry-admin";
 
-  console.log(categorizeDate(ginvoices[0].transtime), ginvoices[0].transtime);
   if (!ginvoices || ginvoices.length === 0) {
     return (
       <div className="mt-6 text-center text-gray-500">
-        <p>No invoices found.</p>
+        <p>No Mpesa transactions found!!</p>
       </div>
     );
   }

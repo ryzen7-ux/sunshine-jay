@@ -12,17 +12,22 @@ import {
   fetchLoanByIdNew,
   fetchUserByEmail,
   fetchFilteredLoans,
+  fetchRegions,
+  fetchBranches,
 } from "@/app/lib/data/sun-data";
 import {
   fetchFilteredLoans2,
   fetchGroups2,
   fetchLoansPages2,
+  fetchRegion2,
 } from "@/app/lib/data/sun-data2";
 import { Metadata } from "next";
 import { ProcessDisbursement } from "@/app/ui/loans/buttons";
 import { getSession } from "@/app/lib/session";
 import { ExportLoanCvs } from "@/app/ui/loans/export-cvs";
 import { CubeIcon } from "@heroicons/react/16/solid";
+import RegionFilterGroups from "@/app/ui/customers/region-filter";
+import RegionFilterLoans from "@/app/ui/loans/region-filter";
 
 export const metadata: Metadata = {
   title: "Loans",
@@ -33,6 +38,8 @@ export default async function Page(props: {
     query?: string;
     page?: string;
     memberQuery?: string;
+    branchQuery?: string;
+    regionQuery?: string;
     startDate?: string;
     endDate?: string;
     pageItems?: string;
@@ -42,6 +49,8 @@ export default async function Page(props: {
   const searchParams = await props.searchParams;
   const query = searchParams?.query || "";
   const memberQuery = searchParams?.memberQuery || "";
+  const branchQuery = searchParams?.branchQuery || "all";
+  const regionQuery = searchParams?.regionQuery || "all";
   const startDate = searchParams?.startDate || "";
   const endDate = searchParams?.endDate || "";
   const pageItems = searchParams?.pageItems || "15";
@@ -59,18 +68,35 @@ export default async function Page(props: {
   let groups: any = [];
   let totalPages: any = 0;
   let loans: any = [];
+  let regions: any = [];
+  let branches: any = [];
 
   if (id) {
     [loan] = await Promise.all([fetchLoanByIdNew(id)]);
   }
 
   if (isAdmin) {
+    branches = await fetchBranches();
+    regions = await fetchRegions();
+    let regionArr: any = [];
+    regionArr =
+      branchQuery === "all"
+        ? regions?.map((item: any) => item.id)
+        : regions
+            ?.filter((item: any) => item.branch === branchQuery)
+            ?.map((item: any) => item.id);
+
+    const regionArr2 =
+      regionQuery === "all"
+        ? regionArr
+        : regionArr?.filter((item: any) => item === regionQuery);
     groups = await fetchGroups();
     totalPages = await fetchLoansPages(
       query,
       startDate,
       endDate,
       Number(pageItems),
+      regionArr2,
     );
     loans = await fetchFilteredLoans(
       query,
@@ -78,17 +104,27 @@ export default async function Page(props: {
       startDate,
       endDate,
       Number(pageItems),
+      regionArr2,
     );
   }
 
   if (!isAdmin) {
     groups = await fetchGroups2(userId);
+    regions = await fetchRegion2(curentUser[0]?.id);
+    const regionArr =
+      regionQuery === "all"
+        ? regions?.map((item: any) => item.id)
+        : regions
+            ?.filter((item: any) => item.id === regionQuery)
+            ?.map((item: any) => item.id);
+
     totalPages = await fetchLoansPages2(
       query,
       userId,
       startDate,
       endDate,
       Number(pageItems),
+      regionArr,
     );
     loans = await fetchFilteredLoans2(
       query,
@@ -97,6 +133,7 @@ export default async function Page(props: {
       startDate,
       endDate,
       Number(pageItems),
+      regionArr,
     );
   }
 
@@ -118,7 +155,12 @@ export default async function Page(props: {
 
         <CreateInvoice groups={groups} members={members} isAdmin={isAdmin} />
       </div>
-
+      <RegionFilterLoans
+        isAdmin={isAdmin}
+        currentUserId={curentUser[0]?.id}
+        selectBranches={branches}
+        selectRegions={regions}
+      />
       <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
         <Table
           query={query}

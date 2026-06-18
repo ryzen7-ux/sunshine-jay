@@ -6,25 +6,15 @@ import {
   formatCurrency,
   formatCurrencyToLocal,
 } from "@/app/lib/utils";
-import { fetchFilteredInvoices } from "@/app/lib/data/data";
-import {
-  fetchFilteredIndividuals,
-  fetchRegions,
-  fetchIndividuals,
-  fetchFilteredIndividualLoans,
-} from "@/app/lib/data/sun-data";
-import { Tooltip } from "@heroui/react";
 import EditLoan from "@/app/ui/individuals/edit-loan";
 import DeleteIndividualLoan from "@/app/ui/individuals/delete-loan";
 
 export default function LoansTable({
-  filteredLoanIndividuals,
   loans,
   loansQuery,
   loansCurrentPage,
   user,
 }: {
-  filteredLoanIndividuals: any;
   loans: any;
   loansQuery: string;
   loansCurrentPage: number;
@@ -224,7 +214,7 @@ export default function LoansTable({
           </table>
         </div>
       </div>
-      {filteredLoanIndividuals.length < 1 && (
+      {loans.length < 1 && (
         <div className="text-sm flex items-center justify-center py-6">
           No loans are added
         </div>

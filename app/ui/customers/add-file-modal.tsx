@@ -10,8 +10,6 @@ import {
   useDisclosure,
   Tooltip,
 } from "@heroui/react";
-import EditMemberForm from "./edit-member-form";
-import FilesForm from "./files-form";
 import { FileUpload } from "../file-upload";
 import {
   revalidateIndividualFileUpload,

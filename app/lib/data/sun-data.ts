@@ -18,7 +18,7 @@ import {
 
 // CLSOE DB COONECTIONS
 
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 15;
 // USERS FETCH
 export async function fetchUserByEmail(email: string) {
   try {
@@ -69,9 +69,11 @@ export async function fetchUsers() {
       users.name,
       users.phone,
       users.role,
-      users.status
+      users.status,
+      users.passport_url,
+      users.application_form_url
     FROM users
-    ORDER BY users.id`;
+    ORDER BY users.name`;
 
     return user;
   } catch (error) {
@@ -79,6 +81,21 @@ export async function fetchUsers() {
   }
 }
 
+// BRANCHES FETCH
+export async function fetchBranches() {
+  try {
+    const branches = await sql<any[]>`
+    SELECT
+      branches.id,
+      branches.name
+    FROM branches
+    ORDER BY branches.name`;
+
+    return branches;
+  } catch (error) {
+    console.log(error);
+  }
+}
 // REGIONS FETCH
 export async function fetchRegions() {
   try {
@@ -88,10 +105,13 @@ export async function fetchRegions() {
       regions.name,
       regions.county,
       regions.manager,
+      regions.branch,
+      branches.name as branch_name,
       users.name as custodian
     FROM regions
+    JOIN branches ON branches.id = regions.branch
     JOIN users on regions.manager = users.id
-    ORDER BY regions.id`;
+    ORDER BY regions.name`;
 
     return regions;
   } catch (error) {
@@ -181,10 +201,21 @@ export async function fetchIndividualById(id: string) {
   }
 }
 
-export async function fetchIndividualPages(query: string, regions: any) {
+export async function fetchIndividualPages(
+  query: string,
+  regions: any,
+  indQuery: any,
+) {
   try {
     const data = await sql`SELECT COUNT(*)
-    FROM individuals JOIN regions ON regions.id = individuals.region WHERE regions.id = ANY(${regions})
+    FROM individuals 
+        JOIN regions ON regions.id = individuals.region 
+        WHERE regions.id = ANY(${regions}) AND
+                             ( individuals.name ILIKE ${`%${indQuery}%`} OR
+                               individuals.phone ILIKE ${`%${indQuery}%`} OR
+                               individuals.idnumber::TEXT ILIKE ${`%${indQuery}%`} OR
+                               individuals.business ILIKE ${`%${indQuery}%`} OR
+                               regions.name ILIKE ${`%${indQuery}%`} )
   `;
     const totalPages = Math.ceil(Number(data[0].count) / ITEMS_PER_PAGE);
     return totalPages;
@@ -195,9 +226,9 @@ export async function fetchIndividualPages(query: string, regions: any) {
 }
 
 export async function fetchFilteredIndividuals(
-  query: string,
   currentPage: number,
   regions: any,
+  indQuery: any,
 ) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
@@ -219,11 +250,11 @@ export async function fetchFilteredIndividuals(
       JOIN regions ON regions.id = individuals.region
       WHERE
       regions.id = ANY(${regions}) AND
-      ( individuals.name ILIKE ${`%${query}%`} OR
-        individuals.phone ILIKE ${`%${query}%`} OR
-        individuals.idnumber::TEXT ILIKE ${`%${query}%`} OR
-        individuals.business ILIKE ${`%${query}%`} OR
-        individuals.created::text ILIKE ${`%${query}%`})
+      ( individuals.name ILIKE ${`%${indQuery}%`} OR
+        individuals.phone ILIKE ${`%${indQuery}%`} OR
+        individuals.idnumber::TEXT ILIKE ${`%${indQuery}%`} OR
+        regions.name ILIKE ${`%${indQuery}%`} OR
+        individuals.business ILIKE ${`%${indQuery}%`})
       ORDER BY individuals.created DESC
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
     `;
@@ -247,6 +278,7 @@ export async function fetchFilteredIndividuals(
       FROM individuals_loans
     `;
 
+    console.log(individualLoanees);
     return { individualLoanees, individual_loans };
   } catch (error) {
     console.error("Database Error:", error);
@@ -258,6 +290,7 @@ export async function fetchFilteredIndividualLoans(
   query: string,
   currentPage: number,
   regions: any,
+  loanSearchQuery: string,
 ) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
@@ -286,11 +319,12 @@ export async function fetchFilteredIndividualLoans(
       LEFT JOIN mpesainvoice ON mpesainvoice.refnumber = individuals.idnumber::TEXT
       WHERE
       regions.id = ANY(${regions})  AND 
-      ( individuals_loans.amount::TEXT ILIKE ${`%${query}%`} OR
-        individuals_loans.status ILIKE ${`%${query}%`} OR
-        individuals_loans.created::TEXT ILIKE ${`%${query}%`} OR
-        individuals.name ILIKE ${`%${query}%`} OR
-        regions.name ILIKE ${`%${query}%`})
+      ( individuals_loans.amount::TEXT ILIKE ${`%${loanSearchQuery}%`} OR
+        individuals_loans.status ILIKE ${`%${loanSearchQuery}%`} OR
+        individuals_loans.created::TEXT ILIKE ${`%${loanSearchQuery}%`} OR
+        individuals.name ILIKE ${`%${loanSearchQuery}%`} OR
+        individuals.idnumber::TEXT ILIKE ${`%${loanSearchQuery}%`} OR
+        regions.name ILIKE ${`%${loanSearchQuery}%`})
       GROUP BY individuals_loans.id, individuals.name, individuals.idnumber, regions.name, individuals.created 
       ORDER BY individuals.created DESC
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
@@ -330,10 +364,24 @@ export async function fetchIndividualsCardsData() {
   }
 }
 
-export async function fetchIndividualLoansPages(query: string, regions: any) {
+export async function fetchIndividualLoansPages(
+  query: string,
+  regions: any,
+  loanSearchQuery: any,
+) {
   try {
     const data = await sql`SELECT COUNT(*)
-    FROM individuals_loans JOIN individuals ON individuals.id = individuals_loans.loanee JOIN regions ON regions.id = individuals.region WHERE regions.id = ANY(${regions})
+    FROM individuals_loans 
+        JOIN individuals ON individuals.id = individuals_loans.loanee 
+        JOIN regions ON regions.id = individuals.region
+      WHERE 
+          regions.id = ANY(${regions})  AND
+      ( individuals_loans.amount::TEXT ILIKE ${`%${loanSearchQuery}%`} OR
+      individuals_loans.status ILIKE ${`%${loanSearchQuery}%`} OR
+      individuals_loans.created::TEXT ILIKE ${`%${loanSearchQuery}%`} OR
+      individuals.name ILIKE ${`%${loanSearchQuery}%`} OR
+      individuals.idnumber::TEXT ILIKE ${`%${loanSearchQuery}%`} OR
+      regions.name ILIKE ${`%${loanSearchQuery}%`})
   `;
     const totalPages = Math.ceil(Number(data[0].count) / ITEMS_PER_PAGE);
     return totalPages;
@@ -344,7 +392,11 @@ export async function fetchIndividualLoansPages(query: string, regions: any) {
 }
 
 // GROUPS FETCH
-export async function fetchFilteredGroups(query: string, currentPage: number) {
+export async function fetchFilteredGroups(
+  query: string,
+  currentPage: number,
+  regionArr: any,
+) {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
@@ -358,18 +410,23 @@ export async function fetchFilteredGroups(query: string, currentPage: number) {
         groups.location,
         groups.region,
         groups.date, 
+        branches.name as branch_name,
         regions.name as region_name,
         (SELECT COUNT(*) FROM members WHERE members.groupid = groups.id:: text ) as members_count,
         s1.disbursed 
       FROM groups
       LEFT JOIN summary1 s1 ON groups.id = s1.groupid
     JOIN regions ON regions.id = groups.region
+    JOIN branches ON branches.id = regions.branch
+      
       WHERE
+        groups.region = ANY(${regionArr}) AND (
         groups.reg ILIKE ${`%${query}%`} OR
         groups.name ILIKE ${`%${query}%`} OR
         groups.location ILIKE ${`%${query}%`} OR
         groups.date::text ILIKE ${`%${query}%`}
-      GROUP BY groups.id, s1.disbursed, regions.name
+        )
+      GROUP BY groups.id, s1.disbursed, regions.name, branches.name
       ORDER BY groups.date DESC
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
     `;
@@ -382,11 +439,19 @@ export async function fetchFilteredGroups(query: string, currentPage: number) {
 }
 // (SELECT COUNT(*) FROM members WHERE members.groupid = groups.id:: text ) as members_count,
 // SUM(CASE WHEN loans.status = 'approved' THEN loans.amount ELSE 0 END)
-export async function fetchGroupPages(query: string) {
+export async function fetchGroupPages(query: string, regionArr: any) {
   try {
     const data = await sql`SELECT COUNT(*)
     FROM groups
-  `;
+           JOIN regions ON regions.id = groups.region
+           JOIN branches ON branches.id = regions.branch
+           WHERE
+                groups.region = ANY(${regionArr}) AND (
+                groups.reg ILIKE ${`%${query}%`} OR
+                groups.name ILIKE ${`%${query}%`} OR
+                groups.location ILIKE ${`%${query}%`} OR
+                groups.date::text ILIKE ${`%${query}%`}
+                )`;
     const totalPages = Math.ceil(Number(data[0].count) / ITEMS_PER_PAGE);
     return totalPages;
   } catch (error) {
@@ -678,6 +743,7 @@ export async function fetchFilteredLoans(
   startDate: string,
   endDate: string,
   pagetItems: number,
+  regionArr: any,
 ) {
   const offset = (currentPage - 1) * pagetItems;
 
@@ -706,16 +772,21 @@ export async function fetchFilteredLoans(
         members.surname,
         members.firstName,
         members.idnumber,
-        groups.name      
+        groups.name,
+        regions.name as region_name,
+        branches.name as branch_name
       FROM loans
       JOIN members ON loans.memberid = members.id
       JOIN groups ON members.groupid = groups.id::text
+      JOIN regions ON regions.id = groups.region
+      JOIN branches ON branches.id = regions.branch
       WHERE
       loans.date >=${
         startDate || defaultStartDate
       }::timestamp AND   loans.date  < ${
         endDate || formattedDate
       }::timestamp + interval '1 day' AND
+      regions.id =  ANY(${regionArr}) AND
         (loans.loanid ILIKE ${`%${query}%`} OR
         loans.cycle::TEXT ILIKE ${`%${query}%`} OR
         loans.fee::TEXT ILIKE ${`%${query}%`} OR
@@ -745,6 +816,7 @@ export async function fetchLoansPages(
   startDate: string,
   endDate: string,
   pageItems: number,
+  regionArr: any,
 ) {
   const today = new Date();
   const formattedDate = today.toISOString().split("T")[0];
@@ -755,11 +827,13 @@ export async function fetchLoansPages(
     FROM loans 
       JOIN members ON loans.memberid = members.id
       JOIN groups ON members.groupid = groups.id::text
+      JOIN regions ON regions.id = groups.region
+      JOIN branches ON branches.id = regions.branch
       WHERE loans.date >= ${startDate || defaultStartDate}::timestamp 
     AND loans.date < ${
       endDate || formattedDate
     }::timestamp  + interval '1 day' AND
-  
+    regions.id =  ANY(${regionArr}) AND
        (loans.loanid ILIKE ${`%${query}%`} OR
         loans.cycle::TEXT ILIKE ${`%${query}%`} OR
         loans.fee::TEXT ILIKE ${`%${query}%`} OR
@@ -823,6 +897,7 @@ export async function fetchDashboardCardData(query: string, region: any) {
   try {
     const highestCyclePromise = await sql`SELECT MAX(cycle) FROM loans`;
     const highestCycle = highestCyclePromise[0].max;
+
     if (highestCycle === null || highestCycle < 1) {
       const groupCountPromise = 0;
       const membersCountPromise = 0;
@@ -1525,7 +1600,7 @@ export async function fetchLatestGroupInvoices() {
 }
 
 export async function fetchLatestMpesaInvoices(region: any, isAdmin: boolean) {
-  let data: MpesaInvoice[] = [];
+  let data: any = [];
   try {
     if (isAdmin) {
       data = await sql<MpesaInvoice[]>`

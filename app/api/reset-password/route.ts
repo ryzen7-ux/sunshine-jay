@@ -1,3 +1,4 @@
+//@ts-nocheck
 import sql from "@/app/lib/db";
 import bcrypt from "bcryptjs";
 
@@ -15,7 +16,7 @@ async function resetPassword() {
 
 export async function GET() {
   try {
-    const result = await sql.begin((sql) => [resetPassword()]);
+    const result = await sql.begin((sql: any) => [resetPassword()]);
 
     return Response.json({ message: "Password changed successfully" });
   } catch (error) {

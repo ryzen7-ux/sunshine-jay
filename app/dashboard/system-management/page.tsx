@@ -1,33 +1,18 @@
-import { Card } from "@/app/ui/dashboard/cards";
-import RevenueChart from "@/app/ui/dashboard/revenue-chart";
-import LatestInvoices from "@/app/ui/dashboard/latest-invoices";
-import { lusitana } from "@/app/ui/fonts";
-import { Suspense } from "react";
-import CardWrapper from "@/app/ui/dashboard/cards";
-import {
-  RevenueChartSkeleton,
-  LatestInvoicesSkeleton,
-  CardsSkeleton,
-} from "@/app/ui/skeletons";
-import { auth } from "@/auth";
-import Staff from "@/app/ui/system-management/staff";
-import Regions from "@/app/ui/system-management/regions";
-import AddStaff from "@/app/ui/system-management/add-staff";
-import AddRegion from "@/app/ui/system-management/add-region";
 import {
   fetchUsers,
   fetchRegions,
-  fetchUserById,
+  fetchBranches,
 } from "@/app/lib/data/sun-data";
 import { MonitorCog } from "lucide-react";
 import { getSession } from "@/app/lib/session";
 import { ExclamationCircleIcon } from "@heroicons/react/24/solid";
+import SystemTabs from "@/app/ui/system-management/tabs";
+import StatCards from "@/app/ui/system-management/stat-cards";
+import { fetchSystemCardStats } from "@/app/lib/data/sun-data2";
+import StatsAccordion from "@/app/ui/system-management/stats-accordion";
 
 export default async function Page() {
-  const users = await fetchUsers();
-  const regions = await fetchRegions();
   const user = await getSession();
-
   if (user.role !== "admin") {
     return (
       <main className="pt-24">
@@ -41,6 +26,15 @@ export default async function Page() {
     );
   }
 
+  const users = await fetchUsers();
+  const branches = await fetchBranches();
+  const regions = await fetchRegions();
+
+  const { staff_count, branches_count, regions_count } =
+    await fetchSystemCardStats();
+
+
+
   return (
     <main className="pt-24">
       <h1
@@ -48,22 +42,24 @@ export default async function Page() {
       >
         <MonitorCog className="h-10 w-10 text-green-500" /> System Management
       </h1>
-      <div className="border rounded-md px-2 pb-6">
-        <div className="w-full">
-          <AddStaff />
-        </div>
-        <div className="mt-2">
-          <Staff users={users} currentUser={user} />
-        </div>
-      </div>
-      <div className="border rounded-md px-2 pb-6 mt-6">
-        <div className="w-full">
-          <AddRegion users={users} />
-        </div>
-        <div className="w-full">
-          <Regions users={users} regions={regions} currentUser={user} />
-        </div>
-      </div>
+      <StatsAccordion
+        staff_count={staff_count}
+        regions_count={regions_count}
+        branches_count={branches_count}
+      />
+      {/*<div className="grid gap-2 grid-cols-1 md:grid-cols-3 mb-6">*/}
+      {/*  <StatCards*/}
+      {/*    staff_count={staff_count}*/}
+      {/*    regions_count={regions_count}*/}
+      {/*    branches_count={branches_count}*/}
+      {/*  />*/}
+      {/*</div>*/}
+      <SystemTabs
+        users={users}
+        currentUser={user}
+        regions={regions}
+        branches={branches}
+      />
     </main>
   );
 }

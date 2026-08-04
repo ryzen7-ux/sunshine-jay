@@ -67,7 +67,7 @@ export default function MembersTable({
   useEffect(() => {
     setMemberLoan(loan);
   }, [loan]);
-  console.log(memberLoan);
+
   const renderCell = React.useCallback((member: any, columnKey: any) => {
     const cellValue = member[columnKey];
 

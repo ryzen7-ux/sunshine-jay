@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 // Configuration constants
 const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB limit
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/gif"];
-const PDF_UPLOAD_TYPES = ["form", "application"]
+const PDF_UPLOAD_TYPES = ["form", "application"];
 
 // Simple rate limiting (in production, use Redis or a proper solution)
 const uploadAttempts = new Map<string, { count: number; resetTime: number }>();
@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
 
     // Validate file type
     if (
-      !PDF_UPLOAD_TYPES.includes(type)  &&
+      !PDF_UPLOAD_TYPES.includes(type) &&
       file.type &&
       !ALLOWED_TYPES.includes(file.type)
     ) {
@@ -111,8 +111,9 @@ export async function POST(request: NextRequest) {
     }
 
     if (
-      PDF_UPLOAD_TYPES.includes(type)
-     && file.type && file.type !== "application/pdf"
+      PDF_UPLOAD_TYPES.includes(type) &&
+      file.type &&
+      file.type !== "application/pdf"
     ) {
       return NextResponse.json(
         {
@@ -195,6 +196,21 @@ export async function POST(request: NextRequest) {
           uploadResult.gcsUri,
         )} WHERE id=${itemId}`;
       }
+      if (type === "homeVisit") {
+        await sql`UPDATE members SET home_visit=${String(
+          uploadResult.gcsUri,
+        )} WHERE id=${itemId}`;
+      }
+      if (type === "kinIdFront") {
+        await sql`UPDATE members SET kin_id_front=${String(
+          uploadResult.gcsUri,
+        )} WHERE id=${itemId}`;
+      }
+      if (type === "kinIdBack") {
+        await sql`UPDATE members SET kin_id_back=${String(
+          uploadResult.gcsUri,
+        )} WHERE id=${itemId}`;
+      }
     }
     if (userType === "individual") {
       if (type === "passport") {
@@ -228,6 +244,21 @@ export async function POST(request: NextRequest) {
       }
       if (type === "kinPhoto") {
         await sql`UPDATE individuals SET kin_photo=${String(
+          uploadResult.gcsUri,
+        )} WHERE id=${itemId}`;
+      }
+      if (type === "homeVisit") {
+        await sql`UPDATE individuals SET home_visit=${String(
+          uploadResult.gcsUri,
+        )} WHERE id=${itemId}`;
+      }
+      if (type === "kinIdFront") {
+        await sql`UPDATE individuals SET kin_id_front=${String(
+          uploadResult.gcsUri,
+        )} WHERE id=${itemId}`;
+      }
+      if (type === "kinIdBack") {
+        await sql`UPDATE individuals SET kin_id_back=${String(
           uploadResult.gcsUri,
         )} WHERE id=${itemId}`;
       }

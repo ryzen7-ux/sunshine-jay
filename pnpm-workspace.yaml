@@ -1,0 +1,4 @@
+allowBuilds:
+  '@heroui/shared-utils': true
+  ngrok: true
+  sharp: true

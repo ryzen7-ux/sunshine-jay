@@ -245,6 +245,11 @@ export async function fetchFilteredIndividuals(
       individuals.id_front,
       individuals.id_back,
       individuals.doc,
+      individuals.kin_photo,
+      individuals.business_photo,
+      individuals.home_visit,
+      individuals.kin_id_front,
+      individuals.kin_id_back,
       regions.name as regionname
       FROM individuals
       JOIN regions ON regions.id = individuals.region
@@ -278,7 +283,7 @@ export async function fetchFilteredIndividuals(
       FROM individuals_loans
     `;
 
-    console.log(individualLoanees);
+
     return { individualLoanees, individual_loans };
   } catch (error) {
     console.error("Database Error:", error);
@@ -537,7 +542,10 @@ export async function fetchMembers(id: string) {
         members.kin_name,
         members.kin_id,
         members.kin_phone,
-        members.status
+        members.status,
+        members.home_visit,
+        members.kin_id_front,
+        members.kin_id_back
       FROM members
       WHERE members.groupId = ${id}
       ORDER BY members.date DESC

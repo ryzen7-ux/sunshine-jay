@@ -50,6 +50,15 @@ export async function DELETE(request: NextRequest) {
       if (type === "kinPhoto") {
         await sql`UPDATE members SET kin_photo=${null} WHERE id=${itemId}`;
       }
+      if (type === "homeVisit") {
+        await sql`UPDATE members SET home_visit=${null} WHERE id=${itemId}`;
+      }
+      if (type === "kinIdFront") {
+        await sql`UPDATE members SET kin_id_front=${null} WHERE id=${itemId}`;
+      }
+      if (type === "kinIdBack") {
+        await sql`UPDATE members SET kin_id_back=${null} WHERE id=${itemId}`;
+      }
     }
 
     if (userType === "individual") {
@@ -73,6 +82,15 @@ export async function DELETE(request: NextRequest) {
       }
       if (type === "kinPhoto") {
         await sql`UPDATE individuals SET kin_photo=${null} WHERE id=${itemId}`;
+      }
+      if (type === "homeVisit") {
+        await sql`UPDATE individuals SET home_visit=${null} WHERE id=${itemId}`;
+      }
+      if (type === "kinIdFront") {
+        await sql`UPDATE individuals SET kin_id_front=${null} WHERE id=${itemId}`;
+      }
+      if (type === "kinIdBack") {
+        await sql`UPDATE individuals SET kin_id_back=${null} WHERE id=${itemId}`;
       }
     }
     if (userType === "staff") {

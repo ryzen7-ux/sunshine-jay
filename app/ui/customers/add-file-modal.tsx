@@ -1,7 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { EditIcon, FileText } from "lucide-react";
+import {
+  EditIcon,
+  FileText,
+  CircleUserRoundIcon,
+  FileUp,
+  UserCheck,
+} from "lucide-react";
 import {
   Modal,
   ModalContent,
@@ -59,10 +65,18 @@ export function AddFileModal({
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Add Member Documents
-                <p className="text-blue-500 uppercase">
-                  {member?.name} {member?.firstname} {member?.surname}
-                </p>{" "}
+                <div className="flex justify-center items-center gap-2">
+                  <FileUp className="h-6 text-green-500" />{" "}
+                  <p className="font-extrabold text-2xl">
+                    ADD MEMBER DOCUMENTS
+                  </p>
+                </div>
+                <div className="flex items-center justify-center gap-1.5">
+                  <UserCheck className="text-blue-600 h-6 w-6" />
+                  <p className="text-blue-500 uppercase">
+                    {member?.name} {member?.firstname} {member?.surname}
+                  </p>{" "}
+                </div>
               </ModalHeader>
               <ModalBody>
                 {/* <FilesForm member={member} onClose={onClose} loanee={loanee} /> */}
@@ -134,6 +148,25 @@ export function AddFileModal({
                 <FileUpload
                   user={user}
                   userType={loanee}
+                  fileUrl={member?.home_visit}
+                  member={member}
+                  itemId={member?.id}
+                  uploadedTitle="Home Visit"
+                  title="Upload Home Visit Photo"
+                  currentInput="homeVisit"
+                  type="homeVisit"
+                  userId="SUNSHINE"
+                  onUploadComplete={handleUploadComplete}
+                />
+                <hr />
+                <div className="flex items-center justify-center gap-2">
+                  <CircleUserRoundIcon className="h-5 w-5 text-pink-500" />{" "}
+                  <h1 className="font-extrabold">NEXT OF KIN</h1>
+                </div>
+                <hr />
+                <FileUpload
+                  user={user}
+                  userType={loanee}
                   fileUrl={member?.kin_photo}
                   member={member}
                   itemId={member?.id}
@@ -141,6 +174,32 @@ export function AddFileModal({
                   title="Upload Next of Kin Photo"
                   currentInput="kinPhoto"
                   type="kinPhoto"
+                  userId="SUNSHINE"
+                  onUploadComplete={handleUploadComplete}
+                />
+                <FileUpload
+                  user={user}
+                  userType={loanee}
+                  fileUrl={member?.kin_id_front}
+                  member={member}
+                  itemId={member?.id}
+                  uploadedTitle="Next of Kin ID Front"
+                  title="Upload Next of Kin ID Front"
+                  currentInput="kinIdFront"
+                  type="kinIdFront"
+                  userId="SUNSHINE"
+                  onUploadComplete={handleUploadComplete}
+                />
+                <FileUpload
+                  user={user}
+                  userType={loanee}
+                  fileUrl={member?.kin_id_back}
+                  member={member}
+                  itemId={member?.id}
+                  uploadedTitle="Next of Kin ID Back"
+                  title="Upload Next of Kin ID Back"
+                  currentInput="kinIdBack"
+                  type="kinIdBack"
                   userId="SUNSHINE"
                   onUploadComplete={handleUploadComplete}
                 />

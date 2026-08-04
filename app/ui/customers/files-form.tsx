@@ -262,7 +262,43 @@ export default function FilesForm({
               loanee={loanee}
             />
             <DocumentUploadField
+              label="Home Visit"
+              documentUrl={applicationFormUrl}
+              onUpload={(file) => handleDocumentUpload("businessPhoto", file)}
+              onDelete={() => handleDocumentDelete("businessPhoto")}
+              isUploading={isUploading}
+              isDeleting={isDeleting}
+              fileType="image"
+              type="businessPhoto"
+              currentInput={currentInput}
+              loanee={loanee}
+            />
+            <DocumentUploadField
               label="Next Of Kin Photo"
+              documentUrl={applicationFormUrl}
+              onUpload={(file) => handleDocumentUpload("kinPhoto", file)}
+              onDelete={() => handleDocumentDelete("kinPhoto")}
+              isUploading={isUploading}
+              isDeleting={isDeleting}
+              fileType="image"
+              type="kinPhoto"
+              currentInput={currentInput}
+              loanee={loanee}
+            />
+            <DocumentUploadField
+              label="Next Of Kin ID Front"
+              documentUrl={applicationFormUrl}
+              onUpload={(file) => handleDocumentUpload("kinPhoto", file)}
+              onDelete={() => handleDocumentDelete("kinPhoto")}
+              isUploading={isUploading}
+              isDeleting={isDeleting}
+              fileType="image"
+              type="kinPhoto"
+              currentInput={currentInput}
+              loanee={loanee}
+            />
+            <DocumentUploadField
+              label="Next Of Kin ID Back"
               documentUrl={applicationFormUrl}
               onUpload={(file) => handleDocumentUpload("kinPhoto", file)}
               onDelete={() => handleDocumentDelete("kinPhoto")}

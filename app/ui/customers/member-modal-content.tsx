@@ -16,6 +16,7 @@ import {
   Slider,
   Badge,
   Image,
+  Chip,
 } from "@heroui/react";
 
 import { MemberForm } from "@/app/lib/sun-defination";
@@ -23,6 +24,7 @@ import {
   DocumentDuplicateIcon,
   EnvelopeIcon,
   PhoneIcon,
+  CameraIcon,
 } from "@heroicons/react/24/solid";
 import { Camera, FileCheck2, FileCheck, Eye, Banknote } from "lucide-react";
 import MemberDetails from "./member-details";
@@ -33,6 +35,7 @@ import MemberStatus from "@/app/ui/customers/status";
 import { MemberLoanTable } from "@/app/ui/customers/member-loans-table";
 import { useState } from "react";
 import { set } from "zod";
+import FileDownloadButton from "@/app/ui/file-download-button";
 
 export function LeftContent({
   memberData,
@@ -124,7 +127,7 @@ export function LeftContent({
               </ModalHeader>
               <ModalBody>
                 <div className="w-full">
-                  <div className="flex px-4 py-2">
+                  <div className="flex px-1 py-2">
                     <div className="text-green-500">
                       <FileCheck2 />
                     </div>
@@ -133,16 +136,30 @@ export function LeftContent({
                       Documents
                     </p>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-1">
                     {memberData.passport ? (
-                      <div className="flex flex-col items-center">
-                        <h1 className="font-extrabold">PASSPORT</h1>
+                      <div className="flex flex-col items-center border-1 border-green-500 rounded-md px-2">
+                        <Chip
+                          variant="flat"
+                          color="success"
+                          endContent={<CameraIcon className="h-5 w-5" />}
+                          className="my-2"
+                        >
+                          PASSPORT
+                        </Chip>
+
                         <Image
                           isZoomed
                           src={`${memberData.passport}`}
                           alt="No image"
                           className="w-full"
                         />
+                        <div>
+                          <FileDownloadButton
+                            fileUrl={memberData.passport}
+                            fileName={`${memberData.name}-passport`}
+                          />
+                        </div>
                       </div>
                     ) : (
                       <div className="flex items-center justify-center border border-green-500 rounded-md text-green-700">
@@ -150,13 +167,26 @@ export function LeftContent({
                       </div>
                     )}
                     {memberData.id_front ? (
-                      <div className="flex flex-col items-center">
-                        <h1 className="font-extrabold">ID FRONT</h1>
+                      <div className="flex flex-col items-center border-1 border-green-500 rounded-md">
+                        <Chip
+                          variant="flat"
+                          color="success"
+                          endContent={<CameraIcon className="h-5 w-5" />}
+                          className="my-2"
+                        >
+                          ID FRONT
+                        </Chip>
                         <Image
                           isZoomed
                           src={`${memberData.id_front}`}
                           alt="No image"
                         />
+                        <div>
+                          <FileDownloadButton
+                            fileUrl={memberData.id_front}
+                            fileName={`${memberData.name}-passport`}
+                          />
+                        </div>
                       </div>
                     ) : (
                       <div className="flex items-center justify-center border border-green-500 rounded-md text-green-700">
@@ -164,13 +194,26 @@ export function LeftContent({
                       </div>
                     )}
                     {memberData.id_back ? (
-                      <div className="flex flex-col items-center">
-                        <h1 className="font-extrabold">ID BACK</h1>
+                      <div className="flex flex-col items-center border-1 border-green-500 rounded-md">
+                        <Chip
+                          variant="flat"
+                          color="success"
+                          endContent={<CameraIcon className="h-5 w-5" />}
+                          className="my-2"
+                        >
+                          ID BACK
+                        </Chip>
                         <Image
                           isZoomed
                           src={`${memberData.id_back}`}
                           alt="No image"
                         />
+                        <div>
+                          <FileDownloadButton
+                            fileUrl={memberData.id_back}
+                            fileName={`${memberData.name}-passport`}
+                          />
+                        </div>
                       </div>
                     ) : (
                       <div className="flex items-center justify-center border border-green-500 rounded-md text-green-700">
@@ -178,7 +221,7 @@ export function LeftContent({
                       </div>
                     )}
                     {memberData.doc ? (
-                      <div className="border rounded-lg py-4">
+                      <div className="border rounded-lg py-4 ">
                         {" "}
                         <div className="flex flex-col items-center justify-center gap-4">
                           <FileCheck className="h-12 w-12 text-green-600" />
@@ -203,31 +246,138 @@ export function LeftContent({
                       </div>
                     )}
                     {memberData.business_photo ? (
-                      <div className="flex flex-col items-center">
-                        <h1 className="font-extrabold">BUSINESS</h1>
+                      <div className="flex flex-col items-center border-1 border-green-500 rounded-md">
+                        <Chip
+                          variant="flat"
+                          color="success"
+                          endContent={<CameraIcon className="h-5 w-5" />}
+                          className="my-2"
+                        >
+                          MEMBER BUSINESS
+                        </Chip>
                         <Image
                           isZoomed
                           src={`${memberData.business_photo}`}
                           alt="No image"
                         />
+                        <div>
+                          <FileDownloadButton
+                            fileUrl={memberData.business_photo}
+                            fileName={`${memberData.name}-passport`}
+                          />
+                        </div>
                       </div>
                     ) : (
                       <div className="flex items-center justify-center border border-green-500 rounded-md text-green-700">
                         No Business photo
                       </div>
                     )}
+                    {memberData.home_visit ? (
+                      <div className="flex flex-col items-center border-1 border-green-500 rounded-md">
+                        <Chip
+                          variant="flat"
+                          color="success"
+                          endContent={<CameraIcon className="h-5 w-5" />}
+                          className="my-2"
+                        >
+                          HOME VISIT
+                        </Chip>
+                        <Image
+                          isZoomed
+                          src={`${memberData.home_visit}`}
+                          alt="No image"
+                        />
+                        <div>
+                          <FileDownloadButton
+                            fileUrl={memberData.home_visit}
+                            fileName={`${memberData.name}-passport`}
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center border border-green-500 rounded-md text-green-700">
+                        No Home visit photo
+                      </div>
+                    )}
                     {memberData.kin_photo ? (
-                      <div className="flex flex-col items-center">
-                        <h1 className="font-extrabold">NEXT OF KIN</h1>
+                      <div className="flex flex-col items-center border-1 border-green-500 rounded-md">
+                        <Chip
+                          variant="flat"
+                          color="success"
+                          endContent={<CameraIcon className="h-5 w-5" />}
+                          className="my-2"
+                        >
+                          NEXT OF KIN PHOTO
+                        </Chip>
                         <Image
                           isZoomed
                           src={`${memberData.kin_photo}`}
                           alt="No image"
                         />
+                        <div>
+                          <FileDownloadButton
+                            fileUrl={memberData.kin_photo}
+                            fileName={`${memberData.name}-passport`}
+                          />
+                        </div>
                       </div>
                     ) : (
                       <div className="flex items-center justify-center border border-green-500 rounded-md text-green-700">
                         No next of kin photo
+                      </div>
+                    )}
+                    {memberData.kin_id_front ? (
+                      <div className="flex flex-col items-center border-1 border-green-500 rounded-md">
+                        <Chip
+                          variant="flat"
+                          color="success"
+                          endContent={<CameraIcon className="h-5 w-5" />}
+                          className="my-2"
+                        >
+                          NEXT OF KIN ID FRONT
+                        </Chip>
+                        <Image
+                          isZoomed
+                          src={`${memberData.kin_id_front}`}
+                          alt="No image"
+                        />
+                        <div>
+                          <FileDownloadButton
+                            fileUrl={memberData.kin_id_front}
+                            fileName={`${memberData.name}-passport`}
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center border border-green-500 rounded-md text-green-700">
+                        No next of kin id front
+                      </div>
+                    )}
+                    {memberData.kin_id_back ? (
+                      <div className="flex flex-col items-center border-1 border-green-500 rounded-md">
+                        <Chip
+                          variant="flat"
+                          color="success"
+                          endContent={<CameraIcon className="h-5 w-5" />}
+                          className="my-2"
+                        >
+                          NEXT OF KIN ID BACK
+                        </Chip>
+                        <Image
+                          isZoomed
+                          src={`${memberData.kin_id_back}`}
+                          alt="No image"
+                        />
+                        <div>
+                          <FileDownloadButton
+                            fileUrl={memberData.kin_id_back}
+                            fileName={`${memberData.name}-passport`}
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center border border-green-500 rounded-md text-green-700">
+                        No next of kin id back
                       </div>
                     )}
                   </div>

@@ -113,7 +113,7 @@ export function UpdateLoan({
         <Button
           size="sm"
           onPress={() => setIsEditModalOpen(true)}
-          className="gap-0"
+          className="gap-0 min-w-10"
           color="secondary"
           startContent={<PencilIcon className="w-5" />}
           isDisabled={user[0].role !== "admin"}
@@ -177,7 +177,7 @@ export function DeleteLoan({ id, user }: { id: string; user: any }) {
       <Tooltip color="danger" content="Delete Loan Item">
         <Button
           onPress={onOpen}
-          className="gap-0"
+          className="gap-0 min-w-10"
           size="sm"
           color="danger"
           startContent={<TrashIcon className="w-5" />}
@@ -233,7 +233,7 @@ export function UploadLoanDocument({ loan, user }: { loan: any; user: any }) {
       <Tooltip color="success" content="Application Form">
         <Button
           onPress={onOpen}
-          className="gap-0"
+          className="gap-0 min-w-10"
           size="sm"
           color="success"
           startContent={<DocumentArrowUpIcon className="w-5 text-gray-100" />}

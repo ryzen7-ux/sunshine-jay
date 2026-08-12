@@ -1,7 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/solid";
+import {
+  PencilIcon,
+  PlusIcon,
+  TrashIcon,
+  CloudArrowUpIcon,
+  DocumentArrowUpIcon,
+} from "@heroicons/react/24/solid";
 import Link from "next/link";
 import { deleteLoan } from "@/app/lib/sun-actions";
 import {
@@ -21,6 +27,9 @@ import CreateLoanForm from "./loan-from";
 import EditLoanForm from "./edit-form";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
+import { FileUpload } from "@/app/ui/file-upload";
+import { LoanFileUpload } from "@/app/ui/loans/loan-file-upload";
+import { revalidateLoanFileUpload } from "@/app/lib/actions";
 
 export function CreateInvoice({
   groups,
@@ -139,7 +148,6 @@ export function UpdateLoan({
 }
 
 export function DeleteLoan({ id, user }: { id: string; user: any }) {
-  const deleteLoanWithId = deleteLoan.bind(null, id);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -203,6 +211,69 @@ export function DeleteLoan({ id, user }: { id: string; user: any }) {
                 </form>
                 <Button color="primary" onPress={onClose}>
                   NO
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+    </>
+  );
+}
+
+export function UploadLoanDocument({ loan, user }: { loan: any; user: any }) {
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+
+  const handleUploadComplete = async () => {
+    await revalidateLoanFileUpload();
+  };
+
+  return (
+    <>
+      <Tooltip color="success" content="Application Form">
+        <Button
+          onPress={onOpen}
+          className="gap-0"
+          size="sm"
+          color="success"
+          startContent={<DocumentArrowUpIcon className="w-5 text-gray-100" />}
+        >
+          <span className="sr-only">Delete</span>
+        </Button>
+      </Tooltip>
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        size="2xl"
+        placement="center"
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex items-center gap-1">
+                <CloudArrowUpIcon className="h-8 w-8 text-green-800" />
+                <h1 className="font-extrabold uppercase">
+                  Loan Application Form
+                </h1>
+              </ModalHeader>
+              <ModalBody>
+                <LoanFileUpload
+                  user={user}
+                  userType="loan"
+                  fileUrl={loan?.form_url}
+                  member=""
+                  itemId={loan?.id}
+                  uploadedTitle="Application Form"
+                  title="Upload Loan Application Form"
+                  currentInput="form"
+                  type="form"
+                  userId="SUNSHINE"
+                  onUploadComplete={handleUploadComplete}
+                />
+              </ModalBody>
+              <ModalFooter>
+                <Button color="primary" onPress={onClose}>
+                  Cancel
                 </Button>
               </ModalFooter>
             </>

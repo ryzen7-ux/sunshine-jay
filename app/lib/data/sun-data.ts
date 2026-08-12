@@ -283,7 +283,6 @@ export async function fetchFilteredIndividuals(
       FROM individuals_loans
     `;
 
-
     return { individualLoanees, individual_loans };
   } catch (error) {
     console.error("Database Error:", error);
@@ -774,6 +773,7 @@ export async function fetchFilteredLoans(
         loans.date,
         loans.notes,
         loans.cycle,
+        loans.form_url,
         CEIL(CEIL(loans.amount / term + amount * (interest/4/100)) * term) as total,
         loans.start_date,
           loans.start_date + (COALESCE(loans.term, 0) * INTERVAL '1 week') AS end_date,

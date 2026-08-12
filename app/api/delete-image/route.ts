@@ -101,6 +101,9 @@ export async function DELETE(request: NextRequest) {
         await sql`UPDATE users SET application_form_url=${null} WHERE id=${itemId}`;
       }
     }
+    if (userType === "loan") {
+      await sql`UPDATE loans SET form_url=${null} WHERE id=${itemId}`;
+    }
 
     NextResponse.json({ message: `deleted.` });
 

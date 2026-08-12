@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { useFileUpload } from "./use-file-upload";
-
-import { FileCheck, Trash } from "lucide-react";
+import { useFileUpload } from "@/app/ui/use-file-upload";
+import { CloudDownload, Eye, FileCheck, Trash } from "lucide-react";
 import { Button, Spinner } from "@heroui/react";
 import {
   revalidateIndividualFileUpload,
+  revalidateLoanFileUpload,
   revalidateMemberFileUpload,
-} from "../lib/actions";
+} from "@/app/lib/actions";
 import Link from "next/link";
 
 interface FileUploadProps {
@@ -27,7 +27,7 @@ interface FileUploadProps {
   maxFileSize?: number;
 }
 
-export const FileUpload: React.FC<FileUploadProps> = ({
+export const LoanFileUpload: React.FC<FileUploadProps> = ({
   user,
   userType,
   fileUrl,
@@ -131,11 +131,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         }),
       });
       if (response.ok) {
-        if (userType === "member") {
-          await revalidateMemberFileUpload(member?.groupid);
-        } else {
-          await revalidateIndividualFileUpload();
-        }
+        await revalidateLoanFileUpload();
       }
       setIsDeleting(false);
     } catch (error) {
@@ -149,20 +145,34 @@ export const FileUpload: React.FC<FileUploadProps> = ({
       {fileUrl ? (
         <div className="space-y-2">
           <h3 className="text-lg font-semibold mb-4">{uploadedTitle}</h3>
-          <div className="flex items-center gap-2 p-3 bg-green-50 rounded-lg border border-green-200">
-            <FileCheck className="h-5 w-5 text-green-600" />
+          <div className="flex items-center justify-center gap-4 p-3 bg-green-50 rounded-lg border border-green-200">
+            <FileCheck className="h-14 w-14 text-green-600" />
             <div className="flex-1">
               <p className="text-sm font-medium text-green-800">
                 Document uploaded
               </p>
-              <Link
-                href={fileUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs text-green-600 hover:underline"
-              >
-                Download document
-              </Link>
+              <div className="flex items-center gap-0.5 pt-1.5">
+                <CloudDownload className="h-5 w-5 text-indigo-600" />
+                <Link
+                  href={fileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-indigo-600 hover:underline"
+                >
+                  Download document
+                </Link>
+              </div>
+              <div className="flex items-center gap-0.5 pt-2">
+                <Eye className="h-5 w-5 text-blue-600" />
+                <Link
+                  href={`pdf-view?pdfUrl=${fileUrl}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-blue-600 hover:underline"
+                >
+                  View document
+                </Link>
+              </div>
             </div>
             {isDeleting && type === currentInput ? (
               <Spinner

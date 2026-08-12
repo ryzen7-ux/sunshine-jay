@@ -1,35 +1,22 @@
 "use client";
 
-import Image from "next/image";
-import { UpdateLoan, DeleteLoan } from "@/app/ui/loans/buttons";
+import {
+  UpdateLoan,
+  DeleteLoan,
+  UploadLoanDocument,
+} from "@/app/ui/loans/buttons";
 import InvoiceStatus from "@/app/ui/loans/status";
 import {
   formatDateToLocal,
-  formatCurrency,
   formatCurrencyToLocal,
-  formatPhoneNumber,
-  categorizeDate,
   formatPercentage,
 } from "@/app/lib/utils";
-import { fetchFilteredInvoices } from "@/app/lib/data/data";
-import { fetchFilteredLoans } from "@/app/lib/data/sun-data";
-import { fetchFilteredLoans2 } from "@/app/lib/data/sun-data2";
-import { Chip, Tooltip } from "@heroui/react";
-import {
-  CalendarIcon,
-  ClockIcon,
-  DevicePhoneMobileIcon,
-  UserIcon,
-} from "@heroicons/react/24/solid";
-import EditMpesa from "@/app/ui/mpesa/edit-mpesa";
-import { DeleteInvoice } from "@/app/ui/mpesa/buttons";
+import { Chip } from "@heroui/react";
+import { ClockIcon, UserIcon } from "@heroicons/react/24/solid";
 import { CalendarArrowDownIcon, CalendarArrowUpIcon } from "lucide-react";
 import { LoansHeroTable } from "@/app/ui/loans/loans-table";
 
 export default function InvoicesTable({
-  query,
-  currentPage,
-  loan,
   user,
   loans,
 }: {
@@ -39,8 +26,6 @@ export default function InvoicesTable({
   user: any;
   loans: any;
 }) {
-  const isAdmin: any = user[0].role === "admin";
-
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">
@@ -147,8 +132,9 @@ export default function InvoicesTable({
                       )}
                     </Chip>
 
-                    <div className="flex gap-3 justify-end">
+                    <div className="flex gap-1">
                       {" "}
+                      <UploadLoanDocument loan={loan} user={user[0]} />
                       <UpdateLoan id={loan.id} loan={loan} user={user} />
                       <DeleteLoan id={loan.id} user={user} />
                     </div>

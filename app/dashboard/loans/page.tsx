@@ -46,7 +46,7 @@ export default async function Page(props: {
   }>;
   params: Promise<{ id: string }>;
 }) {
-  const searchParams = await props.searchParams;
+  const searchParams = await props?.searchParams;
   const query = searchParams?.query || "";
   const memberQuery = searchParams?.memberQuery || "";
   const branchQuery = searchParams?.branchQuery || "all";
@@ -59,9 +59,9 @@ export default async function Page(props: {
   const user = await getSession();
   const isAdmin = user?.role === "admin";
   const curentUser: any = await fetchUserByEmail(user?.email);
-  const userId = curentUser[0].id;
+  const userId = curentUser[0]?.id;
 
-  const params = await props.params;
+  const params = await props?.params;
   const id = params.id;
 
   let loan: any = [];
@@ -81,10 +81,10 @@ export default async function Page(props: {
     let regionArr: any = [];
     regionArr =
       branchQuery === "all"
-        ? regions?.map((item: any) => item.id)
+        ? regions?.map((item: any) => item?.id)
         : regions
-            ?.filter((item: any) => item.branch === branchQuery)
-            ?.map((item: any) => item.id);
+            ?.filter((item: any) => item?.branch === branchQuery)
+            ?.map((item: any) => item?.id);
 
     const regionArr2 =
       regionQuery === "all"
@@ -113,10 +113,10 @@ export default async function Page(props: {
     regions = await fetchRegion2(curentUser[0]?.id);
     const regionArr =
       regionQuery === "all"
-        ? regions?.map((item: any) => item.id)
+        ? regions?.map((item: any) => item?.id)
         : regions
-            ?.filter((item: any) => item.id === regionQuery)
-            ?.map((item: any) => item.id);
+            ?.filter((item: any) => item?.id === regionQuery)
+            ?.map((item: any) => item?.id);
 
     totalPages = await fetchLoansPages2(
       query,

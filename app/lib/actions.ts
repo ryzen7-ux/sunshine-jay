@@ -135,3 +135,7 @@ export async function revalidateIndividualFileUpload() {
 export async function revalidateSystemFileUpload() {
   revalidatePath(`dashboard/system-management`);
 }
+
+export async function revalidateLoanFileUpload() {
+  revalidatePath(`dashboard/loans`);
+}

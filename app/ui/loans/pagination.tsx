@@ -36,8 +36,8 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
             let position: "first" | "last" | "single" | "middle" | undefined;
 
             if (index === 0) position = "first";
-            if (index === allPages.length - 1) position = "last";
-            if (allPages.length === 1) position = "single";
+            if (index === allPages?.length - 1) position = "last";
+            if (allPages?.length === 1) position = "single";
             if (page === "...") position = "middle";
 
             return (
@@ -81,7 +81,7 @@ function PaginationNumber({
       "z-10 bg-blue-600 border-blue-600 text-white": isActive,
       "hover:bg-gray-100": !isActive && position !== "middle",
       "text-gray-300": position === "middle",
-    }
+    },
   );
 
   return isActive || position === "middle" ? (
@@ -109,7 +109,7 @@ function PaginationArrow({
       "hover:bg-gray-100": !isDisabled,
       "mr-2 md:mr-4": direction === "left",
       "ml-2 md:ml-4": direction === "right",
-    }
+    },
   );
 
   const icon =

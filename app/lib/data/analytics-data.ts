@@ -40,7 +40,7 @@ export async function fetchDashboardChartData(region: any) {
     COALESCE(SUM(CEIL(CEIL(CASE WHEN status = 'approved' OR status = 'inactive' THEN amount ELSE 0 END / term + CASE WHEN status = 'approved' OR status = 'inactive' THEN amount ELSE 0 END * (interest/4/100)) * term)), 0) as total_loan
                                         FROM 
     GENERATE_SERIES(
-        DATE_TRUNC('month', NOW() - INTERVAL '4 months'), 
+        DATE_TRUNC('month', NOW() - INTERVAL '11 months'), 
         DATE_TRUNC('month', NOW()), 
         '1 month'::interval
     ) AS gs(month_start_date)
@@ -60,7 +60,7 @@ JOIN groups ON ot.groupid = groups.id JOIN regions ON regions.id
     COALESCE(SUM(CEIL(CEIL(CASE WHEN status = 'approved' OR status = 'inactive' THEN amount ELSE 0 END/ term + CASE WHEN status = 'approved' OR status = 'inactive' THEN amount ELSE 0 END * (interest/4/100)) * term)), 0) as total_loan
 FROM 
     GENERATE_SERIES(
-        DATE_TRUNC('month', NOW() - INTERVAL '4 months'), 
+        DATE_TRUNC('month', NOW() - INTERVAL '11 months'), 
         DATE_TRUNC('month', NOW()), 
         '1 month'::interval
     ) AS gs(month_start_date)
@@ -80,7 +80,7 @@ ORDER BY
    
 FROM 
     GENERATE_SERIES(
-        DATE_TRUNC('month', NOW() - INTERVAL '4 months'), 
+        DATE_TRUNC('month', NOW() - INTERVAL '11 months'), 
         DATE_TRUNC('month', NOW()), 
         '1 month'::interval
     ) AS gs(month_start_date)
@@ -101,7 +101,7 @@ ORDER BY
    
 FROM 
     GENERATE_SERIES(
-        DATE_TRUNC('month', NOW() - INTERVAL '4 months'), 
+        DATE_TRUNC('month', NOW() - INTERVAL '11 months'), 
         DATE_TRUNC('month', NOW()), 
         '1 month'::interval
     ) AS gs(month_start_date)

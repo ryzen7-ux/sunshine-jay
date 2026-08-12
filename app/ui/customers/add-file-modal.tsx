@@ -119,19 +119,19 @@ export function AddFileModal({
                   userId="SUNSHINE"
                   onUploadComplete={handleUploadComplete}
                 />
-                <FileUpload
-                  user={user}
-                  userType={loanee}
-                  fileUrl={member?.doc}
-                  member={member}
-                  itemId={member?.id}
-                  uploadedTitle="Application Form"
-                  title="Upload Application Form"
-                  currentInput="form"
-                  type="form"
-                  userId="SUNSHINE"
-                  onUploadComplete={handleUploadComplete}
-                />
+                {/*<FileUpload*/}
+                {/*  user={user}*/}
+                {/*  userType={loanee}*/}
+                {/*  fileUrl={member?.doc}*/}
+                {/*  member={member}*/}
+                {/*  itemId={member?.id}*/}
+                {/*  uploadedTitle="Application Form"*/}
+                {/*  title="Upload Application Form"*/}
+                {/*  currentInput="form"*/}
+                {/*  type="form"*/}
+                {/*  userId="SUNSHINE"*/}
+                {/*  onUploadComplete={handleUploadComplete}*/}
+                {/*/>*/}
                 <FileUpload
                   user={user}
                   userType={loanee}

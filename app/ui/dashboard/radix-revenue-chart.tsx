@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -8,7 +7,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/app/ui/radix-components/card";
-import { Button } from "@/app/ui/radix-components/button";
 import {
   ChartContainer,
   ChartTooltip,
@@ -18,58 +16,6 @@ import {
 } from "@/app/ui/radix-components/chart";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import { PieChart } from "lucide-react";
-
-// Mock data for business analytics
-const revenueData = [
-  {
-    month: "Jan",
-    disbursed: 8500,
-    paid: 6200,
-    profit: 2300,
-    ads: 45,
-    sponsors: 12,
-  },
-  {
-    month: "Feb",
-    disbursed: 9200,
-    paid: 6800,
-    profit: 2400,
-    ads: 52,
-    sponsors: 15,
-  },
-  {
-    month: "Mar",
-    disbursed: 10100,
-    paid: 7200,
-    profit: 2900,
-    ads: 58,
-    sponsors: 18,
-  },
-  {
-    month: "Apr",
-    disbursed: 11300,
-    paid: 7800,
-    profit: 3500,
-    ads: 62,
-    sponsors: 20,
-  },
-  {
-    month: "May",
-    disbursed: 12450,
-    paid: 8200,
-    profit: 4250,
-    ads: 68,
-    sponsors: 22,
-  },
-  {
-    month: "Jun",
-    disbursed: 13200,
-    paid: 8600,
-    profit: 4600,
-    ads: 72,
-    sponsors: 25,
-  },
-];
 
 const chartConfig = {
   disbursed: {

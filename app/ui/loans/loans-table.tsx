@@ -18,7 +18,11 @@ import {
   formatPercentage,
 } from "@/app/lib/utils";
 import InvoiceStatus from "@/app/ui/loans/status";
-import { DeleteLoan, UpdateLoan } from "@/app/ui/loans/buttons";
+import {
+  DeleteLoan,
+  UpdateLoan,
+  UploadLoanDocument,
+} from "@/app/ui/loans/buttons";
 import { UserIcon } from "@heroicons/react/24/solid";
 
 export const columns = [
@@ -116,7 +120,8 @@ export function LoansHeroTable({ loan, user }: { loan: any; user: any }) {
 
       case "actions":
         return (
-          <div className="flex justify-end gap-3">
+          <div className="flex justify-end gap-1">
+            <UploadLoanDocument loan={loan} user={user[0]} />
             <UpdateLoan id={loan.id} loan={loan} user={user} />
             <DeleteLoan id={loan.id} user={user} />
           </div>

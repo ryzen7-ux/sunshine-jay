@@ -16,33 +16,9 @@ import {
   Tooltip,
 } from "@heroui/react";
 import { Button } from "@heroui/react";
-import {
-  EyeIcon,
-  EyeSlashIcon,
-  DocumentArrowUpIcon,
-} from "@heroicons/react/24/solid";
-import { updateStaff } from "@/app/lib/sun-actions";
 import { Files } from "lucide-react";
-import StaffFilesForm from "@/app/ui/system-management/staff-files-form";
-import { FileUpload } from "@/app/ui/file-upload";
 import { StaffFileUpload } from "@/app/ui/system-management/staff-file-upload";
-import { User } from "next-auth";
-import {
-  revalidateIndividualFileUpload,
-  revalidateMemberFileUpload,
-  revalidateSystemFileUpload,
-} from "@/app/lib/actions";
-
-const roles = [
-  { key: "admin", label: "Admin" },
-  { key: "manager", label: "Manager" },
-  { key: "staff", label: "Staff" },
-];
-const status = [
-  { key: "active", label: "Active" },
-  { key: "inactive", label: "Inactive" },
-  { key: "on-leave", label: "On-Leave" },
-];
+import { revalidateSystemFileUpload } from "@/app/lib/actions";
 
 export default function AddStaffFiles({
   user,

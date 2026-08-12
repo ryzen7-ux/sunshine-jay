@@ -276,6 +276,12 @@ export async function POST(request: NextRequest) {
         )} WHERE id=${itemId}`;
       }
     }
+
+    if (userType === "loan") {
+      await sql`UPDATE loans SET form_url=${String(
+        uploadResult.gcsUri,
+      )} WHERE id=${itemId}`;
+    }
     // Return success response
     return NextResponse.json({
       success: true,

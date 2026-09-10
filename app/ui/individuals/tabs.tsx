@@ -77,6 +77,7 @@ export default function IndividualsTab({
                     regions={regions}
                     detailLoans={detailLoans}
                     user={user}
+                    loans={loans}
                   />
                 </Suspense>
                 <div className="my-5 flex w-full justify-center">

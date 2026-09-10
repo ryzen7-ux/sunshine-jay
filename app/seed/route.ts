@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 import bcrypt from "bcryptjs";
 import postgres from "postgres";
 import sql from "@/app/lib/db";
@@ -195,9 +197,9 @@ async function seedLogs() {
 
 export async function GET() {
   try {
-    //@ts-ignore
+
     const result = await sql.begin(() => [
-      seedUsers(),
+      // seedUsers(),
       // seedBranches(),
       // seedMembers(),
       // seedRegions(),
@@ -208,7 +210,7 @@ export async function GET() {
       // seedLoans(),
       // seedGroupInvoices(),
       // seedMpesaInvoices(),
-      // seedLogs(),
+      seedLogs(),
     ]);
 
     return Response.json({ message: "Database seeded successfully" });

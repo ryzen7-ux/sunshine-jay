@@ -56,7 +56,8 @@ export function SidebarCollapsible({ user }: { user: any }) {
               opacity: 0,
             },
           },
-        }}>
+        }}
+      >
         <DrawerContent>
           {(onClose) => (
             <>
@@ -69,7 +70,7 @@ export function SidebarCollapsible({ user }: { user: any }) {
                 />
               </DrawerHeader>
               <DrawerBody>
-                <NavLinks onClose={onClose} />
+                <NavLinks onClose={onClose} user={user} />
               </DrawerBody>
               <DrawerFooter className="w-full">
                 {/* <Button color="danger" variant="flat" onPress={onClose}>
@@ -80,7 +81,8 @@ export function SidebarCollapsible({ user }: { user: any }) {
                     type="submit"
                     color="danger"
                     startContent={<PowerIcon className="h-5 w-5" />}
-                    className="w-full">
+                    className="w-full"
+                  >
                     Sign Out
                   </Button>
                 </form>

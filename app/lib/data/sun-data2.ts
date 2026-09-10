@@ -1,3 +1,5 @@
+"use server";
+
 import sql from "@/app/lib/db";
 import {
   GroupsTable,
@@ -397,5 +399,16 @@ export async function fetchSystemCardStats() {
   } catch (error) {
     console.error("Database Error:", error);
     throw new Error("Failed to fetch invoice.");
+  }
+}
+
+export async function fetchIndividualDetailsLoans(id: any) {
+  try {
+    const loans =
+      await sql`SELECT * FROM individuals_loans WHERE loanee = ${id}`;
+
+    return loans;
+  } catch (error) {
+    console.error("Database Error:", error);
   }
 }

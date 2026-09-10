@@ -1,3 +1,5 @@
+"use server";
+
 import sql from "@/app/lib/db";
 import {
   GroupForm,

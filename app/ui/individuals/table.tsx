@@ -2,7 +2,10 @@ import EditIndividual from "@/app/ui/individuals/edit-individual";
 import DeleteIndividual from "@/app/ui/individuals/delete-individual";
 import { AddFileModal } from "@/app/ui/customers/add-file-modal";
 import MemberModal from "@/app/ui/customers/member-modal";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
+import IndividualModal from "./individual-modal";
+import { EyeIcon } from "lucide-react";
+import { fetchIndividualDetailsLoans } from "@/app/lib/data/sun-data2";
 
 export default function InvoicesTable({
   query,
@@ -11,6 +14,7 @@ export default function InvoicesTable({
   regions,
   detailLoans,
   user,
+  loans,
 }: {
   query: string;
   currentPage: number;
@@ -18,12 +22,38 @@ export default function InvoicesTable({
   regions: any;
   detailLoans: any;
   user: any;
+  loans: any;
 }) {
   const [isAddModalOpen, setIsAddModalOpen] = React.useState(false);
+  const [isDetailsModalOpen, setIsDetailsAddModalOpen] = React.useState(false);
+  const [modalMember, setModalMember] = React.useState<any>(null);
+  const [memberLoan, setMemberLoan] = useState<any>();
+  const [isLoading, setIsLoading] = useState(false);
+  const isMounted = useRef(false);
+
+  useEffect(() => {
+    if (isMounted.current) {
+      const memberLoans = async () => {
+        try {
+          setIsLoading(true);
+          const loan = await fetchIndividualDetailsLoans(modalMember?.id);
+          setMemberLoan(loan);
+        } catch (err) {
+          setIsLoading(false);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      memberLoans();
+    } else {
+      isMounted.current = true;
+    }
+  }, [modalMember]);
+
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">
-        <div className="rounded-lg bg-green-100 p-2 md:pt-0">
+        <div className="rounded-lg bg-green-200 p-2 md:pt-0">
           <div className="md:hidden">
             {filtredIndividuals?.map((individual: any) => (
               <div
@@ -34,13 +64,30 @@ export default function InvoicesTable({
                   <div>
                     <div className="mb-2 flex justify-between w-full">
                       <p>{individual.name}</p>
-                      <div className="flex">
-                        <EditIndividual
-                          individual={individual}
-                          regions={regions}
-                        />{" "}
-                        {user === "admin" && (
-                          <DeleteIndividual id={individual?.id} />
+                      <div className="flex gap-2.5">
+                        <AddFileModal
+                          user={user}
+                          member={individual}
+                          loanee="individual"
+                        />
+                        <button
+                          onClick={() => {
+                            setModalMember(individual);
+                            setIsDetailsAddModalOpen(true);
+                          }}
+                        >
+                          <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                            <EyeIcon className="h-6 w-6 text-yellow-500" />
+                          </span>
+                        </button>
+                        {user.role === "admin" && (
+                          <EditIndividual
+                            individual={individual}
+                            regions={regions}
+                          />
+                        )}
+                        {user.role === "admin" && (
+                          <DeleteIndividual id={individual?.id} user={user} />
                         )}
                       </div>
                     </div>
@@ -115,6 +162,16 @@ export default function InvoicesTable({
                         member={individual}
                         loanee="individual"
                       />
+                      <button
+                        onClick={() => {
+                          setModalMember(individual);
+                          setIsDetailsAddModalOpen(true);
+                        }}
+                      >
+                        <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                          <EyeIcon className="h-6 w-6 text-yellow-500" />
+                        </span>
+                      </button>
                       <MemberModal
                         memberData={individual}
                         loan={detailLoans}
@@ -128,7 +185,7 @@ export default function InvoicesTable({
                       />
 
                       {user.role === "admin" && (
-                        <DeleteIndividual id={individual?.id} />
+                        <DeleteIndividual id={individual?.id} user={user} />
                       )}
                     </div>
                   </td>
@@ -143,6 +200,14 @@ export default function InvoicesTable({
           No loans are added
         </div>
       )}
+      <IndividualModal
+        memberData={modalMember}
+        loan={memberLoan}
+        isAddModalOpen={isDetailsModalOpen}
+        setIsAddModalOpen={setIsDetailsAddModalOpen}
+        isLoading={isLoading}
+        setIsLoading={setIsLoading}
+      />
     </div>
   );
 }

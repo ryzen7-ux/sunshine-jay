@@ -18,7 +18,13 @@ import {
 } from "@heroui/react";
 import { Trash2Icon, Trash2, Eye, Pen, AlertTriangleIcon } from "lucide-react";
 
-export default function DeleteIndividual({ id }: { id: string }) {
+export default function DeleteIndividual({
+  id,
+  user,
+}: {
+  id: string;
+  user: any;
+}) {
   const [isDelete, setIsDelete] = useState(false);
 
   const handleDelete = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -44,7 +50,11 @@ export default function DeleteIndividual({ id }: { id: string }) {
   return (
     <>
       <Tooltip color="danger" content="Delete Individual">
-        <button onClick={onOpen} className="">
+        <button
+          onClick={onOpen}
+          className="disabled:opacity-50"
+          disabled={user.role === "admin" && user.name === "henry-admin"}
+        >
           <span className="sr-only">Delete</span>
           <TrashIcon className="w-5 fill-red-500" />
         </button>

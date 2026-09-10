@@ -8,6 +8,9 @@ import {
 } from "@/app/lib/utils";
 import EditLoan from "@/app/ui/individuals/edit-loan";
 import DeleteIndividualLoan from "@/app/ui/individuals/delete-loan";
+import { UserIcon } from "lucide-react";
+import { UserCircleIcon, UserGroupIcon } from "@heroicons/react/24/solid";
+import { User } from "@heroui/react";
 
 export default function LoansTable({
   loans,
@@ -23,21 +26,28 @@ export default function LoansTable({
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">
-        <div className="rounded-lg bg-green-100 p-2 md:pt-0">
+        <div className="rounded-lg bg-green-200 p-1 md:pt-0">
           <div className="md:hidden">
             {loans?.map((individual: any) => (
               <div
                 key={individual?.id}
-                className="mb-2 w-full rounded-md bg-white p-4"
+                className="mb-2 w-full rounded-md bg-white p-2"
               >
                 <div className="pb-1">
                   <div>
+                    <div className="flex gap-1 items-center ">
+                      <UserCircleIcon className="text-green-700 h-5 w-5" />
+                      <p className="font-extrabold uppercase text-sm">
+                        {individual.name}
+                      </p>
+                    </div>
+
                     <div className="mb-2 flex justify-between w-full">
-                      <p>{individual.name}</p>
+                      <p></p>
                       <div className="flex">
-                        <p className="text-xs text-gray-700 px-4 pt-1">
+                        {/* <p className="text-xs text-gray-700 px-4 pt-1">
                           {individual.created}
-                        </p>
+                        </p> */}
                         <EditLoan individual={individual} />{" "}
                         {user.role === "admin" && (
                           <DeleteIndividualLoan id={individual?.id} />

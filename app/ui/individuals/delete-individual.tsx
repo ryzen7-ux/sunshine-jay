@@ -53,7 +53,7 @@ export default function DeleteIndividual({
         <button
           onClick={onOpen}
           className="disabled:opacity-50"
-          disabled={user.role === "admin" && user.name === "henry-admin"}
+          disabled={user.role !== "admin" && user.name !== "henry-admin"}
         >
           <span className="sr-only">Delete</span>
           <TrashIcon className="w-5 fill-red-500" />

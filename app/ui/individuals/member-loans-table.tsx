@@ -26,9 +26,9 @@ export const columns = [
   { name: "PRINCIPLE", uid: "principle" },
   { name: "TERM (WEEKS)", uid: "term" },
   { name: "INTEREST", uid: "interest" },
-  { name: "FEE", uid: "fee" },
+  //   { name: "FEE", uid: "fee" },
   { name: "LOAN AMOUNT", uid: "amount" },
-  { name: "TOTAL", uid: "total" },
+  //   { name: "TOTAL", uid: "total" },
   { name: "START DATE", uid: "start" },
   //   { name: "END DATE", uid: "end" },
 ];

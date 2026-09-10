@@ -6,6 +6,7 @@ import React, { useEffect, useRef, useState } from "react";
 import IndividualModal from "./individual-modal";
 import { EyeIcon } from "lucide-react";
 import { fetchIndividualDetailsLoans } from "@/app/lib/data/sun-data2";
+import { UserCircleIcon } from "@heroicons/react/24/solid";
 
 export default function InvoicesTable({
   query,
@@ -53,17 +54,22 @@ export default function InvoicesTable({
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">
-        <div className="rounded-lg bg-green-200 p-2 md:pt-0">
+        <div className="rounded-lg bg-green-200 p-1 md:pt-0">
           <div className="md:hidden">
             {filtredIndividuals?.map((individual: any) => (
               <div
                 key={individual?.id}
-                className="mb-2 w-full rounded-md bg-white p-4"
+                className="mb-1 w-full rounded-md bg-white p-2"
               >
                 <div className=" border-b pb-4">
                   <div>
                     <div className="mb-2 flex justify-between w-full">
-                      <p>{individual.name}</p>
+                      <div className="flex gap-1 items-center">
+                        <UserCircleIcon className="text-green-700 h-5 w-5" />
+                        <p className="font-bold uppercase text-sm">
+                          {individual.name}
+                        </p>
+                      </div>
                       <div className="flex gap-2.5">
                         <AddFileModal
                           user={user}

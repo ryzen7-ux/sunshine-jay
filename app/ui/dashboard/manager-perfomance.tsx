@@ -147,7 +147,7 @@ export default function DashboardManagerPerformance({
             {sortedData?.map((item: any, index: number) => (
               <div key={index}>
                 {isAdmin && item.manager !== "HENRY-ADMIN" ? (
-                  <div className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex flex-col p-4 border rounded-lg">
                     <div className="flex flex-col  gap-2">
                       <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-sans font-bold">
                         {index + 1}
@@ -169,7 +169,7 @@ export default function DashboardManagerPerformance({
                                 <TrendingDown className="h-4 w-4 text-red-500" />
                               )}
                               <span
-                                className={` text-xs ${
+                                className={` text-sm ${
                                   item.disbursement_growth > 0
                                     ? "text-green-500"
                                     : "text-red-500"
@@ -181,7 +181,7 @@ export default function DashboardManagerPerformance({
                             </div>
                           )}
                         </div>
-                        <p className="text-xs text-muted-foreground ">
+                        <p className="text-sm text-muted-foreground ">
                           <strong>Loan:</strong>{" "}
                           {formatCurrencyToLocal(item.loan ?? 0)}
                         </p>
@@ -191,96 +191,13 @@ export default function DashboardManagerPerformance({
                         </p>
                       </div>
                     </div>
-                    <div className="flex flex-col md:flex-row items-center gap-1 text-right">
+                    <div className=" ">
                       <div>
-                        <p className="font-sans font-bold">
-                          {formatCurrencyToLocal(item.paid ?? 0)}
-                        </p>
-                        <div className="flex gap-x-0.5">
-                          <p className="text-sm text-muted-foreground ">
-                            Paid in
-                          </p>
-                          {item.is_growth && (
-                            <div className="flex items-end gap-1">
-                              {item.paid_growth > 0 ? (
-                                <TrendingUp className="h-4 w-4 text-green-500" />
-                              ) : (
-                                <TrendingDown className="h-4 w-4 text-red-500" />
-                              )}
-                              <span
-                                className={` text-xs ${
-                                  item.paid_growth > 0
-                                    ? "text-green-500"
-                                    : "text-red-500"
-                                }`}
-                              >
-                                {item.paid_growth > 0 ? "+" : ""}
-                                {item.paid_growth}%
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  user[0].id === item.user_id && (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between p-4 border rounded-lg"
-                    >
-                      <div className="flex flex-col  gap-2">
-                        <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-sans font-bold">
-                          {index + 1}
-                        </div>
-                        <div>
-                          <p className="font-sans font-bold text-md">
-                            {item.manager}
-                          </p>
-                          <div className="flex items-end gap-x-0.5">
-                            <p className="text-xs text-muted-foreground">
-                              <strong>Disbursed:</strong>{" "}
-                              {formatCurrencyToLocal(item.disbursed ?? 0)}
-                            </p>
-                            {item.is_growth && (
-                              <div className="flex items-end gap-0.5">
-                                {item.disbursement_growth > 0 ? (
-                                  <TrendingUp className="h-4 w-4 text-green-500" />
-                                ) : (
-                                  <TrendingDown className="h-4 w-4 text-red-500" />
-                                )}
-                                <span
-                                  className={` text-xs ${
-                                    item.disbursement_growth > 0
-                                      ? "text-green-500"
-                                      : "text-red-500"
-                                  }`}
-                                >
-                                  {item.disbursement_growth > 0 ? "+" : ""}
-                                  {item.disbursement_growth}%
-                                </span>
-                              </div>
-                            )}
-                          </div>
-                          <p className="text-xs text-muted-foreground ">
-                            <strong>Loan:</strong>{" "}
-                            {formatCurrencyToLocal(item.loan ?? 0)}
-                          </p>
-                          <p className="text-sm text-muted-foreground ">
-                            <strong>Interest:</strong>{" "}
-                            {formatCurrencyToLocal(item.interest ?? 0)}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex flex-col md:flex-row items-center gap-1 text-right">
-                        <div>
+                        <div className="flex gap-0.5">
                           <p className="font-sans font-bold">
-                            {formatCurrencyToLocal(item.paid ?? 0)}
+                            Paid in: {formatCurrencyToLocal(item.paid ?? 0)}
                           </p>
                           <div className="flex gap-x-0.5">
-                            <p className="text-sm text-muted-foreground ">
-                              Paid in
-                            </p>
                             {item.is_growth && (
                               <div className="flex items-end gap-1">
                                 {item.paid_growth > 0 ? (
@@ -300,6 +217,87 @@ export default function DashboardManagerPerformance({
                                 </span>
                               </div>
                             )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  user[0].id === item.user_id && (
+                    <div
+                      key={index}
+                      className="flex flex-col  p-4 border rounded-lg"
+                    >
+                      <div className="flex flex-col  gap-2">
+                        {/* <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-sans font-bold">
+                          {index + 1}
+                        </div> */}
+                        <div>
+                          <p className="font-sans font-bold text-md">
+                            {item.manager}
+                          </p>
+                          <div className="flex items-end gap-x-0.5">
+                            <p className="text-xs text-muted-foreground">
+                              <strong>Disbursed:</strong>{" "}
+                              {formatCurrencyToLocal(item.disbursed ?? 0)}
+                            </p>
+                            {item.is_growth && (
+                              <div className="flex items-end gap-0.5">
+                                {item.disbursement_growth > 0 ? (
+                                  <TrendingUp className="h-4 w-4 text-green-500" />
+                                ) : (
+                                  <TrendingDown className="h-4 w-4 text-red-500" />
+                                )}
+                                <span
+                                  className={` text-sm ${
+                                    item.disbursement_growth > 0
+                                      ? "text-green-500"
+                                      : "text-red-500"
+                                  }`}
+                                >
+                                  {item.disbursement_growth > 0 ? "+" : ""}
+                                  {item.disbursement_growth}%
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                          <p className="text-sm text-muted-foreground ">
+                            <strong>Loan:</strong>{" "}
+                            {formatCurrencyToLocal(item.loan ?? 0)}
+                          </p>
+                          <p className="text-sm text-muted-foreground ">
+                            <strong>Interest:</strong>{" "}
+                            {formatCurrencyToLocal(item.interest ?? 0)}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-1 ">
+                        <div>
+                          <div className="flex gap-0.5 items-center">
+                            <p className="font-sans font-bold">
+                              Paid in: {formatCurrencyToLocal(item.paid ?? 0)}
+                            </p>
+                            <div className="flex gap-x-0.5">
+                              {item.is_growth && (
+                                <div className="flex items-end gap-1">
+                                  {item.paid_growth > 0 ? (
+                                    <TrendingUp className="h-4 w-4 text-green-500" />
+                                  ) : (
+                                    <TrendingDown className="h-4 w-4 text-red-500" />
+                                  )}
+                                  <span
+                                    className={` text-xs ${
+                                      item.paid_growth > 0
+                                        ? "text-green-500"
+                                        : "text-red-500"
+                                    }`}
+                                  >
+                                    {item.paid_growth > 0 ? "+" : ""}
+                                    {item.paid_growth}%
+                                  </span>
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>

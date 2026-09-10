@@ -52,7 +52,7 @@ export function LeftContent({
       <div className="w-full border rounded-md py-4">
         <div className="flex flex-col gap-3 pb-4 px-2">
           <div className="flex gap-3">
-            <Avatar className="w-40 h-40 text-large mb-auto" />
+            <Avatar className="w-10 h-10 text-large mb-auto" />
             <div className="flex flex-col">
               <p className="text-lg font-bold text-default-900 ">
                 {memberData.firstname} {memberData.surname} {memberData.name}

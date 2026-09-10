@@ -195,7 +195,7 @@ export default function InvoicesTable({
           </table>
         </div>
       </div>
-      {filtredIndividuals.length < 1 && (
+      {filtredIndividuals?.length < 1 && (
         <div className="text-sm flex items-center justify-center py-6">
           No loans are added
         </div>

@@ -415,7 +415,7 @@ export function RightContent({
         <p className="px-2">Loans</p>
       </div>
 
-      {loans.length > 0 ? (
+      {loans?.length > 0 ? (
         <IndividualMemberLoanTable
           loan={loans}
           isLoading={isLoading}
